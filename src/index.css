@@ -9,7 +9,6 @@
   --bs-danger: #dc3545;
   --bs-light: #f8f9fa;
   --bs-dark: #212529;
-  --sidebar-width: 240px;
 }
 
 * {
@@ -28,23 +27,41 @@ body {
   min-height: 100vh;
 }
 
-/* Compact Layout Styles */
-.compact-container {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+/* Header Navigation Styles */
+.hover-nav-link {
+  transition: all 0.2s ease;
+  border-radius: 0.375rem;
+}
+
+.hover-nav-link:hover {
+  background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+  color: var(--bs-primary) !important;
+}
+
+.navbar-toggler {
+  border: none !important;
+  padding: 0.25rem 0.5rem;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+/* Content spacing adjustment */
+.main-content {
+  padding-top: 0;
+}
+
+/* Compact spacing for full-width layout */
+.container-fluid {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
 @media (min-width: 768px) {
-  .compact-container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
-
-/* Responsive adjustments for sidebar */
-@media (min-width: 992px) {
-  .main-content {
-    margin-left: var(--sidebar-width);
+  .container-fluid {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }
 

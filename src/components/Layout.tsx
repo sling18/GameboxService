@@ -9,8 +9,6 @@ import {
   ClipboardList, 
   Settings,
   User,
-  Menu,
-  X,
   Shield,
   UserCheck,
   Gamepad2
@@ -23,7 +21,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, signOut } = useAuth()
   const { navigate, currentPage } = useRouter()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navigationItems = [
     { icon: Home, label: 'Dashboard', page: 'dashboard' as const, roles: ['admin', 'receptionist', 'technician'] },
@@ -68,124 +66,86 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const roleColor = getRoleColor(user?.role || '')
 
   return (
-    <div className="d-flex" style={{ minHeight: '100vh' }}>
-      {/* Overlay for mobile */}
-      {sidebarOpen && (
-        <div 
-          className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-lg-none" 
-          style={{ zIndex: 1040 }}
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <nav 
-        className={`bg-white shadow-sm position-fixed position-lg-sticky top-0 start-0 h-100 d-flex flex-column ${
-          sidebarOpen ? 'd-block' : 'd-none d-lg-block'
-        }`}
-        style={{ 
-          width: '240px', 
-          zIndex: 1050,
-          borderRight: '1px solid #dee2e6',
-          maxWidth: '240px',
-          minWidth: '240px'
-        }}
-      >
-        {/* Logo */}
-        <div className="bg-primary text-white p-3">
-          <div className="d-flex align-items-center justify-content-between">
-            <div className="d-flex align-items-center">
-              <Gamepad2 size={20} className="me-2" />
-              <h1 className="h6 mb-0 fw-bold">GameBox</h1>
+    <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
+      {/* Header Navigation */}
+      <header className="bg-white shadow-sm border-bottom">
+        <nav className="navbar navbar-expand-lg navbar-light bg-white px-3 px-md-4">
+          <div className="container-fluid">
+            {/* Brand */}
+            <div className="navbar-brand d-flex align-items-center mb-0">
+              <Gamepad2 size={24} className="me-2 text-primary" />
+              <span className="fw-bold fs-5">GameBox Service</span>
             </div>
+
+            {/* Mobile menu button */}
             <button 
-              className="btn btn-link text-white p-0 d-lg-none"
-              onClick={() => setSidebarOpen(false)}
+              className="navbar-toggler border-0 p-0" 
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              <X size={18} />
+              <span className="navbar-toggler-icon"></span>
             </button>
-          </div>
-        </div>
 
-        {/* User Info */}
-        <div className="p-3 border-bottom">
-          <div className="d-flex align-items-center">
-            <div className={`bg-${roleColor} bg-opacity-10 rounded-circle p-2 me-2`}>
-              <RoleIcon size={16} className={`text-${roleColor}`} />
-            </div>
-            <div className="flex-grow-1">
-              <h6 className="mb-0 fw-semibold text-truncate small">
-                {user?.full_name || user?.email}
-              </h6>
-              <small className="text-muted">
-                {getRoleDisplay(user?.role || '')}
-              </small>
-            </div>
-          </div>
-        </div>
+            {/* Navigation Menu */}
+            <div className={`collapse navbar-collapse ${mobileMenuOpen ? 'show' : ''}`}>
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                {visibleItems.map((item) => {
+                  const Icon = item.icon
+                  const isActive = currentPage === item.page
+                  return (
+                    <li key={item.page} className="nav-item">
+                      <button
+                        onClick={() => {
+                          navigate(item.page)
+                          setMobileMenuOpen(false)
+                        }}
+                        className={`nav-link btn border-0 d-flex align-items-center px-3 py-2 ${
+                          isActive 
+                            ? `text-${roleColor} fw-semibold bg-${roleColor} bg-opacity-10 rounded` 
+                            : 'text-dark hover-nav-link'
+                        }`}
+                      >
+                        <Icon size={16} className="me-2" />
+                        <span>{item.label}</span>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
 
-        {/* Navigation */}
-        <div className="flex-grow-1 p-2">
-          <div className="d-grid gap-1">
-            {visibleItems.map((item) => {
-              const Icon = item.icon
-              const isActive = currentPage === item.page
-              return (
+              {/* User Info & Sign Out */}
+              <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center me-3">
+                  <div className={`bg-${roleColor} bg-opacity-10 rounded-circle p-2 me-2`}>
+                    <RoleIcon size={16} className={`text-${roleColor}`} />
+                  </div>
+                  <div className="d-none d-md-block">
+                    <div className="fw-semibold small text-truncate" style={{maxWidth: '150px'}}>
+                      {user?.full_name || user?.email}
+                    </div>
+                    <small className="text-muted">
+                      {getRoleDisplay(user?.role || '')}
+                    </small>
+                  </div>
+                </div>
+                
                 <button
-                  key={item.page}
-                  onClick={() => {
-                    navigate(item.page)
-                    setSidebarOpen(false)
-                  }}
-                  className={`btn text-start d-flex align-items-center py-2 px-3 ${
-                    isActive 
-                      ? `btn-${roleColor} bg-opacity-10 text-${roleColor} border-0` 
-                      : 'btn-outline-light text-dark border-0 hover-card'
-                  }`}
+                  onClick={signOut}
+                  className="btn btn-outline-danger btn-sm d-flex align-items-center"
                 >
-                  <Icon size={16} className="me-2" />
-                  <span className="fw-medium small">{item.label}</span>
+                  <LogOut size={14} className="me-1" />
+                  <span className="d-none d-md-inline">Salir</span>
                 </button>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Sign Out */}
-        <div className="p-2 border-top">
-          <button
-            onClick={signOut}
-            className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center py-2"
-          >
-            <LogOut size={14} className="me-2" />
-            <span className="small">Cerrar Sesión</span>
-          </button>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <div className="flex-grow-1 d-flex flex-column">
-        {/* Mobile Header */}
-        <header className="d-lg-none bg-white border-bottom p-3">
-          <div className="d-flex align-items-center justify-content-between">
-            <button 
-              className="btn btn-outline-primary"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu size={20} />
-            </button>
-            <h1 className="h6 mb-0 fw-bold">GameBox Service</h1>
-            <div className={`bg-${roleColor} bg-opacity-10 rounded-circle p-2`}>
-              <RoleIcon size={16} className={`text-${roleColor}`} />
+              </div>
             </div>
           </div>
-        </header>
+        </nav>
+      </header>
 
-        {/* Main Content Area */}
-        <main className="flex-grow-1 bg-light">
-          {children}
-        </main>
-      </div>
+      {/* Main Content Area */}
+      <main className="flex-grow-1 bg-light">
+        {children}
+      </main>
     </div>
   )
 }

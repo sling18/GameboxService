@@ -59,19 +59,19 @@ const Dashboard: React.FC = () => {
     switch (user?.role) {
       case 'admin':
         return (
-          <div className="container-fluid px-2 px-md-3">
+          <div className="container-fluid px-3 px-md-4 py-3">
             {/* Header Hero */}
             <div className="row mb-3">
               <div className="col-12">
                 <div className="card border-0 shadow-sm" style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}}>
                   <div className="card-body text-white p-3 p-md-4">
                     <div className="row align-items-center">
-                      <div className="col-md-8">
+                      <div className="col-md-9">
                         <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
                         <p className="mb-0 opacity-90">Panel de Administración - GameBox Service</p>
                         <small className="opacity-75">Control total del sistema de reparaciones</small>
                       </div>
-                      <div className="col-md-4 text-end d-none d-md-block">
+                      <div className="col-md-3 text-end d-none d-md-block">
                         <TrendingUp size={60} className="opacity-25" />
                       </div>
                     </div>
@@ -82,7 +82,7 @@ const Dashboard: React.FC = () => {
 
             {/* Estadísticas principales */}
             <div className="row g-2 g-md-3 mb-3">
-              <div className="col-6 col-lg-3">
+              <div className="col-6 col-md-3">
                 <StatCard
                   title="Total Órdenes"
                   value={stats.total}
@@ -93,7 +93,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => navigate('orders')}
                 />
               </div>
-              <div className="col-6 col-lg-3">
+              <div className="col-6 col-md-3">
                 <StatCard
                   title="Pendientes"
                   value={stats.pending}
@@ -103,7 +103,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => navigate('orders')}
                 />
               </div>
-              <div className="col-6 col-lg-3">
+              <div className="col-6 col-md-3">
                 <StatCard
                   title="En Progreso"
                   value={stats.inProgress}
@@ -113,7 +113,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => navigate('orders')}
                 />
               </div>
-              <div className="col-6 col-lg-3">
+              <div className="col-6 col-md-3">
                 <StatCard
                   title="Completadas"
                   value={stats.completed}
@@ -209,19 +209,19 @@ const Dashboard: React.FC = () => {
         
       case 'receptionist':
         return (
-          <div className="container-fluid px-2 px-md-3">
+          <div className="container-fluid px-3 px-md-4 py-3">
             {/* Header Hero */}
             <div className="row mb-3">
               <div className="col-12">
                 <div className="card border-0 shadow-sm" style={{background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)'}}>
                   <div className="card-body text-white p-3 p-md-4">
                     <div className="row align-items-center">
-                      <div className="col-md-8">
+                      <div className="col-md-9">
                         <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
                         <p className="mb-0 opacity-90">Gestión de Recepción - GameBox Service</p>
                         <small className="opacity-75">Atención al cliente y gestión de órdenes</small>
                       </div>
-                      <div className="col-md-4 text-end d-none d-md-block">
+                      <div className="col-md-3 text-end d-none d-md-block">
                         <Users size={60} className="opacity-25" />
                       </div>
                     </div>
@@ -335,19 +335,19 @@ const Dashboard: React.FC = () => {
         const myCompleted = myOrders.filter(order => order.status === 'completed')
         
         return (
-          <div className="container-fluid px-2 px-md-3">
+          <div className="container-fluid px-3 px-md-4 py-3">
             {/* Header Hero */}
             <div className="row mb-3">
               <div className="col-12">
                 <div className="card border-0 shadow-sm" style={{background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'}}>
                   <div className="card-body text-white p-3 p-md-4">
                     <div className="row align-items-center">
-                      <div className="col-md-8">
+                      <div className="col-md-9">
                         <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
                         <p className="mb-0 opacity-90">Cola de Reparaciones - GameBox Service</p>
                         <small className="opacity-75">Gestión técnica y reparaciones</small>
                       </div>
-                      <div className="col-md-4 text-end d-none d-md-block">
+                      <div className="col-md-3 text-end d-none d-md-block">
                         <Wrench size={60} className="opacity-25" />
                       </div>
                     </div>
@@ -484,8 +484,8 @@ const Dashboard: React.FC = () => {
       {getRoleSpecificContent()}
       
       {/* Tabla de órdenes recientes */}
-      <div className="container-fluid px-2 px-md-3 py-3">
-        <div className="row justify-content-center">
+      <div className="container-fluid px-3 px-md-4 py-3">
+        <div className="row">
           <div className="col-12">
             <div className="card border-0 shadow-sm">
               <div className="card-header bg-transparent border-0 py-3">
@@ -533,7 +533,7 @@ const Dashboard: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {serviceOrders.slice(0, 5).map((order) => (
+                        {serviceOrders.slice(0, 8).map((order) => (
                           <tr key={order.id} className="border-0">
                             <td className="px-3 py-3">
                               <div>
