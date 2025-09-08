@@ -80,39 +80,41 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Sidebar */}
       <nav 
-        className={`bg-white shadow-lg position-fixed position-lg-sticky top-0 start-0 h-100 d-flex flex-column ${
+        className={`bg-white shadow-sm position-fixed position-lg-sticky top-0 start-0 h-100 d-flex flex-column ${
           sidebarOpen ? 'd-block' : 'd-none d-lg-block'
         }`}
         style={{ 
-          width: '280px', 
+          width: '240px', 
           zIndex: 1050,
-          borderRight: '1px solid #dee2e6'
+          borderRight: '1px solid #dee2e6',
+          maxWidth: '240px',
+          minWidth: '240px'
         }}
       >
         {/* Logo */}
-        <div className="bg-primary text-white p-4">
+        <div className="bg-primary text-white p-3">
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
-              <Gamepad2 size={24} className="me-2" />
-              <h1 className="h5 mb-0 fw-bold">GameBox Service</h1>
+              <Gamepad2 size={20} className="me-2" />
+              <h1 className="h6 mb-0 fw-bold">GameBox</h1>
             </div>
             <button 
               className="btn btn-link text-white p-0 d-lg-none"
               onClick={() => setSidebarOpen(false)}
             >
-              <X size={20} />
+              <X size={18} />
             </button>
           </div>
         </div>
 
         {/* User Info */}
-        <div className="p-4 border-bottom">
+        <div className="p-3 border-bottom">
           <div className="d-flex align-items-center">
-            <div className={`bg-${roleColor} bg-opacity-10 rounded-circle p-2 me-3`}>
-              <RoleIcon size={20} className={`text-${roleColor}`} />
+            <div className={`bg-${roleColor} bg-opacity-10 rounded-circle p-2 me-2`}>
+              <RoleIcon size={16} className={`text-${roleColor}`} />
             </div>
             <div className="flex-grow-1">
-              <h6 className="mb-1 fw-semibold text-truncate">
+              <h6 className="mb-0 fw-semibold text-truncate small">
                 {user?.full_name || user?.email}
               </h6>
               <small className="text-muted">
@@ -123,7 +125,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
 
         {/* Navigation */}
-        <div className="flex-grow-1 p-3">
+        <div className="flex-grow-1 p-2">
           <div className="d-grid gap-1">
             {visibleItems.map((item) => {
               const Icon = item.icon
@@ -135,14 +137,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     navigate(item.page)
                     setSidebarOpen(false)
                   }}
-                  className={`btn text-start d-flex align-items-center p-3 ${
+                  className={`btn text-start d-flex align-items-center py-2 px-3 ${
                     isActive 
                       ? `btn-${roleColor} bg-opacity-10 text-${roleColor} border-0` 
                       : 'btn-outline-light text-dark border-0 hover-card'
                   }`}
                 >
-                  <Icon size={18} className="me-3" />
-                  <span className="fw-medium">{item.label}</span>
+                  <Icon size={16} className="me-2" />
+                  <span className="fw-medium small">{item.label}</span>
                 </button>
               )
             })}
@@ -150,13 +152,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
 
         {/* Sign Out */}
-        <div className="p-3 border-top">
+        <div className="p-2 border-top">
           <button
             onClick={signOut}
-            className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center"
+            className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center py-2"
           >
-            <LogOut size={16} className="me-2" />
-            Cerrar Sesión
+            <LogOut size={14} className="me-2" />
+            <span className="small">Cerrar Sesión</span>
           </button>
         </div>
       </nav>

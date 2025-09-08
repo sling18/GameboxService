@@ -59,20 +59,20 @@ const Dashboard: React.FC = () => {
     switch (user?.role) {
       case 'admin':
         return (
-          <div className="container-fluid px-3 px-md-4">
+          <div className="container-fluid px-2 px-md-3">
             {/* Header Hero */}
-            <div className="row mb-4">
+            <div className="row mb-3">
               <div className="col-12">
                 <div className="card border-0 shadow-sm" style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}}>
-                  <div className="card-body text-white p-4 p-md-5">
+                  <div className="card-body text-white p-3 p-md-4">
                     <div className="row align-items-center">
                       <div className="col-md-8">
-                        <h1 className="display-5 fw-bold mb-2">{getWelcomeMessage()}</h1>
-                        <p className="lead mb-0 opacity-90">Panel de Administración - GameBox Service</p>
+                        <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
+                        <p className="mb-0 opacity-90">Panel de Administración - GameBox Service</p>
                         <small className="opacity-75">Control total del sistema de reparaciones</small>
                       </div>
                       <div className="col-md-4 text-end d-none d-md-block">
-                        <TrendingUp size={80} className="opacity-25" />
+                        <TrendingUp size={60} className="opacity-25" />
                       </div>
                     </div>
                   </div>
@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Estadísticas principales */}
-            <div className="row g-3 g-md-4 mb-4">
+            <div className="row g-2 g-md-3 mb-3">
               <div className="col-6 col-lg-3">
                 <StatCard
                   title="Total Órdenes"
@@ -126,7 +126,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Estadísticas secundarias */}
-            <div className="row g-3 g-md-4 mb-4">
+            <div className="row g-2 g-md-3 mb-3">
               <div className="col-md-4">
                 <StatCard
                   title="Órdenes Hoy"
@@ -160,42 +160,42 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Acciones rápidas */}
-            <div className="row mb-4">
+            <div className="row mb-3">
               <div className="col-12">
                 <div className="card border-0 shadow-sm">
-                  <div className="card-header bg-transparent border-0 pt-3">
-                    <h5 className="card-title mb-0">
-                      <Activity className="me-2" size={20} />
+                  <div className="card-header bg-transparent border-0 py-2">
+                    <h6 className="card-title mb-0">
+                      <Activity className="me-2" size={18} />
                       Acciones Rápidas
-                    </h5>
+                    </h6>
                   </div>
-                  <div className="card-body">
-                    <div className="row g-3">
+                  <div className="card-body p-3">
+                    <div className="row g-2">
                       <div className="col-6 col-lg-3">
-                        <button onClick={() => navigate('create-order')} className="btn btn-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 border-0">
-                          <Plus size={24} className="mb-2" />
-                          <span className="fw-semibold">Nueva Orden</span>
+                        <button onClick={() => navigate('create-order')} className="btn btn-primary w-100 d-flex flex-column align-items-center justify-content-center p-2 border-0">
+                          <Plus size={20} className="mb-1" />
+                          <span className="fw-semibold small">Nueva Orden</span>
                           <small className="opacity-75">Registrar dispositivo</small>
                         </button>
                       </div>
                       <div className="col-6 col-lg-3">
-                        <button onClick={() => navigate('customers')} className="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
-                          <Users size={24} className="mb-2" />
-                          <span className="fw-semibold">Buscar Cliente</span>
+                        <button onClick={() => navigate('customers')} className="btn btn-outline-primary w-100 d-flex flex-column align-items-center justify-content-center p-2">
+                          <Users size={20} className="mb-1" />
+                          <span className="fw-semibold small">Buscar Cliente</span>
                           <small className="opacity-75">Por cédula</small>
                         </button>
                       </div>
                       <div className="col-6 col-lg-3">
-                        <button onClick={() => navigate('orders')} className="btn btn-outline-secondary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
-                          <Eye size={24} className="mb-2" />
-                          <span className="fw-semibold">Ver Órdenes</span>
+                        <button onClick={() => navigate('orders')} className="btn btn-outline-secondary w-100 d-flex flex-column align-items-center justify-content-center p-2">
+                          <Eye size={20} className="mb-1" />
+                          <span className="fw-semibold small">Ver Órdenes</span>
                           <small className="opacity-75">Todas las órdenes</small>
                         </button>
                       </div>
                       <div className="col-6 col-lg-3">
-                        <button onClick={() => navigate('settings')} className="btn btn-outline-secondary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
-                          <Wrench size={24} className="mb-2" />
-                          <span className="fw-semibold">Configuración</span>
+                        <button onClick={() => navigate('settings')} className="btn btn-outline-secondary w-100 d-flex flex-column align-items-center justify-content-center p-2">
+                          <Wrench size={20} className="mb-1" />
+                          <span className="fw-semibold small">Configuración</span>
                           <small className="opacity-75">Sistema</small>
                         </button>
                       </div>
@@ -209,20 +209,20 @@ const Dashboard: React.FC = () => {
         
       case 'receptionist':
         return (
-          <div className="container-fluid px-3 px-md-4">
+          <div className="container-fluid px-2 px-md-3">
             {/* Header Hero */}
-            <div className="row mb-4">
+            <div className="row mb-3">
               <div className="col-12">
                 <div className="card border-0 shadow-sm" style={{background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)'}}>
-                  <div className="card-body text-white p-4 p-md-5">
+                  <div className="card-body text-white p-3 p-md-4">
                     <div className="row align-items-center">
                       <div className="col-md-8">
-                        <h1 className="display-5 fw-bold mb-2">{getWelcomeMessage()}</h1>
-                        <p className="lead mb-0 opacity-90">Gestión de Recepción - GameBox Service</p>
+                        <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
+                        <p className="mb-0 opacity-90">Gestión de Recepción - GameBox Service</p>
                         <small className="opacity-75">Atención al cliente y gestión de órdenes</small>
                       </div>
                       <div className="col-md-4 text-end d-none d-md-block">
-                        <Users size={80} className="opacity-25" />
+                        <Users size={60} className="opacity-25" />
                       </div>
                     </div>
                   </div>
@@ -231,7 +231,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Estadísticas para recepcionista */}
-            <div className="row g-3 g-md-4 mb-4">
+            <div className="row g-2 g-md-3 mb-3">
               <div className="col-md-4">
                 <StatCard
                   title="Órdenes Hoy"
@@ -265,22 +265,22 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Acciones principales */}
-            <div className="row g-4 mb-4">
+            <div className="row g-3 mb-3">
               <div className="col-lg-6">
                 <div className="card border-0 shadow-sm h-100 hover-card">
-                  <div className="card-body text-center p-4 p-md-5">
-                    <div className="mb-4">
-                      <div className="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-3">
-                        <Plus size={40} className="text-primary" />
+                  <div className="card-body text-center p-3 p-md-4">
+                    <div className="mb-3">
+                      <div className="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-2">
+                        <Plus size={32} className="text-primary" />
                       </div>
                     </div>
-                    <h4 className="card-title fw-bold mb-3">Nueva Orden de Servicio</h4>
-                    <p className="card-text text-muted mb-4">
+                    <h5 className="card-title fw-bold mb-2">Nueva Orden de Servicio</h5>
+                    <p className="card-text text-muted mb-3 small">
                       Registra un nuevo equipo para reparación y crea la orden de servicio
                     </p>
-                    <button onClick={() => navigate('create-order')} className="btn btn-primary btn-lg px-4">
+                    <button onClick={() => navigate('create-order')} className="btn btn-primary px-3">
                       Crear Orden
-                      <ArrowRight size={20} className="ms-2" />
+                      <ArrowRight size={16} className="ms-2" />
                     </button>
                   </div>
                 </div>
@@ -288,19 +288,19 @@ const Dashboard: React.FC = () => {
               
               <div className="col-lg-6">
                 <div className="card border-0 shadow-sm h-100 hover-card">
-                  <div className="card-body text-center p-4 p-md-5">
-                    <div className="mb-4">
-                      <div className="bg-success bg-opacity-10 rounded-circle d-inline-flex p-3">
-                        <Users size={40} className="text-success" />
+                  <div className="card-body text-center p-3 p-md-4">
+                    <div className="mb-3">
+                      <div className="bg-success bg-opacity-10 rounded-circle d-inline-flex p-2">
+                        <Users size={32} className="text-success" />
                       </div>
                     </div>
-                    <h4 className="card-title fw-bold mb-3">Buscar Cliente</h4>
-                    <p className="card-text text-muted mb-4">
+                    <h5 className="card-title fw-bold mb-2">Buscar Cliente</h5>
+                    <p className="card-text text-muted mb-3 small">
                       Encuentra cliente por cédula y consulta su historial de reparaciones
                     </p>
-                    <button onClick={() => navigate('customers')} className="btn btn-outline-success btn-lg px-4">
+                    <button onClick={() => navigate('customers')} className="btn btn-outline-success px-3">
                       Buscar Cliente
-                      <ArrowRight size={20} className="ms-2" />
+                      <ArrowRight size={16} className="ms-2" />
                     </button>
                   </div>
                 </div>
@@ -309,13 +309,13 @@ const Dashboard: React.FC = () => {
 
             {/* Alerta de prioridades */}
             {stats.highPriority > 0 && (
-              <div className="row mb-4">
+              <div className="row mb-3">
                 <div className="col-12">
-                  <div className="alert alert-warning border-0 shadow-sm d-flex align-items-center">
-                    <AlertTriangle size={24} className="me-3 text-warning" />
+                  <div className="alert alert-warning border-0 shadow-sm d-flex align-items-center py-2">
+                    <AlertTriangle size={20} className="me-2 text-warning" />
                     <div className="flex-grow-1">
-                      <h6 className="alert-heading mb-1">Atención Requerida</h6>
-                      <p className="mb-0">
+                      <h6 className="alert-heading mb-1 small">Atención Requerida</h6>
+                      <p className="mb-0 small">
                         Hay {stats.highPriority} orden{stats.highPriority !== 1 ? 'es' : ''} de alta prioridad pendiente{stats.highPriority !== 1 ? 's' : ''}
                       </p>
                     </div>
@@ -335,20 +335,20 @@ const Dashboard: React.FC = () => {
         const myCompleted = myOrders.filter(order => order.status === 'completed')
         
         return (
-          <div className="container-fluid px-3 px-md-4">
+          <div className="container-fluid px-2 px-md-3">
             {/* Header Hero */}
-            <div className="row mb-4">
+            <div className="row mb-3">
               <div className="col-12">
                 <div className="card border-0 shadow-sm" style={{background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'}}>
-                  <div className="card-body text-white p-4 p-md-5">
+                  <div className="card-body text-white p-3 p-md-4">
                     <div className="row align-items-center">
                       <div className="col-md-8">
-                        <h1 className="display-5 fw-bold mb-2">{getWelcomeMessage()}</h1>
-                        <p className="lead mb-0 opacity-90">Cola de Reparaciones - GameBox Service</p>
+                        <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
+                        <p className="mb-0 opacity-90">Cola de Reparaciones - GameBox Service</p>
                         <small className="opacity-75">Gestión técnica y reparaciones</small>
                       </div>
                       <div className="col-md-4 text-end d-none d-md-block">
-                        <Wrench size={80} className="opacity-25" />
+                        <Wrench size={60} className="opacity-25" />
                       </div>
                     </div>
                   </div>
@@ -357,7 +357,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Estadísticas para técnico */}
-            <div className="row g-3 g-md-4 mb-4">
+            <div className="row g-2 g-md-3 mb-3">
               <div className="col-md-4">
                 <StatCard
                   title="Mis Reparaciones"
@@ -394,25 +394,25 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Acción principal */}
-            <div className="row mb-4">
+            <div className="row mb-3">
               <div className="col-12">
                 <div className="card border-0 shadow-sm hover-card">
-                  <div className="card-body text-center p-4 p-md-5">
-                    <div className="mb-4">
-                      <div className="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-4">
-                        <Wrench size={48} className="text-primary" />
+                  <div className="card-body text-center p-3 p-md-4">
+                    <div className="mb-3">
+                      <div className="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-3">
+                        <Wrench size={36} className="text-primary" />
                       </div>
                     </div>
-                    <h3 className="card-title fw-bold mb-3">Cola de Reparaciones</h3>
-                    <p className="card-text text-muted mb-4 fs-5">
+                    <h4 className="card-title fw-bold mb-2">Cola de Reparaciones</h4>
+                    <p className="card-text text-muted mb-3">
                       {availableOrders.length > 0 ? 
                         `Hay ${availableOrders.length} reparación${availableOrders.length !== 1 ? 'es' : ''} disponible${availableOrders.length !== 1 ? 's' : ''} para tomar` :
                         'No hay reparaciones disponibles en este momento'
                       }
                     </p>
-                    <button onClick={() => navigate('orders')} className="btn btn-primary btn-lg px-5">
+                    <button onClick={() => navigate('orders')} className="btn btn-primary px-4">
                       Ver Cola de Reparaciones
-                      <ArrowRight size={20} className="ms-2" />
+                      <ArrowRight size={16} className="ms-2" />
                     </button>
                   </div>
                 </div>
@@ -421,33 +421,33 @@ const Dashboard: React.FC = () => {
 
             {/* Progreso personal */}
             {myOrders.length > 0 && (
-              <div className="row mb-4">
+              <div className="row mb-3">
                 <div className="col-12">
                   <div className="card border-0 shadow-sm">
-                    <div className="card-header bg-transparent border-0 pt-3">
-                      <h5 className="card-title mb-0">
-                        <Star className="me-2" size={20} />
+                    <div className="card-header bg-transparent border-0 py-2">
+                      <h6 className="card-title mb-0">
+                        <Star className="me-2" size={18} />
                         Mi Progreso
-                      </h5>
+                      </h6>
                     </div>
-                    <div className="card-body">
-                      <div className="row g-3">
+                    <div className="card-body p-3">
+                      <div className="row g-2">
                         <div className="col-md-4">
                           <div className="d-flex justify-content-between align-items-center border-bottom pb-2">
-                            <span className="text-muted">Reparaciones asignadas:</span>
-                            <span className="fw-bold fs-5">{myOrders.length}</span>
+                            <span className="text-muted small">Reparaciones asignadas:</span>
+                            <span className="fw-bold">{myOrders.length}</span>
                           </div>
                         </div>
                         <div className="col-md-4">
                           <div className="d-flex justify-content-between align-items-center border-bottom pb-2">
-                            <span className="text-muted">En progreso:</span>
-                            <span className="fw-bold fs-5 text-primary">{myOrders.filter(o => o.status === 'in_progress').length}</span>
+                            <span className="text-muted small">En progreso:</span>
+                            <span className="fw-bold text-primary">{myOrders.filter(o => o.status === 'in_progress').length}</span>
                           </div>
                         </div>
                         <div className="col-md-4">
                           <div className="d-flex justify-content-between align-items-center border-bottom pb-2">
-                            <span className="text-muted">Completadas:</span>
-                            <span className="fw-bold fs-5 text-success">{myCompleted.length}</span>
+                            <span className="text-muted small">Completadas:</span>
+                            <span className="fw-bold text-success">{myCompleted.length}</span>
                           </div>
                         </div>
                       </div>
@@ -466,13 +466,13 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="container-fluid px-3 px-md-4">
-        <div className="row justify-content-center align-items-center" style={{minHeight: '60vh'}}>
+      <div className="container-fluid px-2 px-md-3">
+        <div className="row justify-content-center align-items-center" style={{minHeight: '50vh'}}>
           <div className="col-auto text-center">
-            <div className="spinner-border text-primary mb-3" role="status" style={{width: '3rem', height: '3rem'}}>
+            <div className="spinner-border text-primary mb-3" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
-            <p className="text-muted fs-5">Cargando dashboard...</p>
+            <p className="text-muted">Cargando dashboard...</p>
           </div>
         </div>
       </div>
@@ -484,14 +484,14 @@ const Dashboard: React.FC = () => {
       {getRoleSpecificContent()}
       
       {/* Tabla de órdenes recientes */}
-      <div className="container-fluid py-4">
+      <div className="container-fluid px-2 px-md-3 py-3">
         <div className="row justify-content-center">
-          <div className="col-12 col-xl-11">
+          <div className="col-12">
             <div className="card border-0 shadow-sm">
-              <div className="card-header bg-transparent border-0 pt-4">
+              <div className="card-header bg-transparent border-0 py-3">
                 <div className="d-flex justify-content-between align-items-center">
                   <h5 className="card-title mb-0 d-flex align-items-center">
-                    <ClipboardList size={20} className="me-2 text-primary" />
+                    <ClipboardList size={18} className="me-2 text-primary" />
                     Órdenes Recientes
                   </h5>
                   <button 
@@ -499,11 +499,11 @@ const Dashboard: React.FC = () => {
                     className="btn btn-outline-primary btn-sm d-flex align-items-center"
                   >
                     Ver Todas
-                    <ArrowRight size={16} className="ms-1" />
+                    <ArrowRight size={14} className="ms-1" />
                   </button>
                 </div>
               </div>
-              <div className="card-body">
+              <div className="card-body p-0">
                 {serviceOrders.length === 0 ? (
                   <div className="text-center py-5">
                     <div className="card-icon bg-light mb-3">
@@ -522,38 +522,38 @@ const Dashboard: React.FC = () => {
                   </div>
                 ) : (
                   <div className="table-responsive">
-                    <table className="table table-hover align-middle">
+                    <table className="table table-hover align-middle mb-0">
                       <thead className="table-light">
                         <tr>
-                          <th scope="col" className="border-0 fw-semibold">Cliente</th>
-                          <th scope="col" className="border-0 fw-semibold">Dispositivo</th>
-                          <th scope="col" className="border-0 fw-semibold">Estado</th>
-                          <th scope="col" className="border-0 fw-semibold">Prioridad</th>
-                          <th scope="col" className="border-0 fw-semibold">Fecha</th>
+                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Cliente</th>
+                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Dispositivo</th>
+                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Estado</th>
+                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Prioridad</th>
+                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Fecha</th>
                         </tr>
                       </thead>
                       <tbody>
                         {serviceOrders.slice(0, 5).map((order) => (
                           <tr key={order.id} className="border-0">
-                            <td>
+                            <td className="px-3 py-3">
                               <div>
                                 <div className="fw-semibold">{order.customer?.full_name}</div>
                                 <small className="text-muted">{order.customer?.cedula}</small>
                               </div>
                             </td>
-                            <td>
+                            <td className="px-3 py-3">
                               <div>
                                 <div className="fw-medium">{order.device_brand} {order.device_model}</div>
                                 <small className="text-muted">{order.device_type}</small>
                               </div>
                             </td>
-                            <td>
+                            <td className="px-3 py-3">
                               <StatusBadge status={order.status} />
                             </td>
-                            <td>
+                            <td className="px-3 py-3">
                               <PriorityBadge priority={order.priority} />
                             </td>
-                            <td>
+                            <td className="px-3 py-3">
                               <small className="text-muted">
                                 {new Date(order.created_at).toLocaleDateString('es-ES', {
                                   day: '2-digit',
