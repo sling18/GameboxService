@@ -2,9 +2,7 @@ import React from 'react'
 import { useServiceOrdersDemo } from '../hooks/useServiceOrdersDemo'
 import { useAuth } from '../contexts/AuthContextDemo'
 import { useRouter } from '../contexts/RouterContext'
-import Card from './ui/Card'
-import Button from './ui/Button'
-import { Clock, User, CheckCircle, Package, Plus } from 'lucide-react'
+import { Clock, User, CheckCircle, Package, Plus, Wrench, AlertTriangle, Calendar } from 'lucide-react'
 
 const ServiceQueue: React.FC = () => {
   const { serviceOrders, loading, assignTechnician, completeServiceOrder } = useServiceOrdersDemo()
@@ -35,6 +33,16 @@ const ServiceQueue: React.FC = () => {
     })
   }
 
+  const getPriorityBadge = (priority: string) => {
+    const priorityConfig = {
+      high: { color: 'danger', label: 'Alta' },
+      medium: { color: 'warning', label: 'Media' },
+      low: { color: 'success', label: 'Baja' }
+    }
+    const config = priorityConfig[priority as keyof typeof priorityConfig] || priorityConfig.low
+    return <span className={`badge bg-${config.color}`}>{config.label}</span>
+  }
+
   const StatusSection: React.FC<{ title: string; status: string; icon: any; color: string }> = ({ 
     title, 
     status, 
@@ -43,149 +51,251 @@ const ServiceQueue: React.FC = () => {
   }) => {
     const orders = getOrdersByStatus(status)
     
-    if (orders.length === 0) {
-      return (
-        <Card>
-          <div className="text-center py-8">
-            <Icon className={`w-12 h-12 mx-auto mb-4 text-${color}-400`} />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
-            <p className="text-gray-500">No hay órdenes {title.toLowerCase()}</p>
-          </div>
-        </Card>
-      )
-    }
-
     return (
-      <Card>
-        <div className="flex items-center mb-4">
-          <Icon className={`w-6 h-6 mr-3 text-${color}-600`} />
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-          <span className={`ml-auto px-2 py-1 text-sm rounded-full bg-${color}-100 text-${color}-800`}>
-            {orders.length}
-          </span>
-        </div>
-        
-        <div className="space-y-3">
-          {orders.map(order => (
-            <div key={order.id} className="border border-gray-200 rounded-lg p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h4 className="font-medium text-gray-900">
-                    {order.device_brand} {order.device_model}
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Cliente: {order.customer?.full_name}
-                  </p>
+      <div className="col-12 col-lg-6 col-xl-3 mb-4">
+        <div className="card border-0 shadow-sm h-100">
+          <div className="card-header bg-transparent border-0 py-3">
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="d-flex align-items-center">
+                <div className={`bg-${color} bg-opacity-10 rounded-circle p-2 me-2`}>
+                  <Icon size={18} className={`text-${color}`} />
                 </div>
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  order.priority === 'high' ? 'bg-red-100 text-red-800' :
-                  order.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-green-100 text-green-800'
-                }`}>
-                  {order.priority === 'high' ? 'Alta' : 
-                   order.priority === 'medium' ? 'Media' : 'Baja'}
-                </span>
+                <h6 className="mb-0 fw-semibold">{title}</h6>
               </div>
-              
-              <p className="text-sm text-gray-700 mb-3">
-                {order.problem_description}
-              </p>
-              
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-500">
-                  {new Date(order.created_at).toLocaleDateString()}
-                </span>
-                
-                {user?.role === 'technician' && (
-                  <div className="space-x-2">
-                    {status === 'pending' && (
-                      <Button 
-                        size="sm" 
-                        onClick={() => handleTakeOrder(order.id)}
-                      >
-                        Tomar Reparación
-                      </Button>
-                    )}
-                    {status === 'in_progress' && (
-                      <Button 
-                        size="sm" 
-                        variant="success"
-                        onClick={() => handleCompleteOrder(order.id)}
-                      >
-                        Completar
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
-              
-              {order.assigned_technician && status !== 'pending' && (
-                <div className="mt-2 pt-2 border-t border-gray-100">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <User className="w-4 h-4 mr-1" />
-                    Técnico: {order.assigned_technician.full_name}
-                  </div>
-                </div>
-              )}
-              
-              {order.completion_notes && (
-                <div className="mt-2 pt-2 border-t border-gray-100">
-                  <p className="text-sm text-gray-700">
-                    <strong>Notas:</strong> {order.completion_notes}
-                  </p>
-                </div>
-              )}
+              <span className={`badge bg-${color}`}>{orders.length}</span>
             </div>
-          ))}
+          </div>
+          
+          <div className="card-body p-0" style={{maxHeight: '500px', overflowY: 'auto'}}>
+            {orders.length === 0 ? (
+              <div className="text-center py-4">
+                <div className={`bg-${color} bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3`}>
+                  <Icon size={32} className={`text-${color}`} />
+                </div>
+                <h6 className="text-muted">Sin órdenes {title.toLowerCase()}</h6>
+              </div>
+            ) : (
+              <div className="p-2">
+                {orders.map(order => (
+                  <div key={order.id} className="card bg-light border-0 mb-2">
+                    <div className="card-body p-3">
+                      <div className="d-flex justify-content-between align-items-start mb-2">
+                        <div className="flex-grow-1">
+                          <h6 className="fw-bold mb-1 text-truncate">
+                            {order.device_brand} {order.device_model}
+                          </h6>
+                          <small className="text-muted d-block">
+                            {order.customer?.full_name}
+                          </small>
+                        </div>
+                        {getPriorityBadge(order.priority)}
+                      </div>
+                      
+                      <p className="small text-muted mb-2 text-truncate">
+                        {order.problem_description}
+                      </p>
+                      
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <small className="text-muted">
+                          <Calendar size={12} className="me-1" />
+                          {new Date(order.created_at).toLocaleDateString('es-ES')}
+                        </small>
+                      </div>
+                      
+                      {user?.role === 'technician' && (
+                        <div className="d-grid gap-1">
+                          {status === 'pending' && (
+                            <button 
+                              className="btn btn-primary btn-sm"
+                              onClick={() => handleTakeOrder(order.id)}
+                            >
+                              <Wrench size={12} className="me-1" />
+                              Tomar Reparación
+                            </button>
+                          )}
+                          {status === 'in_progress' && (
+                            <button 
+                              className="btn btn-success btn-sm"
+                              onClick={() => handleCompleteOrder(order.id)}
+                            >
+                              <CheckCircle size={12} className="me-1" />
+                              Completar
+                            </button>
+                          )}
+                        </div>
+                      )}
+                      
+                      {order.assigned_technician && status !== 'pending' && (
+                        <div className="mt-2 pt-2 border-top">
+                          <small className="text-muted">
+                            <User size={12} className="me-1" />
+                            {order.assigned_technician.full_name}
+                          </small>
+                        </div>
+                      )}
+                      
+                      {order.completion_notes && (
+                        <div className="mt-2 pt-2 border-top">
+                          <small className="text-success">
+                            <strong>Notas:</strong> {order.completion_notes}
+                          </small>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </Card>
+      </div>
     )
   }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="container-fluid px-3 px-md-4 py-3">
+        <div className="d-flex justify-content-center align-items-center" style={{minHeight: '50vh'}}>
+          <div className="text-center">
+            <div className="spinner-border text-primary mb-3" role="status"></div>
+            <p className="text-muted">Cargando órdenes...</p>
+          </div>
+        </div>
       </div>
     )
   }
 
-    return (
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
-            {user?.role === 'technician' ? 'Cola de Reparaciones' : 'Órdenes de Servicio'}
-          </h1>
-          {(user?.role === 'admin' || user?.role === 'receptionist') && (
-            <Button onClick={() => navigate('create-order')} className="flex items-center">
-              <Plus className="w-4 h-4 mr-2" />
-              Nueva Orden
-            </Button>
-          )}
-        </div>      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+  return (
+    <div className="container-fluid px-3 px-md-4 py-3">
+      {/* Header */}
+      <div className="row mb-4">
+        <div className="col-12">
+          <div className="card border-0 shadow-sm" style={{background: user?.role === 'technician' ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}}>
+            <div className="card-body text-white p-3 p-md-4">
+              <div className="row align-items-center">
+                <div className="col-md-9">
+                  <h1 className="h4 fw-bold mb-2">
+                    {user?.role === 'technician' ? 'Cola de Reparaciones' : 'Órdenes de Servicio'}
+                  </h1>
+                  <p className="mb-0 opacity-90">
+                    {user?.role === 'technician' ? 'Gestiona tus reparaciones asignadas' : 'Vista completa de todas las órdenes'}
+                  </p>
+                  <small className="opacity-75">
+                    {user?.role === 'technician' ? 'Toma y completa reparaciones' : 'Seguimiento en tiempo real'}
+                  </small>
+                </div>
+                <div className="col-md-3 text-end d-none d-md-block">
+                  {user?.role === 'technician' ? (
+                    <Wrench size={60} className="opacity-25" />
+                  ) : (
+                    <Package size={60} className="opacity-25" />
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Action button */}
+      {(user?.role === 'admin' || user?.role === 'receptionist') && (
+        <div className="row mb-4">
+          <div className="col-12">
+            <div className="text-end">
+              <button 
+                onClick={() => navigate('create-order')} 
+                className="btn btn-primary d-flex align-items-center ms-auto"
+              >
+                <Plus size={16} className="me-2" />
+                Nueva Orden
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Statistics row */}
+      <div className="row mb-4">
+        <div className="col-md-3">
+          <div className="card bg-warning bg-opacity-10 border-0">
+            <div className="card-body text-center p-3">
+              <Clock size={32} className="text-warning mb-2" />
+              <h5 className="fw-bold text-warning">{getOrdersByStatus('pending').length}</h5>
+              <small className="text-muted">Pendientes</small>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-3">
+          <div className="card bg-info bg-opacity-10 border-0">
+            <div className="card-body text-center p-3">
+              <User size={32} className="text-info mb-2" />
+              <h5 className="fw-bold text-info">{getOrdersByStatus('in_progress').length}</h5>
+              <small className="text-muted">En Progreso</small>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-3">
+          <div className="card bg-success bg-opacity-10 border-0">
+            <div className="card-body text-center p-3">
+              <CheckCircle size={32} className="text-success mb-2" />
+              <h5 className="fw-bold text-success">{getOrdersByStatus('completed').length}</h5>
+              <small className="text-muted">Completadas</small>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-3">
+          <div className="card bg-secondary bg-opacity-10 border-0">
+            <div className="card-body text-center p-3">
+              <Package size={32} className="text-secondary mb-2" />
+              <h5 className="fw-bold text-secondary">{getOrdersByStatus('delivered').length}</h5>
+              <small className="text-muted">Entregadas</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Priority alert */}
+      {serviceOrders.filter(o => o.priority === 'high' && o.status !== 'delivered').length > 0 && (
+        <div className="row mb-4">
+          <div className="col-12">
+            <div className="alert alert-warning border-0 shadow-sm d-flex align-items-center">
+              <AlertTriangle size={20} className="me-2 text-warning" />
+              <div className="flex-grow-1">
+                <h6 className="alert-heading mb-1">¡Atención Prioritaria!</h6>
+                <p className="mb-0 small">
+                  Hay {serviceOrders.filter(o => o.priority === 'high' && o.status !== 'delivered').length} orden(es) de alta prioridad pendiente(s)
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Status sections */}
+      <div className="row">
         <StatusSection 
           title="Pendientes" 
           status="pending" 
           icon={Clock} 
-          color="yellow"
+          color="warning"
         />
         <StatusSection 
           title="En Progreso" 
           status="in_progress" 
           icon={User} 
-          color="blue"
+          color="info"
         />
         <StatusSection 
           title="Completadas" 
           status="completed" 
           icon={CheckCircle} 
-          color="green"
+          color="success"
         />
         <StatusSection 
           title="Entregadas" 
           status="delivered" 
           icon={Package} 
-          color="gray"
+          color="secondary"
         />
       </div>
     </div>
