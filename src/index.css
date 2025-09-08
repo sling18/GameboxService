@@ -1,0 +1,225 @@
+/* Bootstrap Custom Styles - GameBox Service */
+
+:root {
+  --bs-primary: #0d6efd;
+  --bs-secondary: #6c757d;
+  --bs-success: #198754;
+  --bs-info: #0dcaf0;
+  --bs-warning: #ffc107;
+  --bs-danger: #dc3545;
+  --bs-light: #f8f9fa;
+  --bs-dark: #212529;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bs-light);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Login Page Styles */
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: none;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.login-header {
+  text-align: center;
+  padding: 2rem 2rem 1rem;
+  border-bottom: none;
+}
+
+.login-body {
+  padding: 1rem 2rem 2rem;
+}
+
+/* Dashboard Cards */
+.hover-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.hover-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.stat-card {
+  transition: all 0.2s ease;
+  border: none;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Gradient Headers */
+.gradient-header {
+  background: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
+  color: white;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.gradient-admin {
+  --gradient-from: #667eea;
+  --gradient-to: #764ba2;
+}
+
+.gradient-receptionist {
+  --gradient-from: #11998e;
+  --gradient-to: #38ef7d;
+}
+
+.gradient-technician {
+  --gradient-from: #f093fb;
+  --gradient-to: #f5576c;
+}
+
+/* Button Animations */
+.btn {
+  transition: all 0.2s ease;
+  border: none;
+  font-weight: 500;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #0d6efd, #0056b3);
+}
+
+.btn-success {
+  background: linear-gradient(45deg, #198754, #146c43);
+}
+
+.btn-warning {
+  background: linear-gradient(45deg, #ffc107, #f59e0b);
+}
+
+.btn-danger {
+  background: linear-gradient(45deg, #dc3545, #b02a37);
+}
+
+/* Table Styles */
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: scale(1.01);
+  transition: all 0.2s ease;
+}
+
+/* Custom Badge Styles */
+.badge {
+  font-weight: 500;
+  padding: 0.5em 1em;
+}
+
+/* Loading Spinner */
+.loading-container {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive Typography */
+@media (max-width: 576px) {
+  .display-5 {
+    font-size: 2rem !important;
+  }
+  
+  .display-6 {
+    font-size: 1.5rem !important;
+  }
+  
+  .h3 {
+    font-size: 1.5rem !important;
+  }
+  
+  .h4 {
+    font-size: 1.25rem !important;
+  }
+  
+  .h5 {
+    font-size: 1.1rem !important;
+  }
+  
+  .stat-card .h3 {
+    font-size: 1.75rem !important;
+  }
+}
+
+/* Card Icon Styles */
+.card-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+/* Sidebar Animation */
+.sidebar {
+  transition: all 0.3s ease;
+}
+
+/* Form Styles */
+.form-control:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  border-color: #86b7fe;
+}
+
+/* Alert Styles */
+.alert {
+  border: none;
+  border-radius: 0.5rem;
+}
+
+/* Card Border Radius */
+.card {
+  border-radius: 0.75rem;
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Action Cards */
+.action-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  border: 2px solid transparent;
+}
+
+.action-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--bs-primary);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1) !important;
+}
