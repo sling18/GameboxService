@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useCustomersDemo } from '../hooks/useCustomersDemo'
-import { useServiceOrdersDemo } from '../hooks/useServiceOrdersDemo'
+import { useCustomers } from '../hooks/useCustomers'
+import { useServiceOrders } from '../hooks/useServiceOrders'
 import { Search, User, Clock, CheckCircle, Package, Phone, Mail, Calendar, UserPlus } from 'lucide-react'
 
 const CustomerSearch: React.FC = () => {
@@ -10,8 +10,8 @@ const CustomerSearch: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [notFound, setNotFound] = useState(false)
   
-  const { getCustomerByCedula } = useCustomersDemo()
-  const { getServiceOrdersByCustomer } = useServiceOrdersDemo()
+  const { getCustomerByCedula } = useCustomers()
+  const { serviceOrders } = useServiceOrders()
 
   const handleSearch = async () => {
     if (!cedula.trim()) return
@@ -24,7 +24,7 @@ const CustomerSearch: React.FC = () => {
       
       if (foundCustomer) {
         setCustomer(foundCustomer)
-        const orders = await getServiceOrdersByCustomer(foundCustomer.id)
+        const orders = serviceOrders.filter(order => order.customer_id === foundCustomer.id)
         setCustomerOrders(orders)
       } else {
         setCustomer(null)

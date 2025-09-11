@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useAuth } from '../contexts/AuthContextDemo'
-import { LogIn, User, Lock, Shield, UserCheck, Wrench } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
+import { LogIn, User, Lock, Gamepad2, Monitor, Smartphone } from 'lucide-react'
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('')
@@ -16,59 +16,80 @@ const Login: React.FC = () => {
       return
     }
 
+    console.log('🔄 Intentando login con:', { email, password: '***' })
     setLoading(true)
     setError('')
 
-    const { error } = await signIn(email, password)
-    
-    if (error) {
-      setError('Credenciales inválidas')
+    try {
+      const { error } = await signIn(email, password)
+      
+      if (error) {
+        console.error('❌ Error de login:', error)
+        setError(`Error: ${error.message || 'Credenciales inválidas'}`)
+      } else {
+        console.log('✅ Login exitoso')
+      }
+    } catch (err) {
+      console.error('❌ Error inesperado:', err)
+      setError('Error de conexión. Verifica tu configuración.')
     }
     
     setLoading(false)
   }
 
-  const fillCredentials = (userEmail: string, userPassword: string) => {
-    setEmail(userEmail)
-    setPassword(userPassword)
-    setError('')
+  const quickLogin = () => {
+    setEmail('admin@gameboxservice.com')
+    setPassword('admin123')
   }
 
   return (
-    <div className="login-container">
+    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-12 col-sm-8 col-md-6 col-lg-4">
-            <div className="card login-card">
-              {/* Header */}
-              <div className="login-header">
-                <div className="mb-3">
-                  <div className="card-icon bg-primary bg-opacity-10 mx-auto" style={{width: '80px', height: '80px'}}>
-                    <Shield size={40} className="text-primary" />
+          <div className="col-md-6 col-lg-5">
+            <div className="card shadow-lg border-0">
+              <div className="card-body p-5">
+                {/* Header */}
+                <div className="text-center mb-4">
+                  <div className="d-flex justify-content-center align-items-center gap-2 mb-3">
+                    <Gamepad2 size={40} className="text-primary" />
+                    <h1 className="h3 fw-bold text-dark mb-0">GameBox Service</h1>
+                  </div>
+                  <p className="text-muted">Sistema de Gestión de Taller</p>
+                </div>
+
+                {/* Sistema de iconos */}
+                <div className="row text-center mb-4">
+                  <div className="col-4">
+                    <Gamepad2 size={24} className="text-primary mb-2" />
+                    <div className="small text-muted">Consolas</div>
+                  </div>
+                  <div className="col-4">
+                    <Monitor size={24} className="text-success mb-2" />
+                    <div className="small text-muted">Monitores</div>
+                  </div>
+                  <div className="col-4">
+                    <Smartphone size={24} className="text-warning mb-2" />
+                    <div className="small text-muted">Accesorios</div>
                   </div>
                 </div>
-                <h2 className="h3 fw-bold text-dark mb-2">GameBox Service</h2>
-                <p className="text-muted mb-0">Sistema de Gestión de Reparaciones</p>
-              </div>
-              
-              {/* Body */}
-              <div className="login-body">
+
+                {/* Login form */}
                 <form onSubmit={handleSubmit}>
                   {error && (
-                    <div className="alert alert-danger d-flex align-items-center mb-3" role="alert">
-                      <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div className="alert alert-danger" role="alert">
                       {error}
                     </div>
                   )}
-                  
+
                   <div className="mb-3">
-                    <label htmlFor="email" className="form-label fw-semibold">
-                      <User size={16} className="me-1" />
+                    <label htmlFor="email" className="form-label">
+                      <User size={16} className="me-2" />
                       Email
                     </label>
                     <input
                       type="email"
-                      className="form-control form-control-lg"
+                      className="form-control"
                       id="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -76,26 +97,26 @@ const Login: React.FC = () => {
                       required
                     />
                   </div>
-                  
+
                   <div className="mb-4">
-                    <label htmlFor="password" className="form-label fw-semibold">
-                      <Lock size={16} className="me-1" />
+                    <label htmlFor="password" className="form-label">
+                      <Lock size={16} className="me-2" />
                       Contraseña
                     </label>
                     <input
                       type="password"
-                      className="form-control form-control-lg"
+                      className="form-control"
                       id="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder="Tu contraseña"
                       required
                     />
                   </div>
-                  
+
                   <button
                     type="submit"
-                    className="btn btn-primary btn-lg w-100 mb-3"
+                    className="btn btn-primary w-100 mb-3"
                     disabled={loading}
                   >
                     {loading ? (
@@ -105,66 +126,31 @@ const Login: React.FC = () => {
                       </>
                     ) : (
                       <>
-                        <LogIn size={20} className="me-2" />
+                        <LogIn size={16} className="me-2" />
                         Iniciar Sesión
                       </>
                     )}
                   </button>
                 </form>
 
-                {/* Credenciales de demo */}
-                <div className="border-top pt-4">
-                  <h6 className="fw-semibold text-center mb-3">
-                    <span className="badge bg-light text-dark">Credenciales de Demostración</span>
-                  </h6>
-                  
-                  <div className="row g-2">
-                    <div className="col-12">
-                      <div 
-                        className="card action-card border-primary" 
-                        onClick={() => fillCredentials('admin@gameboxservice.com', 'gameboxservice123')}
-                      >
-                        <div className="card-body text-center p-3">
-                          <Shield size={20} className="text-primary mb-1" />
-                          <h6 className="card-title mb-1 text-primary">Administrador</h6>
-                          <small className="text-muted">Control total del sistema</small>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="col-12">
-                      <div 
-                        className="card action-card border-success" 
-                        onClick={() => fillCredentials('recepcion@gameboxservice.com', 'gameboxservice123')}
-                      >
-                        <div className="card-body text-center p-3">
-                          <UserCheck size={20} className="text-success mb-1" />
-                          <h6 className="card-title mb-1 text-success">Recepcionista</h6>
-                          <small className="text-muted">Atención al cliente</small>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="col-12">
-                      <div 
-                        className="card action-card border-warning" 
-                        onClick={() => fillCredentials('tecnico@gameboxservice.com', 'gameboxservice123')}
-                      >
-                        <div className="card-body text-center p-3">
-                          <Wrench size={20} className="text-warning mb-1" />
-                          <h6 className="card-title mb-1 text-warning">Técnico</h6>
-                          <small className="text-muted">Reparaciones y mantenimiento</small>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="text-center mt-3">
-                    <small className="text-muted">
-                      <i className="bi bi-info-circle me-1"></i>
-                      Haz clic en cualquier tarjeta para usar las credenciales
-                    </small>
-                  </div>
+                {/* Quick login */}
+                <div className="text-center">
+                  <hr className="my-3" />
+                  <p className="small text-muted mb-3">Acceso rápido (solo para testing):</p>
+                  <button
+                    type="button"
+                    onClick={quickLogin}
+                    className="btn btn-outline-primary btn-sm"
+                  >
+                    Usar credenciales Admin
+                  </button>
+                </div>
+
+                {/* Footer */}
+                <div className="text-center mt-4">
+                  <small className="text-muted">
+                    Sistema sin datos predefinidos - Todo desde la base de datos
+                  </small>
                 </div>
               </div>
             </div>

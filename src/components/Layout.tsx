@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useAuth } from '../contexts/AuthContextDemo'
+import { useAuth } from '../contexts/AuthContext'
 import { useRouter } from '../contexts/RouterContext'
 import { 
   LogOut, 

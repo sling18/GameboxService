@@ -1,23 +1,29 @@
 import React from 'react'
-import { useServiceOrdersDemo } from '../hooks/useServiceOrdersDemo'
-import { useAuth } from '../contexts/AuthContextDemo'
+import { useServiceOrders } from '../hooks/useServiceOrders'
+import { useAuth } from '../contexts/AuthContext'
 import { useRouter } from '../contexts/RouterContext'
 import { Clock, User, CheckCircle, Package, Plus, Wrench, AlertTriangle, Calendar } from 'lucide-react'
 
 const ServiceQueue: React.FC = () => {
-  const { serviceOrders, loading, assignTechnician, completeServiceOrder } = useServiceOrdersDemo()
+  const { serviceOrders, loading, updateServiceOrder } = useServiceOrders()
   const { user } = useAuth()
   const { navigate } = useRouter()
 
   const handleTakeOrder = async (orderId: string) => {
     if (!user) return
-    await assignTechnician(orderId, user.id)
+    await updateServiceOrder(orderId, { 
+      assigned_technician_id: user.id,
+      status: 'in_progress' 
+    })
   }
 
   const handleCompleteOrder = async (orderId: string) => {
     const notes = prompt('Ingresa las notas de completado:')
     if (notes) {
-      await completeServiceOrder(orderId, notes)
+      await updateServiceOrder(orderId, { 
+        status: 'completed',
+        completion_notes: notes 
+      })
     }
   }
 

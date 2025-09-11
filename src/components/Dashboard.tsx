@@ -1,6 +1,6 @@
 import React from 'react'
-import { useAuth } from '../contexts/AuthContextDemo'
-import { useServiceOrdersDemo } from '../hooks/useServiceOrdersDemo'
+import { useAuth } from '../contexts/AuthContext'
+import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useRouter } from '../contexts/RouterContext'
 import { 
   ClipboardList, 
@@ -21,7 +21,7 @@ import {
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth()
-  const { serviceOrders, loading } = useServiceOrdersDemo()
+  const { serviceOrders, loading } = useServiceOrders()
   const { navigate } = useRouter()
 
   const getStats = () => {

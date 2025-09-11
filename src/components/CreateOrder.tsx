@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useCustomersDemo } from '../hooks/useCustomersDemo'
-import { useServiceOrdersDemo } from '../hooks/useServiceOrdersDemo'
+import { useCustomers } from '../hooks/useCustomers'
+import { useServiceOrders } from '../hooks/useServiceOrders'
 import { Search, Plus, Save, User, UserPlus, Package, ClipboardList, AlertTriangle } from 'lucide-react'
 
 const CreateOrder: React.FC = () => {
@@ -30,8 +30,8 @@ const CreateOrder: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [creating, setCreating] = useState(false)
   
-  const { getCustomerByCedula, createCustomer } = useCustomersDemo()
-  const { createServiceOrder } = useServiceOrdersDemo()
+  const { getCustomerByCedula, createCustomer } = useCustomers()
+  const { createServiceOrder } = useServiceOrders()
 
   const handleSearchCustomer = async () => {
     if (!cedula.trim()) return

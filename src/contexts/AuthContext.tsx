@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import type { User as SupabaseUser, Session } from '@supabase/supabase-js'
+import type { Session } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import type { User } from '../types'
 
@@ -57,8 +57,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => subscription.unsubscribe()
   }, [])
 
-  const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
+  const fetchUserProfile = async (supabaseUser: any) => {
     try {
+      console.log('🔍 Buscando perfil para usuario:', supabaseUser.id)
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -66,13 +67,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .single()
 
       if (error) {
-        console.error('Error fetching user profile:', error)
-        setUser(null)
+        console.error('❌ Error obteniendo perfil:', error)
+        // Si no existe perfil, crear uno básico
+        if (error.code === 'PGRST116') {
+          console.log('📝 Creando perfil básico...')
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert({
+              id: supabaseUser.id,
+              email: supabaseUser.email,
+              full_name: supabaseUser.user_metadata?.full_name || 'Usuario',
+              role: 'admin' // Por defecto admin para el primer usuario
+            })
+            .select()
+            .single()
+
+          if (createError) {
+            console.error('❌ Error creando perfil:', createError)
+            setUser(null)
+          } else {
+            console.log('✅ Perfil creado:', newProfile)
+            setUser(newProfile)
+          }
+        } else {
+          setUser(null)
+        }
       } else {
+        console.log('✅ Perfil encontrado:', data)
         setUser(data)
       }
     } catch (error) {
-      console.error('Error fetching user profile:', error)
+      console.error('❌ Error inesperado obteniendo perfil:', error)
       setUser(null)
     } finally {
       setLoading(false)
