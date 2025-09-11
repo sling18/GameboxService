@@ -1,39 +1,134 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useAuth } from '../contexts/AuthContext'
 import { useRouter } from '../contexts/RouterContext'
 import { Clock, User, CheckCircle, Package, Plus, Wrench, AlertTriangle, Calendar } from 'lucide-react'
 import AutoRefreshIndicator from './AutoRefreshIndicator'
+import { CustomModal } from './ui/CustomModal'
+
+interface ModalState {
+  isOpen: boolean
+  type: 'success' | 'error' | 'warning' | 'info' | 'confirm'
+  title: string
+  message: string
+  onConfirm?: () => void
+  showCancel?: boolean
+  confirmText?: string
+}
 
 const ServiceQueue: React.FC = () => {
   const { serviceOrders, loading, updateServiceOrder, deliverServiceOrder, lastRefresh } = useServiceOrders(true) // Enable auto-refresh
   const { user } = useAuth()
   const { navigate } = useRouter()
+  
+  const [modal, setModal] = useState<ModalState>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: ''
+  })
+  
+  const [completionNotes, setCompletionNotes] = useState('')
+  const [deliveryNotes, setDeliveryNotes] = useState('')
+  const [currentAction, setCurrentAction] = useState<'complete' | 'deliver' | null>(null)
 
-  const handleTakeOrder = async (orderId: string) => {
-    if (!user) return
-    await updateServiceOrder(orderId, { 
-      assigned_technician_id: user.id,
-      status: 'in_progress' 
+  const closeModal = () => {
+    setModal(prev => ({ ...prev, isOpen: false }))
+    setCurrentAction(null)
+    setCompletionNotes('')
+    setDeliveryNotes('')
+  }
+
+  const showSuccessModal = (message: string) => {
+    setModal({
+      isOpen: true,
+      type: 'success',
+      title: '¡Éxito!',
+      message
     })
   }
 
-  const handleCompleteOrder = async (orderId: string) => {
-    const notes = prompt('Ingresa las notas de completado:')
-    if (notes) {
-      await updateServiceOrder(orderId, { 
-        status: 'completed',
-        completion_notes: notes 
-      })
-    }
+  const showErrorModal = (message: string) => {
+    setModal({
+      isOpen: true,
+      type: 'error',
+      title: 'Error',
+      message
+    })
   }
 
-  const handleDeliverOrder = async (orderId: string) => {
-    const confirmed = confirm('¿Confirmas que el cliente ha recogido su artículo?')
-    if (confirmed) {
-      const notes = prompt('Notas de entrega (opcional):') || ''
-      await deliverServiceOrder(orderId, notes)
-    }
+  const handleTakeOrder = async (orderId: string) => {
+    if (!user) return
+    
+    setModal({
+      isOpen: true,
+      type: 'confirm',
+      title: 'Confirmar Acción',
+      message: '¿Estás seguro de que quieres tomar esta reparación?',
+      showCancel: true,
+      confirmText: 'Sí, tomar',
+      onConfirm: async () => {
+        try {
+          await updateServiceOrder(orderId, { 
+            assigned_technician_id: user.id,
+            status: 'in_progress' 
+          })
+          showSuccessModal('Reparación tomada exitosamente')
+        } catch (error) {
+          showErrorModal('Error al tomar la reparación')
+        }
+        closeModal()
+      }
+    })
+  }
+
+  const handleCompleteOrder = (orderId: string) => {
+    setCurrentAction('complete')
+    setCompletionNotes('')
+    
+    setModal({
+      isOpen: true,
+      type: 'info',
+      title: 'Completar Reparación',
+      message: 'Describe el trabajo realizado en la reparación:',
+      showCancel: true,
+      confirmText: 'Completar Reparación',
+      onConfirm: async () => {
+        try {
+          await updateServiceOrder(orderId, { 
+            status: 'completed',
+            completion_notes: completionNotes.trim()
+          })
+          showSuccessModal('Reparación completada exitosamente')
+        } catch (error) {
+          showErrorModal('Error al completar la reparación')
+        }
+        closeModal()
+      }
+    })
+  }
+
+  const handleDeliverOrder = (orderId: string) => {
+    setCurrentAction('deliver')
+    setDeliveryNotes('')
+    
+    setModal({
+      isOpen: true,
+      type: 'confirm',
+      title: 'Confirmar Entrega',
+      message: '¿Confirmas que el cliente ha recogido su artículo? Puedes agregar notas opcionales:',
+      showCancel: true,
+      confirmText: 'Confirmar Entrega',
+      onConfirm: async () => {
+        try {
+          await deliverServiceOrder(orderId, deliveryNotes.trim())
+          showSuccessModal('Artículo entregado exitosamente al cliente')
+        } catch (error) {
+          showErrorModal('Error al registrar la entrega')
+        }
+        closeModal()
+      }
+    })
   }
 
   const getOrdersByStatus = (status: string) => {
@@ -357,6 +452,27 @@ const ServiceQueue: React.FC = () => {
           />
         </div>
       </div>
+
+      {/* Custom Modal */}
+      <CustomModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+        showCancel={modal.showCancel}
+        confirmText={modal.confirmText}
+        showTextInput={currentAction === 'complete' || currentAction === 'deliver'}
+        textInputValue={currentAction === 'complete' ? completionNotes : deliveryNotes}
+        onTextInputChange={currentAction === 'complete' ? setCompletionNotes : setDeliveryNotes}
+        textInputPlaceholder={
+          currentAction === 'complete' 
+            ? 'Describe el trabajo realizado...' 
+            : 'Notas adicionales de entrega (opcional)...'
+        }
+        textInputRequired={currentAction === 'complete'}
+      />
     </div>
   )
 }
