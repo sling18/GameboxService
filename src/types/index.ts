@@ -25,6 +25,7 @@ export interface Customer {
 
 export interface ServiceOrder {
   id: string
+  order_number: string
   customer_id: string
   device_type: string
   device_brand: string

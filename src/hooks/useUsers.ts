@@ -19,69 +19,18 @@ export const useUsers = () => {
       setLoading(true)
       setError(null)
       
-      // Obtener todos los perfiles existentes
+      // Solo obtener perfiles existentes (evitamos el error de admin)
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: false })
 
       if (profilesError) {
+        console.error('Error fetching profiles:', profilesError)
         throw profilesError
       }
 
-      // Obtener todos los usuarios de auth para ver si hay usuarios sin perfil
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers()
-      
-      if (authError) {
-        console.warn('No se pudieron obtener usuarios de auth:', authError)
-        setUsers(profiles || [])
-        return
-      }
-
-      const allUsers: User[] = []
-      const profileMap = new Map(profiles?.map(p => [p.id, p]) || [])
-
-      // Procesar usuarios de auth
-      for (const authUser of authUsers.users) {
-        if (authUser.email && !authUser.email.includes('supabase')) {
-          const existingProfile = profileMap.get(authUser.id)
-          
-          if (existingProfile) {
-            // Usuario con perfil completo
-            allUsers.push(existingProfile)
-          } else {
-            // Usuario sin perfil - crear perfil básico
-            const newProfile: User = {
-              id: authUser.id,
-              email: authUser.email,
-              full_name: authUser.user_metadata?.full_name || 'Usuario Sin Nombre',
-              role: 'receptionist', // rol por defecto
-              created_at: authUser.created_at,
-              updated_at: authUser.updated_at || authUser.created_at
-            }
-
-            // Intentar crear el perfil en la base de datos
-            try {
-              const { error: insertError } = await supabase
-                .from('profiles')
-                .insert(newProfile)
-
-              if (!insertError) {
-                allUsers.push(newProfile)
-              }
-            } catch (error) {
-              console.warn('Error creando perfil automático:', error)
-              // Agregar a la lista local aunque no se haya guardado
-              allUsers.push(newProfile)
-            }
-          }
-        }
-      }
-
-      // Ordenar por fecha de creación
-      allUsers.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      
-      setUsers(allUsers)
+      setUsers(profiles || [])
     } catch (error: any) {
       console.error('Error fetching users:', error)
       setError(error.message)

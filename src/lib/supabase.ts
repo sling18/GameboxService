@@ -64,6 +64,7 @@ export type Database = {
       service_orders: {
         Row: {
           id: string
+          order_number: string
           customer_id: string
           device_type: string
           device_brand: string
@@ -80,6 +81,7 @@ export type Database = {
         }
         Insert: {
           id?: string
+          order_number?: string
           customer_id: string
           device_type: string
           device_brand: string
@@ -96,6 +98,7 @@ export type Database = {
         }
         Update: {
           id?: string
+          order_number?: string
           customer_id?: string
           device_type?: string
           device_brand?: string

@@ -3,9 +3,10 @@ import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useAuth } from '../contexts/AuthContext'
 import { useRouter } from '../contexts/RouterContext'
 import { Clock, User, CheckCircle, Package, Plus, Wrench, AlertTriangle, Calendar } from 'lucide-react'
+import AutoRefreshIndicator from './AutoRefreshIndicator'
 
 const ServiceQueue: React.FC = () => {
-  const { serviceOrders, loading, updateServiceOrder } = useServiceOrders()
+  const { serviceOrders, loading, updateServiceOrder, lastRefresh } = useServiceOrders(true) // Enable auto-refresh
   const { user } = useAuth()
   const { navigate } = useRouter()
 
@@ -92,6 +93,9 @@ const ServiceQueue: React.FC = () => {
                           </h6>
                           <small className="text-muted d-block">
                             {order.customer?.full_name}
+                          </small>
+                          <small className="text-primary d-block fw-semibold">
+                            #{order.order_number}
                           </small>
                         </div>
                         {getPriorityBadge(order.priority)}
@@ -303,6 +307,17 @@ const ServiceQueue: React.FC = () => {
           icon={Package} 
           color="secondary"
         />
+      </div>
+      
+      {/* Auto-refresh indicator */}
+      <div className="row mt-3">
+        <div className="col-12 text-center">
+          <AutoRefreshIndicator 
+            lastRefresh={lastRefresh} 
+            interval={15}
+            showInterval={true}
+          />
+        </div>
       </div>
     </div>
   )

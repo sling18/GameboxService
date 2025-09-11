@@ -3,6 +3,9 @@ import { useAuth } from '../contexts/AuthContext'
 import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useRouter } from '../contexts/RouterContext'
 import UserManagement from './UserManagement'
+import DatabaseDiagnostic from './DatabaseDiagnostic'
+import ServiceOrderTest from './ServiceOrderTest'
+import AutoRefreshIndicator from './AutoRefreshIndicator'
 import { 
   ClipboardList, 
   Clock, 
@@ -22,7 +25,7 @@ import {
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth()
-  const { serviceOrders, loading } = useServiceOrders()
+  const { serviceOrders, loading, lastRefresh } = useServiceOrders(true) // Enabled auto-refresh
   const { navigate } = useRouter()
 
   const getStats = () => {
@@ -71,6 +74,14 @@ const Dashboard: React.FC = () => {
                         <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
                         <p className="mb-0 opacity-90">Panel de Administración - GameBox Service</p>
                         <small className="opacity-75">Control total del sistema de reparaciones</small>
+                        <div className="mt-2">
+                          <AutoRefreshIndicator 
+                            lastRefresh={lastRefresh} 
+                            interval={15}
+                            size="sm"
+                            className="opacity-75"
+                          />
+                        </div>
                       </div>
                       <div className="col-md-3 text-end d-none d-md-block">
                         <TrendingUp size={60} className="opacity-25" />
@@ -206,6 +217,16 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
 
+            {/* Diagnóstico de Base de Datos - Solo para debug */}
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <DatabaseDiagnostic />
+              </div>
+              <div className="col-md-6">
+                <ServiceOrderTest />
+              </div>
+            </div>
+
             {/* Gestión de Usuarios - Solo para Administradores */}
             <div className="row mb-3">
               <div className="col-12">
@@ -228,6 +249,14 @@ const Dashboard: React.FC = () => {
                         <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
                         <p className="mb-0 opacity-90">Gestión de Recepción - GameBox Service</p>
                         <small className="opacity-75">Atención al cliente y gestión de órdenes</small>
+                        <div className="mt-2">
+                          <AutoRefreshIndicator 
+                            lastRefresh={lastRefresh} 
+                            interval={15}
+                            size="sm"
+                            className="opacity-75"
+                          />
+                        </div>
                       </div>
                       <div className="col-md-3 text-end d-none d-md-block">
                         <Users size={60} className="opacity-25" />
@@ -354,6 +383,14 @@ const Dashboard: React.FC = () => {
                         <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
                         <p className="mb-0 opacity-90">Cola de Reparaciones - GameBox Service</p>
                         <small className="opacity-75">Gestión técnica y reparaciones</small>
+                        <div className="mt-2">
+                          <AutoRefreshIndicator 
+                            lastRefresh={lastRefresh} 
+                            interval={15}
+                            size="sm"
+                            className="opacity-75"
+                          />
+                        </div>
                       </div>
                       <div className="col-md-3 text-end d-none d-md-block">
                         <Wrench size={60} className="opacity-25" />

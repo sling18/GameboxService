@@ -10,8 +10,8 @@ const CustomerSearch: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [notFound, setNotFound] = useState(false)
   
-  const { getCustomerByCedula } = useCustomers()
-  const { serviceOrders } = useServiceOrders()
+  const { getCustomerByCedula } = useCustomers(true) // Enable auto-refresh
+  const { serviceOrders } = useServiceOrders(true) // Enable auto-refresh
 
   const handleSearch = async () => {
     if (!cedula.trim()) return

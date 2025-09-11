@@ -33,6 +33,16 @@ La aplicación está **100% funcional** en modo demostración con datos locales.
 - ✅ Asignar reparaciones a técnicos
 - ✅ Completar reparaciones con notas
 - ✅ Estados: Pendiente → En Progreso → Completada → Entregada
+- ✅ **Actualización automática en tiempo real** (15 segundos)
+- ✅ **Números de orden únicos** con formato OS-YYYYMMDD-XXXXXX
+- ✅ **Indicadores visuales** de última actualización
+
+#### 🔄 **Sistema de Auto-Refresh**
+- ✅ **Dashboards dinámicos** - Se actualizan automáticamente cada 15 segundos
+- ✅ **Cola de reparaciones** - Sincronización automática para técnicos
+- ✅ **Búsqueda de clientes** - Datos siempre actualizados
+- ✅ **Indicadores visuales** - Muestra última actualización y próxima
+- ✅ **Optimización inteligente** - Solo actualiza cuando el auto-refresh está habilitado
 
 #### 👥 **Gestión de Clientes**
 - ✅ Búsqueda de clientes por cédula
@@ -174,17 +184,21 @@ src/
 │   ├── ui/              # Componentes reutilizables (Button, Input, Card)
 │   ├── Login.tsx        # Pantalla de autenticación
 │   ├── Layout.tsx       # Layout principal con sidebar
-│   ├── Dashboard.tsx    # Dashboard por roles
-│   ├── ServiceQueue.tsx # Gestión de órdenes
+│   ├── Dashboard.tsx    # Dashboard por roles con auto-refresh
+│   ├── ServiceQueue.tsx # Gestión de órdenes con actualización automática
 │   ├── CustomerSearch.tsx # Búsqueda de clientes
 │   ├── CreateOrder.tsx  # Formulario nueva orden
+│   ├── AutoRefreshIndicator.tsx # Indicador de actualización automática
 │   └── PageRenderer.tsx # Router de páginas
 ├── contexts/            # Contextos React
 │   ├── AuthContextDemo.tsx # Auth con datos locales
 │   └── RouterContext.tsx   # Navegación SPA
 ├── hooks/               # Hooks personalizados
 │   ├── useServiceOrdersDemo.ts # Gestión órdenes (demo)
-│   └── useCustomersDemo.ts     # Gestión clientes (demo)
+│   ├── useCustomersDemo.ts     # Gestión clientes (demo)
+│   ├── useServiceOrders.ts     # Gestión órdenes con Supabase
+│   ├── useCustomers.ts         # Gestión clientes con Supabase
+│   └── useAutoRefresh.ts       # Sistema de actualización automática
 ├── data/                # Datos de demostración
 │   └── demoData.ts      # Clientes y órdenes de ejemplo
 ├── types/               # Tipos TypeScript
@@ -201,6 +215,36 @@ src/
 - ✅ **Estados Visuales** - Colores y badges para estados de órdenes
 - ✅ **UX Intuitivo** - Navegación clara y acciones obvias
 - ✅ **Accesibilidad** - Componentes accesibles y semánticos
+- ✅ **Actualización en Tiempo Real** - Indicadores visuales de sincronización
+
+## 🔄 **Sistema de Auto-Refresh**
+
+### **¿Qué es el Auto-Refresh?**
+El sistema de auto-refresh mantiene los datos actualizados automáticamente sin necesidad de recargar la página. Ideal para talleres donde múltiples usuarios trabajan simultáneamente.
+
+### **Características:**
+- 🕐 **Intervalo inteligente**: 15 segundos para órdenes de servicio, 60 segundos para datos generales
+- 👀 **Indicadores visuales**: Muestra la última actualización y el estado de sincronización
+- ⚡ **Optimizado**: Solo funciona cuando está habilitado, no consume recursos innecesarios
+- 🎯 **Selectivo**: Cada componente puede elegir si usar auto-refresh o no
+- 🛡️ **Robusto**: Maneja errores de red sin afectar la experiencia del usuario
+
+### **Componentes con Auto-Refresh:**
+- **Dashboard**: Estadísticas actualizadas para todos los roles
+- **Cola de Reparaciones**: Sincronización automática para técnicos
+- **Búsqueda de Clientes**: Información siempre al día
+- **Gestión de Órdenes**: Estados actualizados en tiempo real
+
+### **Hooks Disponibles:**
+```typescript
+// Hook general con auto-refresh personalizable
+const { data, loading, lastRefresh } = useServiceOrders(true)
+
+// Hooks específicos con intervalos optimizados
+useServiceOrdersAutoRefresh() // 15 segundos
+useGeneralAutoRefresh()       // 60 segundos
+useAutoRefresh(callback)      // Personalizable
+```
 
 ## 🚀 **Despliegue en Producción**
 
@@ -216,13 +260,15 @@ src/
 
 ## 🤝 **Próximas Funcionalidades**
 
-- [ ] **Notificaciones en tiempo real** con Supabase
+- [ ] **Notificaciones push** con Service Workers
 - [ ] **Reportes y analíticas** avanzadas
 - [ ] **Gestión de inventario** de repuestos
 - [ ] **Facturación integrada**
 - [ ] **API REST** para integraciones
 - [ ] **App móvil** con React Native
 - [ ] **WhatsApp integration** para notificaciones
+- [ ] **Configuración de intervalos** de auto-refresh por usuario
+- [ ] **Websockets** para actualizaciones instantáneas
 
 ---
 
