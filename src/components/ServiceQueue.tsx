@@ -6,7 +6,7 @@ import { Clock, User, CheckCircle, Package, Plus, Wrench, AlertTriangle, Calenda
 import AutoRefreshIndicator from './AutoRefreshIndicator'
 
 const ServiceQueue: React.FC = () => {
-  const { serviceOrders, loading, updateServiceOrder, lastRefresh } = useServiceOrders(true) // Enable auto-refresh
+  const { serviceOrders, loading, updateServiceOrder, deliverServiceOrder, lastRefresh } = useServiceOrders(true) // Enable auto-refresh
   const { user } = useAuth()
   const { navigate } = useRouter()
 
@@ -25,6 +25,14 @@ const ServiceQueue: React.FC = () => {
         status: 'completed',
         completion_notes: notes 
       })
+    }
+  }
+
+  const handleDeliverOrder = async (orderId: string) => {
+    const confirmed = confirm('¿Confirmas que el cliente ha recogido su artículo?')
+    if (confirmed) {
+      const notes = prompt('Notas de entrega (opcional):') || ''
+      await deliverServiceOrder(orderId, notes)
     }
   }
 
@@ -135,6 +143,19 @@ const ServiceQueue: React.FC = () => {
                         </div>
                       )}
                       
+                      {/* Botón de entrega para admin y recepcionista en órdenes completadas */}
+                      {(user?.role === 'admin' || user?.role === 'receptionist') && status === 'completed' && (
+                        <div className="d-grid gap-1 mt-2">
+                          <button 
+                            className="btn btn-outline-success btn-sm border-2"
+                            onClick={() => handleDeliverOrder(order.id)}
+                          >
+                            <Package size={12} className="me-1" />
+                            ✅ Cliente Recoge Artículo
+                          </button>
+                        </div>
+                      )}
+                      
                       {order.assigned_technician && status !== 'pending' && (
                         <div className="mt-2 pt-2 border-top">
                           <small className="text-muted">
@@ -147,7 +168,24 @@ const ServiceQueue: React.FC = () => {
                       {order.completion_notes && (
                         <div className="mt-2 pt-2 border-top">
                           <small className="text-success">
-                            <strong>Notas:</strong> {order.completion_notes}
+                            <strong>Notas de reparación:</strong> {order.completion_notes}
+                          </small>
+                        </div>
+                      )}
+                      
+                      {order.delivery_notes && status === 'delivered' && (
+                        <div className="mt-2 pt-2 border-top">
+                          <small className="text-warning">
+                            <strong>Notas de entrega:</strong> {order.delivery_notes}
+                          </small>
+                        </div>
+                      )}
+                      
+                      {order.delivered_at && status === 'delivered' && (
+                        <div className="mt-2 pt-2 border-top">
+                          <small className="text-muted">
+                            <Package size={12} className="me-1" />
+                            Entregado: {new Date(order.delivered_at).toLocaleString('es-ES')}
                           </small>
                         </div>
                       )}

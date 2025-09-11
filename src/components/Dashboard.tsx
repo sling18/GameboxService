@@ -6,6 +6,8 @@ import UserManagement from './UserManagement'
 import DatabaseDiagnostic from './DatabaseDiagnostic'
 import ServiceOrderTest from './ServiceOrderTest'
 import AutoRefreshIndicator from './AutoRefreshIndicator'
+import DeliverySection from './DeliverySection'
+import DatabaseMigration from './DatabaseMigration'
 import { 
   ClipboardList, 
   Clock, 
@@ -217,6 +219,12 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
 
+            {/* Sección de entregas pendientes */}
+            <DeliverySection />
+
+            {/* Migración de base de datos */}
+            <DatabaseMigration />
+
             {/* Diagnóstico de Base de Datos - Solo para debug */}
             <div className="row mb-3">
               <div className="col-md-6">
@@ -363,6 +371,9 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
             )}
+            
+            {/* Sección de entregas pendientes */}
+            <DeliverySection />
           </div>
         )
         

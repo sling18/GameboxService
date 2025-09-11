@@ -37,6 +37,8 @@ export interface ServiceOrder {
   received_by_id: string
   estimated_completion: string | null
   completion_notes: string | null
+  delivery_notes?: string | null
+  delivered_at?: string | null
   created_at: string
   updated_at: string
   // Relations
