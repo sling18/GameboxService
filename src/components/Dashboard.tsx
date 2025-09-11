@@ -2,6 +2,7 @@ import React from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useRouter } from '../contexts/RouterContext'
+import UserManagement from './UserManagement'
 import { 
   ClipboardList, 
   Clock, 
@@ -202,6 +203,13 @@ const Dashboard: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Gestión de Usuarios - Solo para Administradores */}
+            <div className="row mb-3">
+              <div className="col-12">
+                <UserManagement />
               </div>
             </div>
           </div>

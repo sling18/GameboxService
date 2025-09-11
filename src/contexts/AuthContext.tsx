@@ -59,7 +59,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserProfile = async (supabaseUser: any) => {
     try {
-      console.log('🔍 Buscando perfil para usuario:', supabaseUser.id)
+      console.log('🔍 Buscando perfil para usuario:', {
+        id: supabaseUser.id,
+        email: supabaseUser.email,
+        metadata: supabaseUser.user_metadata
+      })
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -71,13 +76,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Si no existe perfil, crear uno básico
         if (error.code === 'PGRST116') {
           console.log('📝 Creando perfil básico...')
+          
+          // Determinar rol basado en email
+          let role = 'receptionist' // Por defecto
+          if (supabaseUser.email === 'admin@gameboxservice.com') {
+            role = 'admin'
+          } else if (supabaseUser.user_metadata?.role) {
+            role = supabaseUser.user_metadata.role
+          }
+          
+          console.log('🎭 Rol asignado:', role)
+          
           const { data: newProfile, error: createError } = await supabase
             .from('profiles')
             .insert({
               id: supabaseUser.id,
               email: supabaseUser.email,
-              full_name: supabaseUser.user_metadata?.full_name || 'Usuario',
-              role: 'admin' // Por defecto admin para el primer usuario
+              full_name: supabaseUser.user_metadata?.full_name || supabaseUser.email.split('@')[0],
+              role: role
             })
             .select()
             .single()
@@ -94,6 +110,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       } else {
         console.log('✅ Perfil encontrado:', data)
+        console.log('🎭 Rol del usuario:', data.role)
         setUser(data)
       }
     } catch (error) {
