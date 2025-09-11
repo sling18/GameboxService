@@ -2,6 +2,17 @@ import React, { useState } from 'react'
 import { useCustomers } from '../hooks/useCustomers'
 import { useServiceOrders } from '../hooks/useServiceOrders'
 import { Search, Plus, Save, User, UserPlus, Package, ClipboardList, AlertTriangle } from 'lucide-react'
+import { CustomModal } from './ui/CustomModal'
+
+interface ModalState {
+  isOpen: boolean
+  type: 'success' | 'error' | 'warning' | 'info' | 'confirm'
+  title: string
+  message: string
+  onConfirm?: () => void
+  showCancel?: boolean
+  confirmText?: string
+}
 
 const CreateOrder: React.FC = () => {
   // Estados para el cliente
@@ -30,8 +41,29 @@ const CreateOrder: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [creating, setCreating] = useState(false)
   
+  // Estado para el modal
+  const [modal, setModal] = useState<ModalState>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: ''
+  })
+  
   const { getCustomerByCedula, createCustomer } = useCustomers()
   const { createServiceOrder } = useServiceOrders()
+
+  const closeModal = () => {
+    setModal(prev => ({ ...prev, isOpen: false }))
+  }
+
+  const showSuccessModal = (message: string) => {
+    setModal({
+      isOpen: true,
+      type: 'success',
+      title: '¡Éxito!',
+      message
+    })
+  }
 
   const handleSearchCustomer = async () => {
     if (!cedula.trim()) return
@@ -51,6 +83,10 @@ const CreateOrder: React.FC = () => {
   }
 
   const handleCreateCustomer = async () => {
+    if (!newCustomer.cedula.trim() || !newCustomer.full_name.trim()) {
+      return
+    }
+    
     const createdCustomer = await createCustomer(newCustomer)
     if (createdCustomer) {
       setCustomer(createdCustomer)
@@ -62,6 +98,10 @@ const CreateOrder: React.FC = () => {
   const handleCreateOrder = async () => {
     if (!customer) return
     
+    if (!orderData.device_type || !orderData.device_brand || !orderData.problem_description) {
+      return
+    }
+    
     setCreating(true)
     const success = await createServiceOrder({
       customer_id: customer.id,
@@ -69,24 +109,43 @@ const CreateOrder: React.FC = () => {
     })
     
     if (success) {
-      // Limpiar formulario
-      setCustomer(null)
-      setCedula('')
-      setOrderData({
-        device_type: '',
-        device_brand: '',
-        device_model: '',
-        problem_description: '',
-        priority: 'medium',
-        estimated_completion: '',
-      })
-      alert('Orden de servicio creada exitosamente')
+      showSuccessModal('Orden creada')
+      // Limpiar formulario después de 3 segundos
+      setTimeout(() => {
+        setCustomer(null)
+        setCedula('')
+        setShowNewCustomerForm(false)
+        setOrderData({
+          device_type: '',
+          device_brand: '',
+          device_model: '',
+          problem_description: '',
+          priority: 'medium',
+          estimated_completion: '',
+        })
+        closeModal()
+      }, 3000)
     }
     setCreating(false)
   }
 
   const deviceTypes = ['Consola', 'Control', 'Accesorio', 'Otro']
   const brands = ['PlayStation', 'Xbox', 'Nintendo', 'PC', 'Otro']
+
+  const handleClearForm = () => {
+    setCustomer(null)
+    setCedula('')
+    setShowNewCustomerForm(false)
+    setNewCustomer({ cedula: '', full_name: '', phone: '', email: '' })
+    setOrderData({
+      device_type: '',
+      device_brand: '',
+      device_model: '',
+      problem_description: '',
+      priority: 'medium',
+      estimated_completion: '',
+    })
+  }
 
   return (
     <div className="container-fluid px-3 px-md-4 py-3">
@@ -386,19 +445,7 @@ const CreateOrder: React.FC = () => {
                     )}
                   </button>
                   <button 
-                    onClick={() => {
-                      setCustomer(null)
-                      setCedula('')
-                      setShowNewCustomerForm(false)
-                      setOrderData({
-                        device_type: '',
-                        device_brand: '',
-                        device_model: '',
-                        problem_description: '',
-                        priority: 'medium',
-                        estimated_completion: '',
-                      })
-                    }}
+                    onClick={handleClearForm}
                     className="btn btn-outline-secondary"
                   >
                     Limpiar Formulario
@@ -409,6 +456,16 @@ const CreateOrder: React.FC = () => {
           </div>
         </div>
       )}
+      
+      {/* Custom Modal */}
+      <CustomModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={closeModal}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+      />
     </div>
   )
 }

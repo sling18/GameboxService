@@ -1,11 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useAuth } from '../contexts/AuthContext'
 import { Package, Calendar, User, AlertTriangle } from 'lucide-react'
+import { CustomModal } from './ui/CustomModal'
+
+interface ModalState {
+  isOpen: boolean
+  type: 'success' | 'error' | 'warning' | 'info' | 'confirm'
+  title: string
+  message: string
+  onConfirm?: () => void
+  showCancel?: boolean
+  confirmText?: string
+}
 
 const DeliverySection: React.FC = () => {
   const { serviceOrders, deliverServiceOrder } = useServiceOrders()
   const { user } = useAuth()
+  
+  // Estado para el modal
+  const [modal, setModal] = useState<ModalState>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: ''
+  })
+  
+  const [deliveryNotes, setDeliveryNotes] = useState('')
 
   // Solo mostrar para admin y recepcionista
   if (!user || (user.role !== 'admin' && user.role !== 'receptionist')) {
@@ -14,12 +35,49 @@ const DeliverySection: React.FC = () => {
 
   const completedOrders = serviceOrders.filter(order => order.status === 'completed')
 
+  const closeModal = () => {
+    setModal(prev => ({ ...prev, isOpen: false }))
+    setDeliveryNotes('')
+  }
+
+  const showSuccessModal = (message: string) => {
+    setModal({
+      isOpen: true,
+      type: 'success',
+      title: '¡Éxito!',
+      message
+    })
+  }
+
+  const showErrorModal = (message: string) => {
+    setModal({
+      isOpen: true,
+      type: 'error',
+      title: 'Error',
+      message
+    })
+  }
+
   const handleDeliverOrder = async (orderId: string) => {
-    const confirmed = confirm('¿Confirmas que el cliente ha recogido su artículo?')
-    if (confirmed) {
-      const notes = prompt('Notas de entrega (opcional):') || ''
-      await deliverServiceOrder(orderId, notes)
-    }
+    setDeliveryNotes('')
+    
+    setModal({
+      isOpen: true,
+      type: 'confirm',
+      title: 'Confirmar Entrega',
+      message: '¿Confirmas que el cliente ha recogido su artículo? Puedes agregar notas opcionales:',
+      showCancel: true,
+      confirmText: 'Confirmar Entrega',
+      onConfirm: async () => {
+        try {
+          await deliverServiceOrder(orderId, deliveryNotes.trim())
+          showSuccessModal('Artículo entregado exitosamente al cliente')
+        } catch (error) {
+          showErrorModal('Error al registrar la entrega')
+        }
+        closeModal()
+      }
+    })
   }
 
   if (completedOrders.length === 0) {
@@ -124,6 +182,23 @@ const DeliverySection: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Custom Modal */}
+      <CustomModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+        showCancel={modal.showCancel}
+        confirmText={modal.confirmText}
+        showTextInput={modal.type === 'confirm'}
+        textInputValue={deliveryNotes}
+        onTextInputChange={setDeliveryNotes}
+        textInputPlaceholder="Notas adicionales de entrega (opcional)..."
+        textInputRequired={false}
+      />
     </div>
   )
 }

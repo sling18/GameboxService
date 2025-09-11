@@ -15,6 +15,17 @@ import {
   RefreshCw
 } from 'lucide-react'
 import type { UserRole } from '../types'
+import { CustomModal } from './ui/CustomModal'
+
+interface ModalState {
+  isOpen: boolean
+  type: 'success' | 'error' | 'warning' | 'info' | 'confirm'
+  title: string
+  message: string
+  onConfirm?: () => void
+  showCancel?: boolean
+  confirmText?: string
+}
 
 const UserManagement: React.FC = () => {
   const { user: currentUser } = useAuth()
@@ -22,49 +33,101 @@ const UserManagement: React.FC = () => {
   const [editingUser, setEditingUser] = useState<string | null>(null)
   const [newUserRole, setNewUserRole] = useState<UserRole>('receptionist')
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
+  
+  // Estado para el modal
+  const [modal, setModal] = useState<ModalState>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: ''
+  })
+
+  const closeModal = () => {
+    setModal(prev => ({ ...prev, isOpen: false }))
+  }
+
+  const showSuccessModal = (message: string) => {
+    setModal({
+      isOpen: true,
+      type: 'success',
+      title: '¡Éxito!',
+      message
+    })
+  }
+
+  const showErrorModal = (message: string) => {
+    setModal({
+      isOpen: true,
+      type: 'error',
+      title: 'Error',
+      message
+    })
+  }
+
+  const showConfirmModal = (message: string, onConfirm: () => void, confirmText: string = 'Confirmar') => {
+    setModal({
+      isOpen: true,
+      type: 'confirm',
+      title: 'Confirmar Acción',
+      message,
+      showCancel: true,
+      confirmText,
+      onConfirm
+    })
+  }
 
   const handleDeleteUser = async (userId: string, userEmail: string) => {
     if (userId === currentUser?.id) {
-      alert('No puedes eliminar tu propia cuenta')
+      showErrorModal('No puedes eliminar tu propia cuenta')
       return
     }
 
-    if (window.confirm(`¿Estás seguro de eliminar a ${userEmail}?\n\nNOTA: Esto solo elimina el perfil. Para eliminar completamente ve al dashboard de Supabase.`)) {
-      setDeleteLoading(userId)
-      
-      const result = await deleteUser(userId)
-      
-      if (result.error) {
-        alert(`Error: ${result.error}`)
-      } else {
-        alert('Perfil eliminado exitosamente')
-      }
+    showConfirmModal(
+      `¿Estás seguro de eliminar a ${userEmail}?\n\nNOTA: Esto solo elimina el perfil. Para eliminar completamente ve al dashboard de Supabase.`,
+      async () => {
+        setDeleteLoading(userId)
+        
+        const result = await deleteUser(userId)
+        
+        if (result.error) {
+          showErrorModal(`Error: ${result.error}`)
+        } else {
+          showSuccessModal('Perfil eliminado exitosamente')
+        }
 
-      setDeleteLoading(null)
-    }
+        setDeleteLoading(null)
+        closeModal()
+      },
+      'Eliminar Usuario'
+    )
   }
 
   const handleUpdateRole = async (userId: string, newRole: UserRole) => {
     const result = await updateUserRole(userId, newRole)
     
     if (result.error) {
-      alert(`Error: ${result.error}`)
+      showErrorModal(`Error: ${result.error}`)
     } else {
       setEditingUser(null)
-      alert('Rol actualizado exitosamente')
+      showSuccessModal('Rol actualizado exitosamente')
     }
   }
 
   const forceAdminRole = async (userId: string, userEmail: string) => {
-    if (window.confirm(`¿Convertir a ${userEmail} en ADMINISTRADOR?\n\nEsto le dará acceso completo al sistema.`)) {
-      const result = await updateUserRole(userId, 'admin')
-      
-      if (result.error) {
-        alert(`Error: ${result.error}`)
-      } else {
-        alert(`${userEmail} ahora es administrador.\nPuede hacer logout y login de nuevo para ver los cambios.`)
-      }
-    }
+    showConfirmModal(
+      `¿Convertir a ${userEmail} en ADMINISTRADOR?\n\nEsto le dará acceso completo al sistema.`,
+      async () => {
+        const result = await updateUserRole(userId, 'admin')
+        
+        if (result.error) {
+          showErrorModal(`Error: ${result.error}`)
+        } else {
+          showSuccessModal(`${userEmail} ahora es administrador.\nPuede hacer logout y login de nuevo para ver los cambios.`)
+        }
+        closeModal()
+      },
+      'Sí, hacer Admin'
+    )
   }
 
   const getRoleIcon = (role: UserRole) => {
@@ -283,6 +346,18 @@ const UserManagement: React.FC = () => {
           </div>
         )}
       </div>
+      
+      {/* Custom Modal */}
+      <CustomModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+        showCancel={modal.showCancel}
+        confirmText={modal.confirmText}
+      />
     </div>
   )
 }

@@ -1,14 +1,55 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { AlertTriangle, User, RefreshCw, CheckCircle } from 'lucide-react'
+import { CustomModal } from './ui/CustomModal'
+
+interface ModalState {
+  isOpen: boolean
+  type: 'success' | 'error' | 'warning' | 'info' | 'confirm'
+  title: string
+  message: string
+  onConfirm?: () => void
+  showCancel?: boolean
+  confirmText?: string
+}
 
 const UserDiagnostic: React.FC = () => {
   const { user, session } = useAuth()
+  
+  // Estado para el modal
+  const [modal, setModal] = useState<ModalState>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: ''
+  })
+
+  const closeModal = () => {
+    setModal(prev => ({ ...prev, isOpen: false }))
+  }
+
+  const showSuccessModal = (message: string) => {
+    setModal({
+      isOpen: true,
+      type: 'success',
+      title: '¡Éxito!',
+      message
+    })
+  }
+
+  const showErrorModal = (message: string) => {
+    setModal({
+      isOpen: true,
+      type: 'error',
+      title: 'Error',
+      message
+    })
+  }
 
   const fixUserRole = async () => {
     if (!session?.user) {
-      alert('No hay sesión activa')
+      showErrorModal('No hay sesión activa')
       return
     }
 
@@ -20,20 +61,20 @@ const UserDiagnostic: React.FC = () => {
         .eq('id', session.user.id)
 
       if (error) {
-        alert(`Error: ${error.message}`)
+        showErrorModal(`Error: ${error.message}`)
       } else {
-        alert('Rol actualizado a admin. Haz logout y login para ver los cambios.')
+        showSuccessModal('Rol actualizado a admin. Haz logout y login para ver los cambios.')
         // Recargar la página para refrescar el contexto
-        window.location.reload()
+        setTimeout(() => window.location.reload(), 2000)
       }
     } catch (error: any) {
-      alert(`Error: ${error.message}`)
+      showErrorModal(`Error: ${error.message}`)
     }
   }
 
   const createAdminProfile = async () => {
     if (!session?.user) {
-      alert('No hay sesión activa')
+      showErrorModal('No hay sesión activa')
       return
     }
 
@@ -49,13 +90,13 @@ const UserDiagnostic: React.FC = () => {
         })
 
       if (error) {
-        alert(`Error: ${error.message}`)
+        showErrorModal(`Error: ${error.message}`)
       } else {
-        alert('Perfil de admin creado. Haz logout y login para ver los cambios.')
-        window.location.reload()
+        showSuccessModal('Perfil de admin creado. Haz logout y login para ver los cambios.')
+        setTimeout(() => window.location.reload(), 2000)
       }
     } catch (error: any) {
-      alert(`Error: ${error.message}`)
+      showErrorModal(`Error: ${error.message}`)
     }
   }
 
@@ -124,6 +165,18 @@ const UserDiagnostic: React.FC = () => {
           </small>
         </div>
       </div>
+      
+      {/* Custom Modal */}
+      <CustomModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+        showCancel={modal.showCancel}
+        confirmText={modal.confirmText}
+      />
     </div>
   )
 }
