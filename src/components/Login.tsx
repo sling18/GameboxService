@@ -37,11 +37,6 @@ const Login: React.FC = () => {
     setLoading(false)
   }
 
-  const quickLogin = () => {
-    setEmail('admin@gameboxservice.com')
-    setPassword('admin123')
-  }
-
   return (
     <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
       <div className="container">
@@ -132,26 +127,6 @@ const Login: React.FC = () => {
                     )}
                   </button>
                 </form>
-
-                {/* Quick login */}
-                <div className="text-center">
-                  <hr className="my-3" />
-                  <p className="small text-muted mb-3">Acceso rápido (solo para testing):</p>
-                  <button
-                    type="button"
-                    onClick={quickLogin}
-                    className="btn btn-outline-primary btn-sm"
-                  >
-                    Usar credenciales Admin
-                  </button>
-                </div>
-
-                {/* Footer */}
-                <div className="text-center mt-4">
-                  <small className="text-muted">
-                    Sistema sin datos predefinidos - Todo desde la base de datos
-                  </small>
-                </div>
               </div>
             </div>
           </div>

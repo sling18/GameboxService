@@ -3,8 +3,6 @@ import { useAuth } from '../contexts/AuthContext'
 import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useRouter } from '../contexts/RouterContext'
 import UserManagement from './UserManagement'
-import DatabaseDiagnostic from './DatabaseDiagnostic'
-import ServiceOrderTest from './ServiceOrderTest'
 import AutoRefreshIndicator from './AutoRefreshIndicator'
 import DeliverySection from './DeliverySection'
 import DatabaseMigration from './DatabaseMigration'
@@ -224,16 +222,6 @@ const Dashboard: React.FC = () => {
 
             {/* Migración de base de datos */}
             <DatabaseMigration />
-
-            {/* Diagnóstico de Base de Datos - Solo para debug */}
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <DatabaseDiagnostic />
-              </div>
-              <div className="col-md-6">
-                <ServiceOrderTest />
-              </div>
-            </div>
 
             {/* Gestión de Usuarios - Solo para Administradores */}
             <div className="row mb-3">
