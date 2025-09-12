@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useAuth } from '../contexts/AuthContext'
 import { useRouter } from '../contexts/RouterContext'
-import { Clock, User, CheckCircle, Package, Plus, Wrench, AlertTriangle, Calendar } from 'lucide-react'
+import { Clock, User, CheckCircle, Package, Plus, Wrench, AlertTriangle, Calendar, Printer } from 'lucide-react'
 import AutoRefreshIndicator from './AutoRefreshIndicator'
+import CommandaPrint from './CommandaPrint'
 import { CustomModal } from './ui/CustomModal'
+import { supabase } from '../lib/supabase'
 
 interface ModalState {
   isOpen: boolean
@@ -31,6 +33,9 @@ const ServiceQueue: React.FC = () => {
   const [completionNotes, setCompletionNotes] = useState('')
   const [deliveryNotes, setDeliveryNotes] = useState('')
   const [currentAction, setCurrentAction] = useState<'complete' | 'deliver' | null>(null)
+  
+  // Estados para la comanda de impresión
+  const [showComandaFor, setShowComandaFor] = useState<{order: any, customer: any} | null>(null)
 
   const closeModal = () => {
     setModal(prev => ({ ...prev, isOpen: false }))
@@ -55,6 +60,38 @@ const ServiceQueue: React.FC = () => {
       title: 'Error',
       message
     })
+  }
+
+  // Función para obtener detalles completos de la orden para la comanda
+  const getOrderForComanda = async (orderId: string) => {
+    try {
+      const { data: order, error } = await supabase
+        .from('service_orders')
+        .select(`
+          *,
+          customer:customers(*),
+          admin:admin_id(full_name),
+          receptionist:receptionist_id(full_name),
+          technician:technician_id(full_name)
+        `)
+        .eq('id', orderId)
+        .single()
+      
+      if (error) throw error
+      return order
+    } catch (error) {
+      console.error('Error fetching order for comanda:', error)
+      return null
+    }
+  }
+
+  const handlePrintComanda = async (orderId: string) => {
+    const order = await getOrderForComanda(orderId)
+    if (order) {
+      setShowComandaFor({ order, customer: order.customer })
+    } else {
+      showErrorModal('No se pudo cargar la información de la orden para la comanda')
+    }
   }
 
   const handleTakeOrder = async (orderId: string) => {
@@ -247,6 +284,19 @@ const ServiceQueue: React.FC = () => {
                           >
                             <Package size={12} className="me-1" />
                             ✅ Cliente Recoge Artículo
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Botón de imprimir comanda para admin y recepcionista */}
+                      {(user?.role === 'admin' || user?.role === 'receptionist') && (
+                        <div className="d-grid gap-1 mt-2">
+                          <button 
+                            className="btn btn-outline-info btn-sm"
+                            onClick={() => handlePrintComanda(order.id)}
+                          >
+                            <Printer size={12} className="me-1" />
+                            Imprimir Comanda
                           </button>
                         </div>
                       )}
@@ -473,6 +523,15 @@ const ServiceQueue: React.FC = () => {
         }
         textInputRequired={currentAction === 'complete'}
       />
+
+      {/* CommandaPrint Modal */}
+      {showComandaFor && (
+        <CommandaPrint
+          order={showComandaFor.order}
+          customer={showComandaFor.customer}
+          onClose={() => setShowComandaFor(null)}
+        />
+      )}
     </div>
   )
 }

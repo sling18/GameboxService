@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
+import { supabase } from '../lib/supabase'
 import { useCustomers } from '../hooks/useCustomers'
 import { useServiceOrders } from '../hooks/useServiceOrders'
-import { Search, Plus, Save, User, UserPlus, Package, ClipboardList, AlertTriangle } from 'lucide-react'
+import { Search, Plus, Save, User, UserPlus, Package, ClipboardList, AlertTriangle, Printer } from 'lucide-react'
 import { CustomModal } from './ui/CustomModal'
+import CommandaPrint from './CommandaPrint'
 
 interface ModalState {
   isOpen: boolean
@@ -40,6 +42,10 @@ const CreateOrder: React.FC = () => {
   
   const [loading, setLoading] = useState(false)
   const [creating, setCreating] = useState(false)
+  
+  // Estados para la comanda
+  const [showComanda, setShowComanda] = useState(false)
+  const [createdOrder, setCreatedOrder] = useState<any>(null)
   
   // Estado para el modal
   const [modal, setModal] = useState<ModalState>({
@@ -109,6 +115,23 @@ const CreateOrder: React.FC = () => {
     })
     
     if (success) {
+      // Buscar la orden recién creada para mostrar la comanda
+      try {
+        const { data: orders } = await supabase
+          .from('service_orders')
+          .select('*, customers(*)')
+          .eq('customer_id', customer.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+        
+        if (orders && orders.length > 0) {
+          setCreatedOrder(orders[0])
+          setShowComanda(true)
+        }
+      } catch (error) {
+        console.error('Error buscando orden creada:', error)
+      }
+      
       showSuccessModal('Orden creada')
       // Limpiar formulario después de 3 segundos
       setTimeout(() => {
@@ -453,6 +476,22 @@ const CreateOrder: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Comanda de Impresión */}
+      {showComanda && createdOrder && (
+        <div className="row mt-4">
+          <div className="col-12">
+            <CommandaPrint
+              order={createdOrder}
+              customer={createdOrder.customers}
+              onPrint={() => {
+                setShowComanda(false)
+                setCreatedOrder(null)
+              }}
+            />
           </div>
         </div>
       )}

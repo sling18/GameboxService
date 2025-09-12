@@ -3,6 +3,11 @@ import { useAuth } from '../contexts/AuthContext'
 import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useRouter } from '../contexts/RouterContext'
 import UserManagement from './UserManagement'
+import InviteUser from './InviteUser'
+import EmailTester from './EmailTester'
+import PrinterSettings from './PrinterSettings'
+import PendingInvitesList from './PendingInvitesList'
+import PendingInvitesMigration from './PendingInvitesMigration'
 import AutoRefreshIndicator from './AutoRefreshIndicator'
 import DeliverySection from './DeliverySection'
 import DatabaseMigration from './DatabaseMigration'
@@ -25,7 +30,9 @@ import {
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth()
-  const { serviceOrders, loading, lastRefresh } = useServiceOrders(true) // Enabled auto-refresh
+  // Deshabilitar auto-refresh para administradores, habilitarlo para otros roles
+  const autoRefreshEnabled = user?.role !== 'admin'
+  const { serviceOrders, loading, lastRefresh } = useServiceOrders(autoRefreshEnabled)
   const { navigate } = useRouter()
 
   const getStats = () => {
@@ -75,12 +82,18 @@ const Dashboard: React.FC = () => {
                         <p className="mb-0 opacity-90">Panel de Administración - GameBox Service</p>
                         <small className="opacity-75">Control total del sistema de reparaciones</small>
                         <div className="mt-2">
-                          <AutoRefreshIndicator 
-                            lastRefresh={lastRefresh} 
-                            interval={15}
-                            size="sm"
-                            className="opacity-75"
-                          />
+                          {autoRefreshEnabled ? (
+                            <AutoRefreshIndicator 
+                              lastRefresh={lastRefresh} 
+                              interval={15}
+                              size="sm"
+                              className="opacity-75"
+                            />
+                          ) : (
+                            <small className="opacity-75 text-white-50">
+                              📋 Actualización manual - Sin auto-refresh
+                            </small>
+                          )}
                         </div>
                       </div>
                       <div className="col-md-3 text-end d-none d-md-block">
@@ -222,6 +235,41 @@ const Dashboard: React.FC = () => {
 
             {/* Migración de base de datos */}
             <DatabaseMigration />
+
+            {/* Migración para sistema de invitaciones */}
+            <div className="row mb-3">
+              <div className="col-12">
+                <PendingInvitesMigration />
+              </div>
+            </div>
+
+            {/* Invitar Usuarios - Solo para Administradores */}
+            <div className="row mb-3">
+              <div className="col-12">
+                <InviteUser />
+              </div>
+            </div>
+
+            {/* Lista de Invitaciones Pendientes */}
+            <div className="row mb-3">
+              <div className="col-12">
+                <PendingInvitesList />
+              </div>
+            </div>
+
+            {/* Prueba de Envío de Correos */}
+            <div className="row mb-3">
+              <div className="col-12">
+                <EmailTester />
+              </div>
+            </div>
+
+            {/* Configuración de Impresoras */}
+            <div className="row mb-3">
+              <div className="col-12">
+                <PrinterSettings />
+              </div>
+            </div>
 
             {/* Gestión de Usuarios - Solo para Administradores */}
             <div className="row mb-3">
