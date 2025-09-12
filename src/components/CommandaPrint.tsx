@@ -230,7 +230,6 @@ ${order.problem_description.length > 40 ? `^FO50,350^A0N,12,12^FD${order.problem
     try {
       // Generar contenido según el tipo de impresora
       let content = ''
-      let contentType = 'text/plain'
       
       if (printer.type === 'zebra') {
         content = generateZebraZPL()

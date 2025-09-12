@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useCustomers } from '../hooks/useCustomers'
 import { useServiceOrders } from '../hooks/useServiceOrders'
-import { Search, Plus, Save, User, UserPlus, Package, ClipboardList, AlertTriangle, Printer } from 'lucide-react'
+import { Search, Plus, Save, User, UserPlus, Package, ClipboardList, AlertTriangle } from 'lucide-react'
 import { CustomModal } from './ui/CustomModal'
 import CommandaPrint from './CommandaPrint'
 
