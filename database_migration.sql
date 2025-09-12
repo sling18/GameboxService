@@ -5,7 +5,11 @@
 ALTER TABLE service_orders 
 ADD COLUMN serial_number TEXT;
 
--- 2. Agregar columna para técnico que completó la orden
+-- 2. Agregar columna para observaciones
+ALTER TABLE service_orders 
+ADD COLUMN observations TEXT;
+
+-- 3. Agregar columna para técnico que completó la orden
 ALTER TABLE service_orders 
 ADD COLUMN completed_by_id UUID REFERENCES profiles(id);
 

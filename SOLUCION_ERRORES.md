@@ -37,8 +37,27 @@ He simplificado temporalmente el hook `useServiceOrders.ts` para que solo consul
 
 ## 📝 Columnas que se van a agregar:
 - `serial_number` (TEXT): Para el número de serie de la consola
+- `observations` (TEXT): Para observaciones adicionales separadas del problema
 - `completed_by_id` (UUID): Para trackear qué técnico completó la orden
 - Se eliminará la columna `priority` (si existe)
+
+## 🎯 NUEVAS FUNCIONALIDADES IMPLEMENTADAS:
+
+### ✅ Campo dividido en CreateOrder
+- **Descripción del Problema**: Campo obligatorio para el problema reportado
+- **Observaciones**: Campo opcional para notas adicionales
+
+### ✅ Campo dividido en EditOrderModal
+- Ambos campos disponibles para edición por administradores
+- Diseño responsive (2 columnas en pantallas grandes)
+
+### ✅ Comanda actualizada
+- Muestra el problema y las observaciones por separado (si existen)
+- Mejor organización visual de la información
+
+### ✅ Tipos TypeScript actualizados
+- Nuevo campo `observations: string | null` en ServiceOrder
+- Tipado completo para mantener la seguridad de tipos
 
 ## ⚠️ IMPORTANTE
 Ejecuta la migración SQL lo antes posible para que la aplicación funcione con todas las funcionalidades nuevas.

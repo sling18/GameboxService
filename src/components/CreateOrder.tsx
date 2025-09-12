@@ -37,6 +37,7 @@ const CreateOrder: React.FC = () => {
     device_model: '',
     serial_number: '',
     problem_description: '',
+    observations: '',
     estimated_completion: '',
   })
   
@@ -144,6 +145,7 @@ const CreateOrder: React.FC = () => {
           device_model: '',
           serial_number: '',
           problem_description: '',
+          observations: '',
           estimated_completion: '',
         })
         closeModal()
@@ -166,6 +168,7 @@ const CreateOrder: React.FC = () => {
       device_model: '',
       serial_number: '',
       problem_description: '',
+      observations: '',
       estimated_completion: '',
     })
   }
@@ -413,15 +416,26 @@ const CreateOrder: React.FC = () => {
                     <div className="form-text">Opcional - Número de serie del dispositivo</div>
                   </div>
                   
-                  <div className="col-12">
+                  <div className="col-md-6">
                     <label className="form-label fw-semibold">Descripción del Problema <span className="text-danger">*</span></label>
                     <textarea
                       className="form-control"
                       rows={4}
-                      placeholder="Describe detalladamente el problema reportado por el cliente..."
+                      placeholder="Describe el problema reportado por el cliente..."
                       value={orderData.problem_description}
                       onChange={(e) => setOrderData({ ...orderData, problem_description: e.target.value })}
                       required
+                    />
+                  </div>
+                  
+                  <div className="col-md-6">
+                    <label className="form-label fw-semibold">Observaciones</label>
+                    <textarea
+                      className="form-control"
+                      rows={4}
+                      placeholder="Observaciones adicionales, notas técnicas, etc..."
+                      value={orderData.observations}
+                      onChange={(e) => setOrderData({ ...orderData, observations: e.target.value })}
                     />
                   </div>
                   

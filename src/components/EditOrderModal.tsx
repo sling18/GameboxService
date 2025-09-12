@@ -15,6 +15,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({ order, onClose, onSave 
     device_model: order.device_model,
     serial_number: order.serial_number || '',
     problem_description: order.problem_description,
+    observations: order.observations || '',
     status: order.status,
   })
   const [loading, setLoading] = useState(false)
@@ -207,18 +208,33 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({ order, onClose, onSave 
 
               {/* Descripción del problema */}
               <div className="mb-4">
-                <h6 className="text-muted mb-3">Descripción del Problema</h6>
-                <div className="mb-3">
-                  <label htmlFor="problem_description" className="form-label">Descripción *</label>
-                  <textarea
-                    id="problem_description"
-                    name="problem_description"
-                    className="form-control"
-                    rows={4}
-                    value={formData.problem_description}
-                    onChange={handleChange}
-                    required
-                  />
+                <h6 className="text-muted mb-3">Información del Problema</h6>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="problem_description" className="form-label">Descripción del Problema *</label>
+                    <textarea
+                      id="problem_description"
+                      name="problem_description"
+                      className="form-control"
+                      rows={4}
+                      placeholder="Describe el problema reportado..."
+                      value={formData.problem_description}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="observations" className="form-label">Observaciones</label>
+                    <textarea
+                      id="observations"
+                      name="observations"
+                      className="form-control"
+                      rows={4}
+                      placeholder="Observaciones adicionales..."
+                      value={formData.observations}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

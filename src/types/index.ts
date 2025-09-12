@@ -30,6 +30,7 @@ export interface ServiceOrder {
   device_model: string
   serial_number: string | null
   problem_description: string
+  observations: string | null
   status: ServiceStatus
   assigned_technician_id: string | null
   completed_by_id: string | null
