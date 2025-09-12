@@ -109,19 +109,6 @@ const CommandaPrint: React.FC<CommandaPrintProps> = ({ order, customer, onPrint,
     }
   }
 
-  const getPriorityDisplayName = (priority: string) => {
-    switch (priority) {
-      case 'low':
-        return 'BAJA'
-      case 'medium':
-        return 'MEDIA'
-      case 'high':
-        return 'ALTA'
-      default:
-        return priority.toUpperCase()
-    }
-  }
-
   // Generar contenido de la comanda según el tipo de impresora
   const generateCommandaContent = (printer: PrinterConfig) => {
     const width = printer.paperWidth
@@ -162,7 +149,7 @@ ${lineSeparator}
 DETALLES:
 ${lineSeparator}
 Estado: ${getStatusDisplayName(order.status)}
-Prioridad: ${getPriorityDisplayName(order.priority)}
+${order.serial_number ? `Num. Serie: ${order.serial_number}` : 'Sin número de serie'}
 ${order.estimated_completion ? `Est. Entrega: ${formatDate(order.estimated_completion)}` : ''}
 
 ${separator}
@@ -202,7 +189,7 @@ ${customer.phone ? `^FO50,210^A0N,15,15^FDTEL: ${customer.phone}^FS` : ''}
 ${order.problem_description.length > 40 ? `^FO50,350^A0N,12,12^FD${order.problem_description.substring(40, 80)}^FS` : ''}
 
 ^FO50,380^A0N,15,15^FDESTADO: ${getStatusDisplayName(order.status)}^FS
-^FO250,380^A0N,15,15^FDPRIORIDAD: ${getPriorityDisplayName(order.priority)}^FS
+^FO250,380^A0N,15,15^FDSERIE: ${order.serial_number || 'N/A'}^FS
 
 ^FO50,420^GB400,2,2^FS
 ^FO50,440^A0N,12,12^FDConserve este ticket como comprobante^FS

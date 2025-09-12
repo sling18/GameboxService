@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useCustomers } from '../hooks/useCustomers'
 import { useServiceOrders } from '../hooks/useServiceOrders'
-import { Search, Plus, Save, User, UserPlus, Package, ClipboardList, AlertTriangle } from 'lucide-react'
+import { Search, Plus, Save, User, UserPlus, Package, ClipboardList } from 'lucide-react'
 import { CustomModal } from './ui/CustomModal'
-import CommandaPrint from './CommandaPrint'
+import ComandaPreview from './ComandaPreview'
 
 interface ModalState {
   isOpen: boolean
@@ -35,8 +35,8 @@ const CreateOrder: React.FC = () => {
     device_type: '',
     device_brand: '',
     device_model: '',
+    serial_number: '',
     problem_description: '',
-    priority: 'medium' as 'low' | 'medium' | 'high',
     estimated_completion: '',
   })
   
@@ -142,8 +142,8 @@ const CreateOrder: React.FC = () => {
           device_type: '',
           device_brand: '',
           device_model: '',
+          serial_number: '',
           problem_description: '',
-          priority: 'medium',
           estimated_completion: '',
         })
         closeModal()
@@ -164,8 +164,8 @@ const CreateOrder: React.FC = () => {
       device_type: '',
       device_brand: '',
       device_model: '',
+      serial_number: '',
       problem_description: '',
-      priority: 'medium',
       estimated_completion: '',
     })
   }
@@ -402,16 +402,15 @@ const CreateOrder: React.FC = () => {
                   </div>
                   
                   <div className="col-md-6">
-                    <label className="form-label fw-semibold">Prioridad</label>
-                    <select
-                      className="form-select"
-                      value={orderData.priority}
-                      onChange={(e) => setOrderData({ ...orderData, priority: e.target.value as 'low' | 'medium' | 'high' })}
-                    >
-                      <option value="low">Baja</option>
-                      <option value="medium">Media</option>
-                      <option value="high">Alta</option>
-                    </select>
+                    <label className="form-label fw-semibold">Número de Serie</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Ej: ABC123456789"
+                      value={orderData.serial_number}
+                      onChange={(e) => setOrderData({ ...orderData, serial_number: e.target.value })}
+                    />
+                    <div className="form-text">Opcional - Número de serie del dispositivo</div>
                   </div>
                   
                   <div className="col-12">
@@ -437,16 +436,6 @@ const CreateOrder: React.FC = () => {
                     />
                   </div>
                 </div>
-
-                {/* Priority Alert */}
-                {orderData.priority === 'high' && (
-                  <div className="alert alert-warning border-0 shadow-sm mt-3 d-flex align-items-center">
-                    <AlertTriangle size={20} className="me-2 text-warning" />
-                    <div>
-                      <strong>Prioridad Alta:</strong> Esta orden será marcada como urgente y aparecerá en la parte superior de la cola de reparaciones.
-                    </div>
-                  </div>
-                )}
 
                 {/* Action buttons */}
                 <div className="d-flex gap-2 mt-4">
@@ -484,10 +473,10 @@ const CreateOrder: React.FC = () => {
       {showComanda && createdOrder && (
         <div className="row mt-4">
           <div className="col-12">
-            <CommandaPrint
+            <ComandaPreview
               order={createdOrder}
               customer={createdOrder.customers}
-              onPrint={() => {
+              onClose={() => {
                 setShowComanda(false)
                 setCreatedOrder(null)
               }}

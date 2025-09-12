@@ -21,13 +21,12 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
 
     try {
       setLoading(true)
+      // Consulta simplificada hasta que se ejecute la migración
       let query = supabase
         .from('service_orders')
         .select(`
           *,
-          customer:customers(*),
-          assigned_technician:profiles!service_orders_assigned_technician_id_fkey(*),
-          received_by:profiles!service_orders_received_by_id_fkey(*)
+          customer:customers(*)
         `)
         .order('created_at', { ascending: false })
 
@@ -74,6 +73,7 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
           *,
           customer:customers(*),
           assigned_technician:profiles!service_orders_assigned_technician_id_fkey(*),
+          completed_by:profiles!service_orders_completed_by_id_fkey(*),
           received_by:profiles!service_orders_received_by_id_fkey(*)
         `)
         .eq('customer_id', customerId)
@@ -123,6 +123,7 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
           *,
           customer:customers(*),
           assigned_technician:profiles!service_orders_assigned_technician_id_fkey(*),
+          completed_by:profiles!service_orders_completed_by_id_fkey(*),
           received_by:profiles!service_orders_received_by_id_fkey(*)
         `)
         .eq('id', insertedOrder.id)
@@ -197,11 +198,14 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
 
   const completeServiceOrder = async (orderId: string, completionNotes: string): Promise<boolean> => {
     try {
+      if (!user) throw new Error('Usuario no autenticado')
+      
       const { error } = await supabase
         .from('service_orders')
         .update({
           status: 'completed',
           completion_notes: completionNotes,
+          completed_by_id: user.id,
           updated_at: new Date().toISOString(),
         })
         .eq('id', orderId)
@@ -245,6 +249,29 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
     }
   }
 
+  const deleteServiceOrder = async (orderId: string): Promise<boolean> => {
+    try {
+      console.log('🗑️ Eliminando orden de servicio:', orderId)
+      
+      const { error } = await supabase
+        .from('service_orders')
+        .delete()
+        .eq('id', orderId)
+
+      if (error) throw error
+
+      // Update local state by removing the deleted order
+      setServiceOrders(prev => prev.filter(order => order.id !== orderId))
+      
+      console.log('✅ Orden eliminada exitosamente')
+      return true
+    } catch (err) {
+      console.error('❌ Error eliminando orden:', err)
+      setError(err instanceof Error ? err.message : 'Error al eliminar orden')
+      return false
+    }
+  }
+
   useEffect(() => {
     if (user) {
       fetchServiceOrders()
@@ -263,5 +290,6 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
     assignTechnician,
     completeServiceOrder,
     deliverServiceOrder,
+    deleteServiceOrder,
   }
 }

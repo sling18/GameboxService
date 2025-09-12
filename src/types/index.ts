@@ -2,8 +2,6 @@ export type UserRole = 'admin' | 'receptionist' | 'technician'
 
 export type ServiceStatus = 'pending' | 'in_progress' | 'completed' | 'delivered'
 
-export type Priority = 'low' | 'medium' | 'high'
-
 export interface User {
   id: string
   email: string
@@ -30,10 +28,11 @@ export interface ServiceOrder {
   device_type: string
   device_brand: string
   device_model: string
+  serial_number: string | null
   problem_description: string
   status: ServiceStatus
-  priority: Priority
   assigned_technician_id: string | null
+  completed_by_id: string | null
   received_by_id: string
   estimated_completion: string | null
   completion_notes: string | null
@@ -44,6 +43,7 @@ export interface ServiceOrder {
   // Relations
   customer?: Customer
   assigned_technician?: User
+  completed_by?: User
   received_by?: User
 }
 
@@ -69,7 +69,7 @@ export interface CreateServiceOrderData {
   device_type: string
   device_brand: string
   device_model: string
+  serial_number?: string
   problem_description: string
-  priority?: Priority
   estimated_completion?: string
 }

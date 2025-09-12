@@ -1,16 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useRouter } from '../contexts/RouterContext'
 import UserManagement from './UserManagement'
-import InviteUser from './InviteUser'
-import EmailTester from './EmailTester'
 import PrinterSettings from './PrinterSettings'
-import PendingInvitesList from './PendingInvitesList'
-import PendingInvitesMigration from './PendingInvitesMigration'
 import AutoRefreshIndicator from './AutoRefreshIndicator'
 import DeliverySection from './DeliverySection'
-import DatabaseMigration from './DatabaseMigration'
+import EditOrderModal from './EditOrderModal'
 import { 
   ClipboardList, 
   Clock, 
@@ -21,19 +17,23 @@ import {
   Calendar,
   Plus,
   Eye,
-  AlertTriangle,
   Package,
   ArrowRight,
   Activity,
-  Star
+  Star,
+  Edit,
+  Trash2
 } from 'lucide-react'
+import type { ServiceOrder } from '../types'
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth()
   // Deshabilitar auto-refresh para administradores, habilitarlo para otros roles
   const autoRefreshEnabled = user?.role !== 'admin'
-  const { serviceOrders, loading, lastRefresh } = useServiceOrders(autoRefreshEnabled)
+  const { serviceOrders, loading, lastRefresh, updateServiceOrder, deleteServiceOrder } = useServiceOrders(autoRefreshEnabled)
   const { navigate } = useRouter()
+  const [editingOrder, setEditingOrder] = useState<ServiceOrder | null>(null)
+  const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null)
 
   const getStats = () => {
     const pending = serviceOrders.filter(order => order.status === 'pending').length
@@ -43,17 +43,45 @@ const Dashboard: React.FC = () => {
     const total = serviceOrders.length
     
     // Estadísticas adicionales
-    const highPriority = serviceOrders.filter(order => order.priority === 'high' && order.status !== 'delivered').length
+    const withSerial = serviceOrders.filter(order => order.serial_number && order.serial_number.trim() !== '').length
     const myOrders = user?.role === 'technician' ? serviceOrders.filter(order => order.assigned_technician_id === user.id).length : 0
     const todayOrders = serviceOrders.filter(order => {
       const today = new Date().toDateString()
       return new Date(order.created_at).toDateString() === today
     }).length
 
-    return { pending, inProgress, completed, delivered, total, highPriority, myOrders, todayOrders }
+    return { pending, inProgress, completed, delivered, total, withSerial, myOrders, todayOrders }
   }
 
   const stats = getStats()
+
+  const handleEditOrder = (order: ServiceOrder) => {
+    setEditingOrder(order)
+  }
+
+  const handleSaveOrder = async (orderId: string, updates: Partial<ServiceOrder>) => {
+    const success = await updateServiceOrder(orderId, updates)
+    return success
+  }
+
+  const handleDeleteOrder = async (orderId: string) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta orden? Esta acción no se puede deshacer.')) {
+      setDeletingOrderId(orderId)
+      try {
+        const success = await deleteServiceOrder(orderId)
+        if (success) {
+          console.log('Orden eliminada exitosamente')
+        } else {
+          alert('Error al eliminar la orden')
+        }
+      } catch (error) {
+        console.error('Error deleting order:', error)
+        alert('Error inesperado al eliminar la orden')
+      } finally {
+        setDeletingOrderId(null)
+      }
+    }
+  }
 
   const getWelcomeMessage = () => {
     const hour = new Date().getHours()
@@ -164,11 +192,11 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="col-md-4">
                 <StatCard
-                  title="Alta Prioridad"
-                  value={stats.highPriority}
-                  icon={AlertTriangle}
-                  color="danger"
-                  subtitle="Requieren atención"
+                  title="Con Número Serie"
+                  value={stats.withSerial}
+                  icon={Package}
+                  color="info"
+                  subtitle="Identificados"
                   size="sm"
                 />
               </div>
@@ -232,37 +260,6 @@ const Dashboard: React.FC = () => {
 
             {/* Sección de entregas pendientes */}
             <DeliverySection />
-
-            {/* Migración de base de datos */}
-            <DatabaseMigration />
-
-            {/* Migración para sistema de invitaciones */}
-            <div className="row mb-3">
-              <div className="col-12">
-                <PendingInvitesMigration />
-              </div>
-            </div>
-
-            {/* Invitar Usuarios - Solo para Administradores */}
-            <div className="row mb-3">
-              <div className="col-12">
-                <InviteUser />
-              </div>
-            </div>
-
-            {/* Lista de Invitaciones Pendientes */}
-            <div className="row mb-3">
-              <div className="col-12">
-                <PendingInvitesList />
-              </div>
-            </div>
-
-            {/* Prueba de Envío de Correos */}
-            <div className="row mb-3">
-              <div className="col-12">
-                <EmailTester />
-              </div>
-            </div>
 
             {/* Configuración de Impresoras */}
             <div className="row mb-3">
@@ -387,26 +384,6 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {/* Alerta de prioridades */}
-            {stats.highPriority > 0 && (
-              <div className="row mb-3">
-                <div className="col-12">
-                  <div className="alert alert-warning border-0 shadow-sm d-flex align-items-center py-2">
-                    <AlertTriangle size={20} className="me-2 text-warning" />
-                    <div className="flex-grow-1">
-                      <h6 className="alert-heading mb-1 small">Atención Requerida</h6>
-                      <p className="mb-0 small">
-                        Hay {stats.highPriority} orden{stats.highPriority !== 1 ? 'es' : ''} de alta prioridad pendiente{stats.highPriority !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <button onClick={() => navigate('orders')} className="btn btn-warning btn-sm">
-                      Ver Órdenes
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
             
             {/* Sección de entregas pendientes */}
             <DeliverySection />
@@ -620,8 +597,11 @@ const Dashboard: React.FC = () => {
                           <th scope="col" className="border-0 fw-semibold px-3 py-3">Cliente</th>
                           <th scope="col" className="border-0 fw-semibold px-3 py-3">Dispositivo</th>
                           <th scope="col" className="border-0 fw-semibold px-3 py-3">Estado</th>
-                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Prioridad</th>
+                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Técnico</th>
                           <th scope="col" className="border-0 fw-semibold px-3 py-3">Fecha</th>
+                          {user?.role === 'admin' && (
+                            <th scope="col" className="border-0 fw-semibold px-3 py-3 text-center">Acciones</th>
+                          )}
                         </tr>
                       </thead>
                       <tbody>
@@ -636,14 +616,29 @@ const Dashboard: React.FC = () => {
                             <td className="px-3 py-3">
                               <div>
                                 <div className="fw-medium">{order.device_brand} {order.device_model}</div>
-                                <small className="text-muted">{order.device_type}</small>
+                                <small className="text-muted">
+                                  {order.device_type}
+                                  {order.serial_number && ` • S/N: ${order.serial_number}`}
+                                </small>
                               </div>
                             </td>
                             <td className="px-3 py-3">
                               <StatusBadge status={order.status} />
                             </td>
                             <td className="px-3 py-3">
-                              <PriorityBadge priority={order.priority} />
+                              {order.status === 'completed' && order.completed_by ? (
+                                <div>
+                                  <div className="fw-medium text-success">{order.completed_by.full_name}</div>
+                                  <small className="text-muted">Finalizado</small>
+                                </div>
+                              ) : order.assigned_technician ? (
+                                <div>
+                                  <div className="fw-medium">{order.assigned_technician.full_name}</div>
+                                  <small className="text-muted">Asignado</small>
+                                </div>
+                              ) : (
+                                <span className="text-muted">Sin asignar</span>
+                              )}
                             </td>
                             <td className="px-3 py-3">
                               <small className="text-muted">
@@ -654,6 +649,35 @@ const Dashboard: React.FC = () => {
                                 })}
                               </small>
                             </td>
+                            {user?.role === 'admin' && (
+                              <td className="px-3 py-3 text-center">
+                                <div className="btn-group btn-group-sm" role="group">
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-primary"
+                                    onClick={() => handleEditOrder(order)}
+                                    title="Editar orden"
+                                  >
+                                    <Edit size={14} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-danger"
+                                    onClick={() => handleDeleteOrder(order.id)}
+                                    disabled={deletingOrderId === order.id}
+                                    title="Eliminar orden"
+                                  >
+                                    {deletingOrderId === order.id ? (
+                                      <div className="spinner-border spinner-border-sm" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                      </div>
+                                    ) : (
+                                      <Trash2 size={14} />
+                                    )}
+                                  </button>
+                                </div>
+                              </td>
+                            )}
                           </tr>
                         ))}
                       </tbody>
@@ -665,6 +689,15 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de Edición - Solo para Admin */}
+      {user?.role === 'admin' && editingOrder && (
+        <EditOrderModal
+          order={editingOrder}
+          onClose={() => setEditingOrder(null)}
+          onSave={handleSaveOrder}
+        />
+      )}
     </div>
   )
 }
@@ -736,10 +769,6 @@ interface StatusBadgeProps {
   status: 'pending' | 'in_progress' | 'completed' | 'delivered'
 }
 
-interface PriorityBadgeProps {
-  priority: 'low' | 'medium' | 'high'
-}
-
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const statusConfig = {
     pending: {
@@ -761,31 +790,6 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   }
 
   const config = statusConfig[status]
-
-  return (
-    <span className={`badge ${config.classes} rounded-pill`}>
-      {config.label}
-    </span>
-  )
-}
-
-const PriorityBadge: React.FC<PriorityBadgeProps> = ({ priority }) => {
-  const priorityConfig = {
-    low: {
-      label: 'Baja',
-      classes: 'bg-light text-dark'
-    },
-    medium: {
-      label: 'Media', 
-      classes: 'bg-warning text-dark'
-    },
-    high: {
-      label: 'Alta',
-      classes: 'bg-danger text-white'
-    }
-  }
-
-  const config = priorityConfig[priority]
 
   return (
     <span className={`badge ${config.classes} rounded-pill`}>

@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useAuth } from '../contexts/AuthContext'
 import { useRouter } from '../contexts/RouterContext'
-import { Clock, User, CheckCircle, Package, Plus, Wrench, AlertTriangle, Calendar, Printer } from 'lucide-react'
+import { Clock, User, CheckCircle, Package, Plus, Wrench, Calendar, Printer } from 'lucide-react'
 import AutoRefreshIndicator from './AutoRefreshIndicator'
-import CommandaPrint from './CommandaPrint'
+import ComandaPreview from './ComandaPreview'
 import { CustomModal } from './ui/CustomModal'
 import { supabase } from '../lib/supabase'
 
@@ -180,16 +180,6 @@ const ServiceQueue: React.FC = () => {
     })
   }
 
-  const getPriorityBadge = (priority: string) => {
-    const priorityConfig = {
-      high: { color: 'danger', label: 'Alta' },
-      medium: { color: 'warning', label: 'Media' },
-      low: { color: 'success', label: 'Baja' }
-    }
-    const config = priorityConfig[priority as keyof typeof priorityConfig] || priorityConfig.low
-    return <span className={`badge bg-${config.color}`}>{config.label}</span>
-  }
-
   const StatusSection: React.FC<{ title: string; status: string; icon: any; color: string }> = ({ 
     title, 
     status, 
@@ -238,7 +228,17 @@ const ServiceQueue: React.FC = () => {
                             #{order.order_number}
                           </small>
                         </div>
-                        {getPriorityBadge(order.priority)}
+                        <div className="d-flex align-items-center text-muted">
+                          <Package className="w-3 h-3 me-1" />
+                          <small>
+                            {order.device_type}
+                            {order.serial_number && (
+                              <span className="text-muted ms-2">
+                                SN: {order.serial_number}
+                              </span>
+                            )}
+                          </small>
+                        </div>
                       </div>
                       
                       <p className="small text-muted mb-2 text-truncate">
@@ -447,23 +447,6 @@ const ServiceQueue: React.FC = () => {
         </div>
       </div>
 
-      {/* Priority alert */}
-      {serviceOrders.filter(o => o.priority === 'high' && o.status !== 'delivered').length > 0 && (
-        <div className="row mb-4">
-          <div className="col-12">
-            <div className="alert alert-warning border-0 shadow-sm d-flex align-items-center">
-              <AlertTriangle size={20} className="me-2 text-warning" />
-              <div className="flex-grow-1">
-                <h6 className="alert-heading mb-1">¡Atención Prioritaria!</h6>
-                <p className="mb-0 small">
-                  Hay {serviceOrders.filter(o => o.priority === 'high' && o.status !== 'delivered').length} orden(es) de alta prioridad pendiente(s)
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Status sections */}
       <div className="row">
         <StatusSection 
@@ -524,9 +507,9 @@ const ServiceQueue: React.FC = () => {
         textInputRequired={currentAction === 'complete'}
       />
 
-      {/* CommandaPrint Modal */}
+      {/* ComandaPreview Modal */}
       {showComandaFor && (
-        <CommandaPrint
+        <ComandaPreview
           order={showComandaFor.order}
           customer={showComandaFor.customer}
           onClose={() => setShowComandaFor(null)}
