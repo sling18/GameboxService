@@ -30,12 +30,22 @@ La aplicación está **100% funcional** en modo demostración con datos locales.
 #### 📋 **Gestión de Órdenes de Servicio**
 - ✅ Ver todas las órdenes organizadas por estado
 - ✅ Crear nuevas órdenes de servicio
+- ✅ **Sistema de múltiples dispositivos** - Un cliente puede traer varios dispositivos
 - ✅ Asignar reparaciones a técnicos
 - ✅ Completar reparaciones con notas
+- ✅ **Tracking de técnicos** - Se muestra quién completó cada orden
 - ✅ Estados: Pendiente → En Progreso → Completada → Entregada
 - ✅ **Actualización automática en tiempo real** (15 segundos)
 - ✅ **Números de orden únicos** con formato OS-YYYYMMDD-XXXXXX
 - ✅ **Indicadores visuales** de última actualización
+
+#### 🖨️ **Sistema de Comanda e Impresión**
+- ✅ **Comanda completa** - Documento único con todos los dispositivos del cliente
+- ✅ **Stickers individuales** - Etiquetas separadas para marcar cada consola/dispositivo
+- ✅ **Vista previa** antes de imprimir
+- ✅ **Descarga en PDF** para guardar digitalmente
+- ✅ **Formatos optimizados** para impresión térmica y papel normal
+- ✅ **Información completa** - Cliente, dispositivos, problemas, números de orden
 
 #### 🔄 **Sistema de Auto-Refresh**
 - ✅ **Dashboards dinámicos** - Se actualizan automáticamente cada 15 segundos
@@ -74,6 +84,39 @@ Al ejecutar la aplicación, puedes usar estas credenciales:
 - **Email:** `tecnico@gameboxservice.com`
 - **Contraseña:** `gameboxservice123`  
 - **Permisos:** Ver y gestionar reparaciones asignadas
+
+## 🆕 **Funcionalidades Avanzadas**
+
+### 📱 **Sistema de Múltiples Dispositivos**
+La aplicación permite manejar clientes que traen varios dispositivos para reparar:
+
+- **Modo Único**: Para un solo dispositivo (comportamiento tradicional)
+- **Modo Múltiple**: Para agregar varios dispositivos del mismo cliente
+- **Lista Dinámica**: Agregar, duplicar y eliminar dispositivos antes de crear las órdenes
+- **Fecha Compartida**: Una fecha estimada común para todos los dispositivos
+- **Órdenes Individuales**: Cada dispositivo genera su propia orden con número único
+
+### 🖨️ **Sistema de Comanda e Impresión**
+Documentos profesionales para el taller:
+
+#### **Comanda Completa**
+- Documento único con todos los dispositivos del cliente
+- Información del cliente (nombre, cédula, teléfono)
+- Lista detallada de cada dispositivo y problema
+- Números de orden individuales
+- Estado y técnico asignado
+
+#### **Stickers Individuales**
+- Etiquetas separadas para marcar cada consola/dispositivo
+- Formato compacto optimizado para etiquetas pequeñas
+- Información esencial: cliente, dispositivo, número de orden
+- Descripción del problema truncada
+
+#### **Opciones de Impresión**
+- **Vista previa** en pantalla antes de imprimir
+- **Impresión directa** con ventana emergente
+- **Descarga PDF** para guardado digital
+- **Formatos optimizados** para impresoras térmicas y papel normal
 
 ## 🛠️ **Tecnologías Utilizadas**
 
@@ -135,16 +178,22 @@ Al ejecutar la aplicación, puedes usar estas credenciales:
 1. Recepcionista inicia sesión
 2. Crea nueva orden de servicio
 3. Busca cliente por cédula (o registra nuevo)
-4. Completa detalles del dispositivo y problema
-5. Orden entra en cola "Pendiente"
+4. **Selecciona modo**: Dispositivo único o múltiples dispositivos
+5. **Dispositivo único**: Completa detalles y crea orden
+6. **Múltiples dispositivos**: Agrega cada dispositivo a la lista, puede duplicar dispositivos similares
+7. **Genera comanda de impresión**:
+   - Comanda completa con todos los dispositivos
+   - Stickers individuales para marcar cada consola
+8. Todas las órdenes entran en cola "Pendiente"
 
 ### **2. Asignación y Reparación**
 1. Técnico inicia sesión
-2. Ve reparaciones disponibles
+2. Ve reparaciones disponibles en la cola
 3. Toma una reparación (pasa a "En Progreso")
 4. Completa la reparación
 5. Agrega notas del trabajo realizado
-6. Marca como "Completada"
+6. Marca como "Completada" - **El sistema registra automáticamente qué técnico la completó**
+7. La orden aparece como "Finalizada" con el nombre del técnico visible
 
 ### **3. Entrega al Cliente**
 1. Recepcionista busca cliente por cédula
@@ -258,6 +307,31 @@ useAutoRefresh(callback)      // Personalizable (por defecto 15 segundos)
 2. Build command: `npm run build`
 3. Publish directory: `dist`
 
+## 🗄️ **Configuración de Base de Datos**
+
+Para habilitar todas las funcionalidades (tracking de técnicos, números de serie, observaciones), ejecuta esta migración en el SQL Editor de Supabase:
+
+```sql
+-- Migración para agregar campos de serial number y tracking de técnicos
+-- Ejecutar en el SQL Editor de Supabase
+
+-- 1. Agregar columna de número de serie
+ALTER TABLE service_orders 
+ADD COLUMN serial_number TEXT;
+
+-- 2. Agregar columna para observaciones
+ALTER TABLE service_orders 
+ADD COLUMN observations TEXT;
+
+-- 3. Agregar columna para técnico que completó la orden
+ALTER TABLE service_orders 
+ADD COLUMN completed_by_id UUID REFERENCES profiles(id);
+
+-- 4. Crear índices para mejorar el rendimiento
+CREATE INDEX IF NOT EXISTS idx_service_orders_completed_by_id ON service_orders(completed_by_id);
+CREATE INDEX IF NOT EXISTS idx_service_orders_serial_number ON service_orders(serial_number);
+```
+
 ## 🤝 **Próximas Funcionalidades**
 
 - [ ] **Notificaciones push** con Service Workers
@@ -277,38 +351,14 @@ useAutoRefresh(callback)      // Personalizable (por defecto 15 segundos)
 **¡SÍ!** Esta aplicación está lista para usar en un taller real. Solo necesitas:
 
 1. ✅ **Configurar Supabase** (base de datos gratuita)
-2. ✅ **Cambiar a contextos reales** (líneas ya preparadas)
-3. ✅ **Crear usuarios** en la base de datos
-4. ✅ **¡Empezar a usar!**
+2. ✅ **Ejecutar la migración de base de datos** (arriba)
+3. ✅ **Cambiar a contextos reales** (líneas ya preparadas)
+4. ✅ **Crear usuarios** en la base de datos
+5. ✅ **¡Empezar a usar!**
 
 La aplicación ya maneja todos los casos de uso de un taller de reparación de videojuegos y está optimizada para un flujo de trabajo eficiente.
 
 **Desarrollado con ❤️ para talleres de reparación de videojuegos**
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
     },
   },
 ])

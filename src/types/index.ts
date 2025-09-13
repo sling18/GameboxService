@@ -65,6 +65,15 @@ export interface CreateCustomerData {
   email?: string
 }
 
+export interface DeviceItem {
+  device_type: string
+  device_brand: string
+  device_model: string
+  serial_number?: string
+  problem_description: string
+  observations?: string
+}
+
 export interface CreateServiceOrderData {
   customer_id: string
   device_type: string
@@ -72,5 +81,11 @@ export interface CreateServiceOrderData {
   device_model: string
   serial_number?: string
   problem_description: string
+  estimated_completion?: string
+}
+
+export interface CreateMultipleDeviceOrderData {
+  customer_id: string
+  devices: DeviceItem[]
   estimated_completion?: string
 }

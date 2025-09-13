@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import type { ServiceOrder, CreateServiceOrderData } from '../types'
+import type { ServiceOrder, CreateServiceOrderData, CreateMultipleDeviceOrderData } from '../types'
 import { useAuth } from '../contexts/AuthContext'
 import { generateOrderNumberSimple } from '../utils/orderNumber'
 import { useServiceOrdersRealtime } from './useRealtimeSubscription'
@@ -155,6 +155,85 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
     }
   }
 
+  const createMultipleDeviceOrder = async (orderData: CreateMultipleDeviceOrderData): Promise<ServiceOrder[]> => {
+    try {
+      if (!user) throw new Error('Usuario no autenticado')
+      if (!orderData.devices || orderData.devices.length === 0) {
+        throw new Error('Debe agregar al menos un dispositivo')
+      }
+
+      console.log('🔄 Creando múltiples órdenes de servicio:', orderData.devices.length, 'dispositivos')
+
+      const createdOrders: ServiceOrder[] = []
+
+      // Crear una orden por cada dispositivo
+      for (const device of orderData.devices) {
+        const orderNumber = generateOrderNumberSimple()
+
+        const orderToInsert = {
+          customer_id: orderData.customer_id,
+          device_type: device.device_type,
+          device_brand: device.device_brand,
+          device_model: device.device_model,
+          serial_number: device.serial_number || null,
+          problem_description: device.problem_description,
+          observations: device.observations || null,
+          estimated_completion: orderData.estimated_completion || null,
+          order_number: orderNumber,
+          received_by_id: user.id,
+        }
+
+        // Insertar la orden
+        const { data: insertedOrder, error: insertError } = await supabase
+          .from('service_orders')
+          .insert(orderToInsert)
+          .select('*')
+          .single()
+
+        if (insertError) {
+          console.error('❌ Error insertando orden:', insertError)
+          throw insertError
+        }
+
+        // Obtener la orden completa con relaciones
+        const { data: completeOrder, error: fetchError } = await supabase
+          .from('service_orders')
+          .select(`
+            *,
+            customer:customers(*),
+            assigned_technician:profiles!service_orders_assigned_technician_id_fkey(*),
+            completed_by:profiles!service_orders_completed_by_id_fkey(*),
+            received_by:profiles!service_orders_received_by_id_fkey(*)
+          `)
+          .eq('id', insertedOrder.id)
+          .single()
+
+        if (fetchError) {
+          console.warn('⚠️ Error obteniendo orden completa:', fetchError)
+          const basicOrder = {
+            ...insertedOrder,
+            customer: null,
+            assigned_technician: null,
+            received_by: null
+          }
+          createdOrders.push(basicOrder as ServiceOrder)
+        } else {
+          createdOrders.push(completeOrder)
+        }
+      }
+
+      // Update local state con todas las órdenes nuevas
+      setServiceOrders(prev => [...createdOrders, ...prev])
+      
+      console.log('✅ Órdenes múltiples creadas exitosamente:', createdOrders.length)
+      return createdOrders
+    } catch (err) {
+      console.error('❌ Error creando órdenes múltiples:', err)
+      setError(err instanceof Error ? err.message : 'Error al crear órdenes de servicio')
+      return []
+    }
+  }
+
   const updateServiceOrder = async (id: string, updates: Partial<ServiceOrder>): Promise<boolean> => {
     try {
       const { error } = await supabase
@@ -289,6 +368,7 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
     fetchServiceOrders,
     getServiceOrdersByCustomer,
     createServiceOrder,
+    createMultipleDeviceOrder,
     updateServiceOrder,
     assignTechnician,
     completeServiceOrder,
