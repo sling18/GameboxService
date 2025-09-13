@@ -19,7 +19,7 @@ interface ModalState {
 }
 
 const ServiceQueue: React.FC = () => {
-  const { serviceOrders, loading, updateServiceOrder, deliverServiceOrder, lastRefresh } = useServiceOrders(true) // Enable auto-refresh
+  const { serviceOrders, loading, updateServiceOrder, deliverServiceOrder } = useServiceOrders(true) // Enable auto-refresh
   const { user } = useAuth()
   const { navigate } = useRouter()
   
@@ -305,7 +305,17 @@ const ServiceQueue: React.FC = () => {
                         <div className="mt-2 pt-2 border-top">
                           <small className="text-muted">
                             <User size={12} className="me-1" />
-                            {order.assigned_technician.full_name}
+                            {status === 'completed' && order.completed_by ? (
+                              <>
+                                <span className="text-success fw-semibold">{order.completed_by.full_name}</span>
+                                <span className="text-muted"> (Finalizado)</span>
+                              </>
+                            ) : (
+                              <>
+                                {order.assigned_technician.full_name}
+                                <span className="text-muted"> (Asignado)</span>
+                              </>
+                            )}
                           </small>
                         </div>
                       )}
@@ -479,9 +489,7 @@ const ServiceQueue: React.FC = () => {
       <div className="row mt-3">
         <div className="col-12 text-center">
           <AutoRefreshIndicator 
-            lastRefresh={lastRefresh} 
-            interval={15}
-            showInterval={true}
+            realtime={true}
           />
         </div>
       </div>

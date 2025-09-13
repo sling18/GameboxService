@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import type { ServiceOrder, CreateServiceOrderData } from '../types'
 import { useAuth } from '../contexts/AuthContext'
 import { generateOrderNumberSimple } from '../utils/orderNumber'
-import { useServiceOrdersAutoRefresh } from './useAutoRefresh'
+import { useServiceOrdersRealtime } from './useRealtimeSubscription'
 
 export const useServiceOrders = (autoRefresh: boolean = true) => {
   const [serviceOrders, setServiceOrders] = useState<ServiceOrder[]>([])
@@ -21,12 +21,15 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
 
     try {
       setLoading(true)
-      // Consulta simplificada hasta que se ejecute la migración
+      // Consulta completa con todas las relaciones de técnicos
       let query = supabase
         .from('service_orders')
         .select(`
           *,
-          customer:customers(*)
+          customer:customers(*),
+          assigned_technician:profiles!service_orders_assigned_technician_id_fkey(*),
+          completed_by:profiles!service_orders_completed_by_id_fkey(*),
+          received_by:profiles!service_orders_received_by_id_fkey(*)
         `)
         .order('created_at', { ascending: false })
 
@@ -49,21 +52,21 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
     }
   }
 
-  // Auto-refresh setup - Solo si hay usuario autenticado
-  const { clearAutoRefresh } = useServiceOrdersAutoRefresh(
+  // Real-time subscription - Solo si hay usuario autenticado
+  const { disconnect } = useServiceOrdersRealtime(
     fetchServiceOrders,
-    autoRefresh && !!user // Solo auto-refresh si está habilitado y hay usuario
+    autoRefresh && !!user // Solo real-time si está habilitado y hay usuario
   )
 
-  // Cleanup auto-refresh when user logs out
+  // Cleanup real-time subscription when user logs out
   useEffect(() => {
     if (!user) {
-      clearAutoRefresh()
+      disconnect()
       setServiceOrders([]) // Clear data when user logs out
       setError(null)
       setLoading(false)
     }
-  }, [user, clearAutoRefresh])
+  }, [user, disconnect])
 
   const getServiceOrdersByCustomer = async (customerId: string): Promise<ServiceOrder[]> => {
     try {

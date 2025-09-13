@@ -3,12 +3,12 @@ import { useEffect, useRef } from 'react'
 /**
  * Hook para ejecutar una función de actualización de forma automática cada cierto intervalo
  * @param refreshFunction - Función a ejecutar para actualizar los datos
- * @param intervalMs - Intervalo en milisegundos (por defecto 30 segundos)
+ * @param intervalMs - Intervalo en milisegundos (por defecto 15 segundos)
  * @param enabled - Si está habilitado el auto-refresh (por defecto true)
  */
 export const useAutoRefresh = (
   refreshFunction: () => void | Promise<void>,
-  intervalMs: number = 30000, // 30 segundos por defecto
+  intervalMs: number = 15000, // 15 segundos por defecto
   enabled: boolean = true
 ) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -79,11 +79,11 @@ export const useServiceOrdersAutoRefresh = (
 
 /**
  * Hook para auto-refresh de datos generales
- * Intervalo más largo para datos que cambian menos frecuentemente
+ * Intervalo de 15 segundos para mantener todos los datos actualizados
  */
 export const useGeneralAutoRefresh = (
   refreshFunction: () => void | Promise<void>,
   enabled: boolean = true
 ) => {
-  return useAutoRefresh(refreshFunction, 60000, enabled) // 60 segundos para datos generales
+  return useAutoRefresh(refreshFunction, 15000, enabled) // 15 segundos para datos generales
 }

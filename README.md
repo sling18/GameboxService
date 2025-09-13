@@ -223,9 +223,9 @@ src/
 El sistema de auto-refresh mantiene los datos actualizados automáticamente sin necesidad de recargar la página. Ideal para talleres donde múltiples usuarios trabajan simultáneamente.
 
 ### **Características:**
-- 🕐 **Intervalo inteligente**: 15 segundos para órdenes de servicio, 60 segundos para datos generales
-- 👀 **Indicadores visuales**: Muestra la última actualización y el estado de sincronización
-- ⚡ **Optimizado**: Solo funciona cuando está habilitado, no consume recursos innecesarios
+- 🕐 **Actualización cada 15 segundos**: Todos los datos se mantienen frescos
+- 👀 **Indicadores visuales**: Muestra la última actualización y el estado de sincronización  
+- ⚡ **Sin recargas de página**: Experiencia fluida y rápida
 - 🎯 **Selectivo**: Cada componente puede elegir si usar auto-refresh o no
 - 🛡️ **Robusto**: Maneja errores de red sin afectar la experiencia del usuario
 
@@ -240,10 +240,10 @@ El sistema de auto-refresh mantiene los datos actualizados automáticamente sin 
 // Hook general con auto-refresh personalizable
 const { data, loading, lastRefresh } = useServiceOrders(true)
 
-// Hooks específicos con intervalos optimizados
+// Hooks específicos - todos con 15 segundos
 useServiceOrdersAutoRefresh() // 15 segundos
-useGeneralAutoRefresh()       // 60 segundos
-useAutoRefresh(callback)      // Personalizable
+useGeneralAutoRefresh()       // 15 segundos
+useAutoRefresh(callback)      // Personalizable (por defecto 15 segundos)
 ```
 
 ## 🚀 **Despliegue en Producción**

@@ -30,7 +30,7 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth()
   // Deshabilitar auto-refresh para administradores, habilitarlo para otros roles
   const autoRefreshEnabled = user?.role !== 'admin'
-  const { serviceOrders, loading, lastRefresh, updateServiceOrder, deleteServiceOrder } = useServiceOrders(autoRefreshEnabled)
+  const { serviceOrders, loading, updateServiceOrder, deleteServiceOrder } = useServiceOrders(autoRefreshEnabled)
   const { navigate } = useRouter()
   const [editingOrder, setEditingOrder] = useState<ServiceOrder | null>(null)
   const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null)
@@ -112,9 +112,7 @@ const Dashboard: React.FC = () => {
                         <div className="mt-2">
                           {autoRefreshEnabled ? (
                             <AutoRefreshIndicator 
-                              lastRefresh={lastRefresh} 
-                              interval={15}
-                              size="sm"
+                              realtime={true}
                               className="opacity-75"
                             />
                           ) : (
@@ -292,9 +290,7 @@ const Dashboard: React.FC = () => {
                         <small className="opacity-75">Atención al cliente y gestión de órdenes</small>
                         <div className="mt-2">
                           <AutoRefreshIndicator 
-                            lastRefresh={lastRefresh} 
-                            interval={15}
-                            size="sm"
+                            realtime={true}
                             className="opacity-75"
                           />
                         </div>
@@ -409,9 +405,7 @@ const Dashboard: React.FC = () => {
                         <small className="opacity-75">Gestión técnica y reparaciones</small>
                         <div className="mt-2">
                           <AutoRefreshIndicator 
-                            lastRefresh={lastRefresh} 
-                            interval={15}
-                            size="sm"
+                            realtime={true}
                             className="opacity-75"
                           />
                         </div>

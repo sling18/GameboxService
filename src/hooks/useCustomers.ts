@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Customer, CreateCustomerData } from '../types'
-import { useGeneralAutoRefresh } from './useAutoRefresh'
+import { useCustomersRealtime } from './useRealtimeSubscription'
 import { useAuth } from '../contexts/AuthContext'
 
 export const useCustomers = (autoRefresh: boolean = false) => {
@@ -11,22 +11,22 @@ export const useCustomers = (autoRefresh: boolean = false) => {
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
   const { user } = useAuth()
 
-  // Auto-refresh handler - Solo si hay usuario autenticado
-  const { clearAutoRefresh } = useGeneralAutoRefresh(() => {
+  // Real-time subscription - Solo si hay usuario autenticado
+  const { disconnect } = useCustomersRealtime(() => {
     if (autoRefresh && user) {
       fetchCustomers()
     }
   })
 
-  // Cleanup auto-refresh when user logs out
+  // Cleanup real-time subscription when user logs out
   useEffect(() => {
     if (!user) {
-      clearAutoRefresh()
+      disconnect()
       setCustomers([]) // Clear data when user logs out
       setError(null)
       setLoading(false)
     }
-  }, [user, clearAutoRefresh])
+  }, [user, disconnect])
 
   const fetchCustomers = async () => {
     // No hacer fetch si no hay usuario autenticado

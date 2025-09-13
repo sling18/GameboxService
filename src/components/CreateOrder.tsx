@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useCustomers } from '../hooks/useCustomers'
 import { useServiceOrders } from '../hooks/useServiceOrders'
+import { useAuth } from '../contexts/AuthContext'
+import { useRouter } from '../contexts/RouterContext'
 import { Search, Plus, Save, User, UserPlus, Package, ClipboardList } from 'lucide-react'
 import { CustomModal } from './ui/CustomModal'
 import ComandaPreview from './ComandaPreview'
@@ -17,6 +19,37 @@ interface ModalState {
 }
 
 const CreateOrder: React.FC = () => {
+  const { user } = useAuth()
+  const { navigate } = useRouter()
+
+  // Redirigir técnicos al dashboard si llegan aquí por error
+  useEffect(() => {
+    if (user?.role === 'technician') {
+      console.log('⚠️ Técnico redirigido desde CreateOrder al dashboard')
+      navigate('dashboard')
+    }
+  }, [user, navigate])
+
+  // Si es un técnico, mostrar un mensaje mientras se redirige
+  if (user?.role === 'technician') {
+    return (
+      <div className="container-fluid px-3 px-md-4 py-3">
+        <div className="row">
+          <div className="col-12">
+            <div className="card border-0 shadow-sm">
+              <div className="card-body text-center py-5">
+                <ClipboardList size={60} className="text-warning mb-3" />
+                <h3 className="h5 fw-bold text-dark mb-3">Acceso No Permitido</h3>
+                <p className="text-muted mb-3">Los técnicos no pueden crear órdenes de servicio.</p>
+                <p className="text-muted">Redirigiendo al dashboard...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // Estados para el cliente
   const [cedula, setCedula] = useState('')
   const [customer, setCustomer] = useState<any>(null)

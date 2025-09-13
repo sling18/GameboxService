@@ -63,9 +63,7 @@ const UserDiagnostic: React.FC = () => {
       if (error) {
         showErrorModal(`Error: ${error.message}`)
       } else {
-        showSuccessModal('Rol actualizado a admin. Haz logout y login para ver los cambios.')
-        // Recargar la página para refrescar el contexto
-        setTimeout(() => window.location.reload(), 2000)
+        showSuccessModal('Rol actualizado a admin. Por favor haz logout y login para ver los cambios reflejados.')
       }
     } catch (error: any) {
       showErrorModal(`Error: ${error.message}`)
@@ -92,8 +90,7 @@ const UserDiagnostic: React.FC = () => {
       if (error) {
         showErrorModal(`Error: ${error.message}`)
       } else {
-        showSuccessModal('Perfil de admin creado. Haz logout y login para ver los cambios.')
-        setTimeout(() => window.location.reload(), 2000)
+        showSuccessModal('Perfil de admin creado. Por favor haz logout y login para ver los cambios reflejados.')
       }
     } catch (error: any) {
       showErrorModal(`Error: ${error.message}`)
