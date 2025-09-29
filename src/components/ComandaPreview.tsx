@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { FileText, Printer, Download, X, Tag } from 'lucide-react'
 import type { ServiceOrder, Customer } from '../types'
+import logoGamebox from '../assets/logo-gamebox.png'
 
 interface ComandaPreviewProps {
   order: ServiceOrder
@@ -10,6 +11,27 @@ interface ComandaPreviewProps {
 
 const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClose }) => {
   const [viewType, setViewType] = useState<'comanda' | 'sticker'>('comanda')
+  const [logoBase64, setLogoBase64] = useState<string>('')
+
+  // Convertir imagen a base64 para impresión
+  React.useEffect(() => {
+    const convertImageToBase64 = async () => {
+      try {
+        const response = await fetch(logoGamebox)
+        const blob = await response.blob()
+        const reader = new FileReader()
+        reader.onload = () => {
+          if (typeof reader.result === 'string') {
+            setLogoBase64(reader.result)
+          }
+        }
+        reader.readAsDataURL(blob)
+      } catch (error) {
+        console.error('Error al cargar la imagen:', error)
+      }
+    }
+    convertImageToBase64()
+  }, [])
   
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('es-ES', {
@@ -72,7 +94,23 @@ CONSERVE ESTE COMPROBANTE
   const generateStickerContent = () => {
     const content = `
 ┌─────────────────────────────────────┐
-│           GAMEBOXSERVICE            │
+│                                     │
+│    ░██████╗  ░█████╗  ███╗   ███╗   │
+│    ██╔════╝  ██╔══██╗ ████╗ ████║   │
+│    ██║  ███╗ ███████║ ██╔████╔██║   │
+│    ██║   ██║ ██╔══██║ ██║╚██╔╝██║   │
+│    ╚██████╔╝ ██║  ██║ ██║ ╚═╝ ██║   │
+│     ╚═════╝  ╚═╝  ╚═╝ ╚═╝     ╚═╝   │
+│                                     │
+│    ███████╗ ██████╗   ██████╗ ██╗  ██╗│
+│    ██╔════╝ ██╔══██╗ ██╔═══██╗╚██╗██╔╝│
+│    █████╗   ██████╔╝ ██║   ██║ ╚███╔╝ │
+│    ██╔══╝   ██╔══██╗ ██║   ██║ ██╔██╗ │
+│    ███████╗ ██████╔╝ ╚██████╔╝██╔╝ ██╗│
+│    ╚══════╝ ╚═════╝   ╚═════╝ ╚═╝  ╚═╝│
+│                                     │
+│  🎮 SERVICIO TÉCNICO DE CONSOLAS 🎮 │
+│                                     │
 │  ORDEN #: ${order.order_number.padEnd(25)} │
 │  CLIENTE: ${customer.full_name.slice(0,22).padEnd(22)}    │
 │  TELEFONO: ${(customer.phone || 'N/A').slice(0,21).padEnd(21)}    │
@@ -84,41 +122,105 @@ CONSERVE ESTE COMPROBANTE
   }
 
   const handlePrint = () => {
-    const content = viewType === 'comanda' ? generateComandaContent() : generateStickerContent()
     const title = viewType === 'comanda' ? 'Comanda' : 'Sticker'
     const printWindow = window.open('', '_blank', 'width=600,height=800')
     
     if (printWindow) {
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>${title} - Orden #${order.order_number}</title>
-            <meta charset="utf-8">
-            <style>
-              body { 
-                font-family: 'Courier New', monospace; 
-                font-size: ${viewType === 'sticker' ? '10px' : '12px'}; 
-                margin: 0; 
-                padding: 10mm;
-                white-space: pre-wrap;
-                line-height: 1.2;
-              }
-              @media print {
+      if (viewType === 'sticker') {
+        // Template HTML para sticker con imagen
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>${title} - Orden #${order.order_number}</title>
+              <meta charset="utf-8">
+              <style>
                 body { 
+                  font-family: 'Courier New', monospace; 
+                  font-size: 10px; 
                   margin: 0; 
-                  padding: ${viewType === 'sticker' ? '2mm' : '5mm'};
+                  padding: 10mm;
+                  text-align: center;
                 }
-                @page {
-                  margin: ${viewType === 'sticker' ? '2mm' : '5mm'};
-                  size: ${viewType === 'sticker' ? 'auto' : 'auto'};
+                .sticker-container {
+                  border: 2px solid #000;
+                  padding: 10px;
+                  width: 300px;
+                  margin: 0 auto;
                 }
-              }
-            </style>
-          </head>
-          <body>${content}</body>
-        </html>
-      `)
+                .logo {
+                  width: 200px;
+                  margin-bottom: 10px;
+                }
+                .info {
+                  text-align: left;
+                  font-size: 9px;
+                  line-height: 1.2;
+                }
+                @media print {
+                  body { 
+                    margin: 0; 
+                    padding: 2mm;
+                  }
+                  @page {
+                    margin: 2mm;
+                    size: auto;
+                  }
+                }
+              </style>
+            </head>
+            <body>
+              <div class="sticker-container">
+                <img src="${logoBase64}" alt="GameBox Logo" class="logo">
+                
+                <div style="margin-bottom: 5px; font-weight: bold;">🎮 SERVICIO TÉCNICO DE CONSOLAS 🎮</div>
+                
+                <div class="info">
+                  <div>ORDEN #: ${order.order_number}</div>
+                  <div>CLIENTE: ${customer.full_name}</div>
+                  <div>TELEFONO: ${customer.phone || 'N/A'}</div>
+                  <div>DISPOSITIVO: ${order.device_type} ${order.device_brand}</div>
+                  <div>SERIE: ${order.serial_number || 'N/A'}</div>
+                </div>
+              </div>
+            </body>
+          </html>
+        `)
+      } else {
+        // Template normal para comanda
+        const content = generateComandaContent()
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>${title} - Orden #${order.order_number}</title>
+              <meta charset="utf-8">
+              <style>
+                body { 
+                  font-family: 'Courier New', monospace; 
+                  font-size: 12px; 
+                  margin: 0; 
+                  padding: 10mm;
+                  white-space: pre-wrap;
+                  line-height: 1.2;
+                }
+                @media print {
+                  body { 
+                    margin: 0; 
+                    padding: 5mm;
+                  }
+                  @page {
+                    margin: 5mm;
+                    size: auto;
+                  }
+                }
+              </style>
+            </head>
+            <body>${content}</body>
+          </html>
+        `)
+      }
+      
       printWindow.document.close()
       
       // Auto-print after a short delay
@@ -193,8 +295,6 @@ CONSERVE ESTE COMPROBANTE
     }
   }
 
-  const content = viewType === 'comanda' ? generateComandaContent() : generateStickerContent()
-
   return (
     <>
       {/* Modal Backdrop */}
@@ -237,15 +337,36 @@ CONSERVE ESTE COMPROBANTE
               </div>
 
               {/* Preview Area */}
-              <div className="bg-light p-3 rounded mb-3" style={{ 
-                fontFamily: 'monospace', 
-                fontSize: viewType === 'sticker' ? '10px' : '12px', 
-                whiteSpace: 'pre-wrap', 
-                maxHeight: '400px', 
-                overflowY: 'auto' 
-              }}>
-                {content}
-              </div>
+              {viewType === 'sticker' ? (
+                // Vista previa con imagen para sticker
+                <div className="bg-light p-3 rounded mb-3 text-center" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  <div className="border rounded p-3 d-inline-block bg-white" style={{ fontFamily: 'monospace', fontSize: '10px' }}>
+                    {/* Logo como imagen en vista previa */}
+                    <img src={logoGamebox} alt="GameBox Logo" style={{ width: '200px', marginBottom: '10px' }} />
+                    
+                    <div style={{ marginBottom: '5px', fontWeight: 'bold' }}>🎮 SERVICIO TÉCNICO DE CONSOLAS 🎮</div>
+                    
+                    <div className="mt-2" style={{ textAlign: 'left' }}>
+                      <div>ORDEN #: {order.order_number}</div>
+                      <div>CLIENTE: {customer.full_name}</div>
+                      <div>TELEFONO: {customer.phone || 'N/A'}</div>
+                      <div>DISPOSITIVO: {order.device_type} {order.device_brand}</div>
+                      <div>SERIE: {order.serial_number || 'N/A'}</div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                // Vista previa normal para comanda
+                <div className="bg-light p-3 rounded mb-3" style={{ 
+                  fontFamily: 'monospace', 
+                  fontSize: '12px', 
+                  whiteSpace: 'pre-wrap', 
+                  maxHeight: '400px', 
+                  overflowY: 'auto' 
+                }}>
+                  {generateComandaContent()}
+                </div>
+              )}
               
               {/* Action Buttons */}
               <div className="d-flex gap-2 justify-content-center">
