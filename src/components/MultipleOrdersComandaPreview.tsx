@@ -85,32 +85,24 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
 
 FECHA: ${formatDate(firstOrder.created_at)}
 CANTIDAD DE DISPOSITIVOS: ${orders.length}
-
 ------------------------------------------
-CLIENTE:
-------------------------------------------
-${customer.full_name || 'N/A'}
+CLIENTE: ${customer.full_name || 'N/A'}
 CEDULA: ${customer.cedula || 'N/A'}
 ${customer.phone ? `TEL: ${customer.phone}` : ''}
-
 ------------------------------------------
 DISPOSITIVOS INGRESADOS:
 ------------------------------------------
 ${orders.map((order, index) => `
 ${index + 1}. ORDEN #: ${order.order_number}
-   ${order.device_type} - ${order.device_brand}
+   DISPOSITIVO: ${order.device_type} - ${order.device_brand}
    MODELO: ${order.device_model || 'N/A'}
-   ${order.serial_number ? `SERIE: ${order.serial_number}` : 'SERIE: N/A'}
-   
-   PROBLEMA:
-   ${order.problem_description}
-   
-   ${order.observations ? `OBSERVACIONES: ${order.observations}` : ''}
+   ${order.serial_number ? `SERIE: ${order.serial_number}` : 'SERIE: N/A'}   
+   PROBLEMA: ${order.problem_description}
+   ${order.observations ? `OBSERVACIONES: ${order.observations}` : ''}   
    ESTADO: ${getStatusDisplayName(order.status)}
    ${order.completed_by ? `FINALIZADO POR: ${order.completed_by.full_name}` : ''}
    ${'─'.repeat(38)}
 `).join('')}
-
 ==========================================
 TOTAL DE ÓRDENES CREADAS: ${orders.length}
 CONSERVE ESTE COMPROBANTE
@@ -124,31 +116,14 @@ CONSERVE ESTE COMPROBANTE
       return 'Error: Información del cliente no disponible'
     }
     
-    return orders.map((order, index) => `
+    return orders.map((order) => `
 ┌─────────────────────────────────────┐
 │           GAMEBOXSERVICE            │
-│             DISPOSITIVO ${(index + 1).toString().padStart(2, '0')}           │
-│                                     │
 │  ORDEN #: ${(order.order_number || 'N/A').padEnd(25)} │
-│                                     │
-│  CLIENTE:                           │
-│  ${(customer.full_name || 'N/A').slice(0,30).padEnd(30)} │
-│                                     │
-│  TELEFONO:                          │
-│  ${(customer.phone || 'N/A').padEnd(30)} │
-│                                     │
-│  DISPOSITIVO:                       │
-│  ${(order.device_type + ' ' + order.device_brand).slice(0,30).padEnd(30)} │
-│                                     │
-│  MODELO:                            │
-│  ${(order.device_model || 'N/A').slice(0,30).padEnd(30)} │
-│                                     │
-│  ${order.serial_number ? `SERIE: ${order.serial_number.slice(0,24).padEnd(24)}` : 'SERIE: N/A'.padEnd(31)} │
-│                                     │
-│  PROBLEMA:                          │
-│  ${order.problem_description.slice(0,30).padEnd(30)} │
-│  ${order.problem_description.slice(30,60).padEnd(30)} │
-│                                     │
+│  CLIENTE: ${(customer.full_name || 'N/A').slice(0,22).padEnd(22)}    │
+│  TELEFONO: ${(customer.phone || 'N/A').slice(0,21).padEnd(21)}    │
+│  DISPOSITIVO: ${(order.device_type + ' ' + order.device_brand).slice(0,18).padEnd(18)}    │
+│  ${order.serial_number ? `SERIE: ${order.serial_number.slice(0,26).padEnd(26)}` : 'SERIE: N/A'.padEnd(33)}  │
 └─────────────────────────────────────┘
 
 ${'═'.repeat(39)}

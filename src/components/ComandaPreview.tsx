@@ -50,16 +50,18 @@ CLIENTE: ${customer.full_name}
 CEDULA: ${customer.cedula}
 ${customer.phone ? `TEL: ${customer.phone}` : ''}
 ------------------------------------------
+DISPOSITIVO INGRESADO:
+------------------------------------------
 DISPOSITIVO: ${order.device_type} - ${order.device_brand}
 MODELO: ${order.device_model} 
-${order.serial_number ? `SERIE: ${order.serial_number}` : ''}
-------------------------------------------
+${order.serial_number ? `SERIE: ${order.serial_number}` : 'SERIE: N/A'}
+
 PROBLEMA: ${order.problem_description}
-${order.observations ? `------------------------------------------
-OBSERVACIONES: ${order.observations}` : ''}
-------------------------------------------
+${order.observations ? `OBSERVACIONES: ${order.observations}` : ''}
+
 ESTADO: ${getStatusDisplayName(order.status)}
 ${order.completed_by ? `FINALIZADO POR: ${order.completed_by.full_name}` : ''}
+------------------------------------------
 ==========================================
 CONSERVE ESTE COMPROBANTE
 ==========================================
