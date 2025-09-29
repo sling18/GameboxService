@@ -65,32 +65,63 @@ const ServiceQueue: React.FC = () => {
   // Función para obtener detalles completos de la orden para la comanda
   const getOrderForComanda = async (orderId: string) => {
     try {
+      console.log('🔍 Consultando orden para comanda:', orderId)
+      
       const { data: order, error } = await supabase
         .from('service_orders')
         .select(`
           *,
           customer:customers(*),
-          admin:admin_id(full_name),
-          receptionist:receptionist_id(full_name),
-          technician:technician_id(full_name)
+          assigned_technician:profiles!service_orders_assigned_technician_id_fkey(*),
+          completed_by:profiles!service_orders_completed_by_id_fkey(*),
+          received_by:profiles!service_orders_received_by_id_fkey(*)
         `)
         .eq('id', orderId)
         .single()
       
-      if (error) throw error
+      if (error) {
+        console.error('❌ Error en consulta de comanda:', error)
+        throw error
+      }
+      
+      if (!order.customer) {
+        console.error('❌ Customer no encontrado en la orden:', orderId)
+        throw new Error('No se encontró información del cliente')
+      }
+      
+      console.log('✅ Orden completa obtenida para comanda:', order)
       return order
     } catch (error) {
-      console.error('Error fetching order for comanda:', error)
+      console.error('❌ Error general obteniendo orden para comanda:', error)
       return null
     }
   }
 
   const handlePrintComanda = async (orderId: string) => {
-    const order = await getOrderForComanda(orderId)
-    if (order) {
-      setShowComandaFor({ order, customer: order.customer })
-    } else {
-      showErrorModal('No se pudo cargar la información de la orden para la comanda')
+    console.log('📋 Iniciando impresión de comanda para orden:', orderId)
+    
+    try {
+      const order = await getOrderForComanda(orderId)
+      if (order && order.customer) {
+        console.log('✅ Abriendo comanda con datos completos')
+        setShowComandaFor({ order, customer: order.customer })
+      } else {
+        console.error('❌ No se pudieron obtener datos completos de la orden')
+        setModal({
+          isOpen: true,
+          type: 'error',
+          title: 'Error al Cargar Comanda',
+          message: 'No se pudo cargar la información de la orden para la comanda. Verifique que la orden tenga datos de cliente asociados.'
+        })
+      }
+    } catch (error) {
+      console.error('❌ Error en handlePrintComanda:', error)
+      setModal({
+        isOpen: true,
+        type: 'error',
+        title: 'Error al Cargar Comanda',
+        message: 'Ocurrió un problema técnico al cargar la información de la orden. Por favor, intente nuevamente.'
+      })
     }
   }
 

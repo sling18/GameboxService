@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useServiceOrders } from '../hooks/useServiceOrders'
 import { useRouter } from '../contexts/RouterContext'
+import { supabase } from '../lib/supabase'
 import UserManagement from './UserManagement'
 import PrinterSettings from './PrinterSettings'
 import AutoRefreshIndicator from './AutoRefreshIndicator'
 import DeliverySection from './DeliverySection'
 import EditOrderModal from './EditOrderModal'
+import ComandaPreview from './ComandaPreview'
 import { 
   ClipboardList, 
   Clock, 
@@ -22,7 +24,8 @@ import {
   Activity,
   Star,
   Edit,
-  Trash2
+  Trash2,
+  FileText
 } from 'lucide-react'
 import type { ServiceOrder } from '../types'
 
@@ -34,6 +37,10 @@ const Dashboard: React.FC = () => {
   const { navigate } = useRouter()
   const [editingOrder, setEditingOrder] = useState<ServiceOrder | null>(null)
   const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null)
+  const [showComanda, setShowComanda] = useState(false)
+  const [selectedOrder, setSelectedOrder] = useState<ServiceOrder | null>(null)
+  const [showErrorModal, setShowErrorModal] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const getStats = () => {
     const pending = serviceOrders.filter(order => order.status === 'pending').length
@@ -81,6 +88,50 @@ const Dashboard: React.FC = () => {
         setDeletingOrderId(null)
       }
     }
+  }
+
+  const handleShowComanda = async (order: ServiceOrder) => {
+    console.log('📋 Intentando mostrar comanda para orden:', order.id)
+    console.log('📋 Datos de customer en order:', order.customer)
+    
+    try {
+      // Hacer consulta directa para asegurar datos del customer
+      const { data: orderWithCustomer, error } = await supabase
+        .from('service_orders')
+        .select(`
+          *,
+          customer:customers(*)
+        `)
+        .eq('id', order.id)
+        .single()
+
+      if (error) {
+        console.error('❌ Error consultando orden con customer:', error)
+        setErrorMessage('Error: No se pudo cargar la información de la orden desde la base de datos.')
+        setShowErrorModal(true)
+        return
+      }
+
+      if (!orderWithCustomer.customer) {
+        console.error('❌ Customer no encontrado para la orden:', order.id)
+        setErrorMessage('Error: No se pudo encontrar la información del cliente para esta orden.')
+        setShowErrorModal(true)
+        return
+      }
+
+      console.log('✅ Datos completos cargados:', orderWithCustomer)
+      setSelectedOrder(orderWithCustomer as ServiceOrder)
+      setShowComanda(true)
+    } catch (err) {
+      console.error('❌ Error general:', err)
+      setErrorMessage('Error: Problema técnico al cargar la información de la orden.')
+      setShowErrorModal(true)
+    }
+  }
+
+  const handleCloseComanda = () => {
+    setShowComanda(false)
+    setSelectedOrder(null)
   }
 
   const getWelcomeMessage = () => {
@@ -656,6 +707,14 @@ const Dashboard: React.FC = () => {
                                   </button>
                                   <button
                                     type="button"
+                                    className="btn btn-outline-info"
+                                    onClick={() => handleShowComanda(order)}
+                                    title="Ver comanda para imprimir"
+                                  >
+                                    <FileText size={14} />
+                                  </button>
+                                  <button
+                                    type="button"
                                     className="btn btn-outline-danger"
                                     onClick={() => handleDeleteOrder(order.id)}
                                     disabled={deletingOrderId === order.id}
@@ -691,6 +750,51 @@ const Dashboard: React.FC = () => {
           onClose={() => setEditingOrder(null)}
           onSave={handleSaveOrder}
         />
+      )}
+
+      {/* Comanda de Impresión */}
+      {showComanda && selectedOrder && selectedOrder.customer && (
+        <div className="row mt-4">
+          <div className="col-12">
+            <ComandaPreview
+              order={selectedOrder}
+              customer={selectedOrder.customer}
+              onClose={handleCloseComanda}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Error */}
+      {showErrorModal && (
+        <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header bg-danger text-white">
+                <h5 className="modal-title">
+                  <i className="bi bi-exclamation-triangle me-2"></i>
+                  Error al Cargar Comanda
+                </h5>
+              </div>
+              <div className="modal-body">
+                <p className="mb-0">{errorMessage}</p>
+                <p className="text-muted mt-2 mb-0">
+                  Por favor, intente nuevamente o contacte al administrador del sistema.
+                </p>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary"
+                  onClick={() => setShowErrorModal(false)}
+                >
+                  <i className="bi bi-check-lg me-2"></i>
+                  Aceptar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
