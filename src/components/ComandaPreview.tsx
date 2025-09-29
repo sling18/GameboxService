@@ -58,76 +58,13 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
     }
   }
 
-  const generateComandaContent = () => {
-    const content = `
-==========================================
-           GAMEBOXSERVICE
-           COMANDA DE SERVICIO
-==========================================
-
-ORDEN #: ${order.order_number}
-FECHA: ${formatDate(order.created_at)}
-------------------------------------------
-CLIENTE: ${customer.full_name}
-CEDULA: ${customer.cedula}
-${customer.phone ? `TEL: ${customer.phone}` : ''}
-------------------------------------------
-DISPOSITIVO INGRESADO:
-------------------------------------------
-DISPOSITIVO: ${order.device_type} - ${order.device_brand}
-MODELO: ${order.device_model} 
-${order.serial_number ? `SERIE: ${order.serial_number}` : 'SERIE: N/A'}
-
-PROBLEMA: ${order.problem_description}
-${order.observations ? `OBSERVACIONES: ${order.observations}` : ''}
-
-ESTADO: ${getStatusDisplayName(order.status)}
-${order.completed_by ? `FINALIZADO POR: ${order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}` : ''}
-------------------------------------------
-==========================================
-CONSERVE ESTE COMPROBANTE
-==========================================
-    `
-    return content.trim()
-  }
-
-  const generateStickerContent = () => {
-    const content = `
-┌─────────────────────────────────────┐
-│                                     │
-│    ░██████╗  ░█████╗  ███╗   ███╗   │
-│    ██╔════╝  ██╔══██╗ ████╗ ████║   │
-│    ██║  ███╗ ███████║ ██╔████╔██║   │
-│    ██║   ██║ ██╔══██║ ██║╚██╔╝██║   │
-│    ╚██████╔╝ ██║  ██║ ██║ ╚═╝ ██║   │
-│     ╚═════╝  ╚═╝  ╚═╝ ╚═╝     ╚═╝   │
-│                                     │
-│    ███████╗ ██████╗   ██████╗ ██╗  ██╗│
-│    ██╔════╝ ██╔══██╗ ██╔═══██╗╚██╗██╔╝│
-│    █████╗   ██████╔╝ ██║   ██║ ╚███╔╝ │
-│    ██╔══╝   ██╔══██╗ ██║   ██║ ██╔██╗ │
-│    ███████╗ ██████╔╝ ╚██████╔╝██╔╝ ██╗│
-│    ╚══════╝ ╚═════╝   ╚═════╝ ╚═╝  ╚═╝│
-│                                     │
-│  🎮 SERVICIO TÉCNICO DE CONSOLAS 🎮 │
-│                                     │
-│  ORDEN #: ${order.order_number.padEnd(25)} │
-│  CLIENTE: ${customer.full_name.slice(0,22).padEnd(22)}    │
-│  TELEFONO: ${(customer.phone || 'N/A').slice(0,21).padEnd(21)}    │
-│  DISPOSITIVO: ${(order.device_type + ' ' + order.device_brand).slice(0,18).padEnd(18)}    │
-│  ${order.serial_number ? `SERIE: ${order.serial_number.slice(0,26).padEnd(26)}` : 'SERIE: N/A'.padEnd(33)}  │
-└─────────────────────────────────────┘
-    `
-    return content.trim()
-  }
-
   const handlePrint = () => {
     const title = viewType === 'comanda' ? 'Comanda' : 'Sticker'
     const printWindow = window.open('', '_blank', 'width=600,height=800')
     
     if (printWindow) {
       if (viewType === 'sticker') {
-        // Template HTML para sticker con imagen
+        // Template HTML para sticker optimizado 7cm x 5cm
         printWindow.document.write(`
           <!DOCTYPE html>
           <html>
@@ -135,36 +72,63 @@ CONSERVE ESTE COMPROBANTE
               <title>${title} - Orden #${order.order_number}</title>
               <meta charset="utf-8">
               <style>
+                * {
+                  margin: 0;
+                  padding: 0;
+                  box-sizing: border-box;
+                }
                 body { 
-                  font-family: 'Courier New', monospace; 
-                  font-size: 10px; 
-                  margin: 0; 
-                  padding: 10mm;
-                  text-align: center;
+                  font-family: 'Arial', sans-serif; 
+                  margin: 0;
+                  padding: 0;
+                  background: white;
                 }
                 .sticker-container {
+                  width: 7cm;
+                  height: 5cm;
                   border: 2px solid #000;
-                  padding: 10px;
-                  width: 300px;
-                  margin: 0 auto;
+                  padding: 3mm;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: space-between;
+                  box-sizing: border-box;
+                  position: relative;
                 }
                 .logo {
-                  width: 200px;
-                  margin-bottom: 10px;
+                  width: 100%;
+                  max-width: 4.5cm;
+                  height: auto;
+                  margin: 0 auto 3mm auto;
+                  display: block;
                 }
                 .info {
-                  text-align: left;
-                  font-size: 9px;
-                  line-height: 1.2;
+                  flex-grow: 1;
+                  font-size: 8px;
+                  line-height: 1.3;
+                  color: #000;
+                }
+                .info-line {
+                  margin-bottom: 1mm;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                }
+                .info-line strong {
+                  font-weight: bold;
+                  color: #000;
                 }
                 @media print {
                   body { 
-                    margin: 0; 
-                    padding: 2mm;
+                    margin: 0;
+                    padding: 0;
                   }
                   @page {
-                    margin: 2mm;
-                    size: auto;
+                    margin: 0;
+                    size: 7cm 5cm;
+                  }
+                  .sticker-container {
+                    width: 7cm;
+                    height: 5cm;
                   }
                 }
               </style>
@@ -172,23 +136,19 @@ CONSERVE ESTE COMPROBANTE
             <body>
               <div class="sticker-container">
                 <img src="${logoBase64}" alt="GameBox Logo" class="logo">
-                
-                <div style="margin-bottom: 5px; font-weight: bold;">🎮 SERVICIO TÉCNICO DE CONSOLAS 🎮</div>
-                
                 <div class="info">
-                  <div>ORDEN #: ${order.order_number}</div>
-                  <div>CLIENTE: ${customer.full_name}</div>
-                  <div>TELEFONO: ${customer.phone || 'N/A'}</div>
-                  <div>DISPOSITIVO: ${order.device_type} ${order.device_brand}</div>
-                  <div>SERIE: ${order.serial_number || 'N/A'}</div>
+                  <div class="info-line"><strong>ORDEN:</strong> ${order.order_number}</div>
+                  <div class="info-line"><strong>CLIENTE:</strong> ${customer.full_name.slice(0, 25)}</div>
+                  <div class="info-line"><strong>TEL:</strong> ${(customer.phone || 'N/A').slice(0, 15)}</div>
+                  <div class="info-line"><strong>DISPOSITIVO:</strong> ${(order.device_type + ' ' + order.device_brand).slice(0, 22)}</div>
+                  <div class="info-line"><strong>SERIE:</strong> ${(order.serial_number || 'N/A').slice(0, 20)}</div>
                 </div>
               </div>
             </body>
           </html>
         `)
       } else {
-        // Template normal para comanda
-        const content = generateComandaContent()
+        // Template para comanda en tirilla (80mm)
         printWindow.document.write(`
           <!DOCTYPE html>
           <html>
@@ -196,27 +156,110 @@ CONSERVE ESTE COMPROBANTE
               <title>${title} - Orden #${order.order_number}</title>
               <meta charset="utf-8">
               <style>
+                * {
+                  margin: 0;
+                  padding: 0;
+                  box-sizing: border-box;
+                }
                 body { 
                   font-family: 'Courier New', monospace; 
-                  font-size: 12px; 
-                  margin: 0; 
-                  padding: 10mm;
-                  white-space: pre-wrap;
-                  line-height: 1.2;
+                  font-size: 10px; 
+                  width: 80mm;
+                  margin: 0;
+                  padding: 2mm;
+                  line-height: 1.3;
+                  background: white;
+                }
+                .header {
+                  text-align: center;
+                  margin-bottom: 3mm;
+                  border-bottom: 1px dashed #000;
+                  padding-bottom: 3mm;
+                }
+                .logo {
+                  width: 60mm;
+                  height: auto;
+                  margin-bottom: 2mm;
+                }
+                .title {
+                  font-weight: bold;
+                  font-size: 11px;
+                  margin-bottom: 2mm;
+                }
+                .content {
+                  font-size: 9px;
+                  line-height: 1.4;
+                }
+                .section {
+                  margin-bottom: 3mm;
+                  border-bottom: 1px dashed #ccc;
+                  padding-bottom: 2mm;
+                }
+                .label {
+                  font-weight: bold;
+                }
+                .footer {
+                  text-align: center;
+                  margin-top: 5mm;
+                  font-size: 8px;
+                  border-top: 1px dashed #000;
+                  padding-top: 3mm;
                 }
                 @media print {
                   body { 
-                    margin: 0; 
-                    padding: 5mm;
+                    width: 80mm;
+                    margin: 0;
+                    padding: 2mm;
                   }
                   @page {
-                    margin: 5mm;
-                    size: auto;
+                    margin: 0;
+                    size: 80mm auto;
                   }
                 }
               </style>
             </head>
-            <body>${content}</body>
+            <body>
+              <div class="header">
+                <img src="${logoBase64}" alt="GameBox Logo" class="logo">
+                <div class="title">COMANDA DE SERVICIO</div>
+              </div>
+              
+              <div class="content">
+                <div class="section">
+                  <div><span class="label">ORDEN:</span> ${order.order_number}</div>
+                  <div><span class="label">FECHA:</span> ${formatDate(order.created_at)}</div>
+                </div>
+                
+                <div class="section">
+                  <div><span class="label">CLIENTE:</span> ${customer.full_name}</div>
+                  <div><span class="label">CEDULA:</span> ${customer.cedula}</div>
+                  ${customer.phone ? `<div><span class="label">TEL:</span> ${customer.phone}</div>` : ''}
+                </div>
+                
+                <div class="section">
+                  <div class="label">DISPOSITIVO INGRESADO:</div>
+                  <div><span class="label">TIPO:</span> ${order.device_type}</div>
+                  <div><span class="label">MARCA:</span> ${order.device_brand}</div>
+                  <div><span class="label">MODELO:</span> ${order.device_model}</div>
+                  <div><span class="label">SERIE:</span> ${order.serial_number || 'N/A'}</div>
+                </div>
+                
+                <div class="section">
+                  <div class="label">PROBLEMA:</div>
+                  <div>${order.problem_description}</div>
+                  ${order.observations ? `<div class="label">OBSERVACIONES:</div><div>${order.observations}</div>` : ''}
+                </div>
+                
+                <div class="section">
+                  <div><span class="label">ESTADO:</span> ${getStatusDisplayName(order.status)}</div>
+                  ${order.completed_by ? `<div><span class="label">FINALIZADO POR:</span> ${order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}</div>` : ''}
+                </div>
+              </div>
+              
+              <div class="footer">
+                <div class="label">CONSERVE ESTE COMPROBANTE</div>
+              </div>
+            </body>
           </html>
         `)
       }
@@ -232,60 +275,249 @@ CONSERVE ESTE COMPROBANTE
   }
 
   const handleDownloadPDF = () => {
-    const content = viewType === 'comanda' ? generateComandaContent() : generateStickerContent()
     const title = viewType === 'comanda' ? 'Comanda' : 'Sticker'
     const printWindow = window.open('', '_blank', 'width=600,height=800')
     
     if (printWindow) {
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>${title} - Orden #${order.order_number}</title>
-            <meta charset="utf-8">
-            <style>
-              body { 
-                font-family: 'Courier New', monospace; 
-                font-size: ${viewType === 'sticker' ? '10px' : '12px'}; 
-                margin: 0; 
-                padding: 10mm;
-                white-space: pre-wrap;
-                line-height: 1.2;
-              }
-              .instructions {
-                background: #e3f2fd;
-                padding: 15px;
-                margin-bottom: 20px;
-                border-radius: 5px;
-                font-family: Arial, sans-serif;
-                font-size: 14px;
-              }
-              @media print {
-                .instructions {
-                  display: none;
+      if (viewType === 'sticker') {
+        // Template optimizado para sticker 7cm x 5cm
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>${title} - Orden #${order.order_number}</title>
+              <meta charset="utf-8">
+              <style>
+                * {
+                  margin: 0;
+                  padding: 0;
+                  box-sizing: border-box;
                 }
                 body { 
-                  margin: 0; 
-                  padding: ${viewType === 'sticker' ? '2mm' : '5mm'};
+                  font-family: 'Arial', sans-serif; 
+                  margin: 0;
+                  padding: 0;
+                  background: white;
                 }
-                @page {
-                  margin: ${viewType === 'sticker' ? '2mm' : '5mm'};
-                  size: auto;
+                .instructions {
+                  background: #e3f2fd;
+                  padding: 15px;
+                  margin-bottom: 20px;
+                  border-radius: 5px;
+                  font-family: Arial, sans-serif;
+                  font-size: 14px;
                 }
-              }
-            </style>
-          </head>
-          <body>
-            <div class="instructions">
-              <strong>📄 Para guardar como PDF:</strong><br>
-              1. Presiona <strong>Ctrl+P</strong> (o Cmd+P en Mac)<br>
-              2. En "Destino" selecciona <strong>"Guardar como PDF"</strong><br>
-              3. Haz clic en <strong>"Guardar"</strong>
-            </div>
-            ${content}
-          </body>
-        </html>
-      `)
+                .sticker-container {
+                  width: 7cm;
+                  height: 5cm;
+                  border: 2px solid #000;
+                  padding: 3mm;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: space-between;
+                  box-sizing: border-box;
+                  margin: 0 auto;
+                }
+                .logo {
+                  width: 100%;
+                  max-width: 4.5cm;
+                  height: auto;
+                  margin: 0 auto 3mm auto;
+                  display: block;
+                }
+                .info {
+                  flex-grow: 1;
+                  font-size: 8px;
+                  line-height: 1.3;
+                  color: #000;
+                }
+                .info-line {
+                  margin-bottom: 1mm;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                }
+                .info-line strong {
+                  font-weight: bold;
+                  color: #000;
+                }
+                @media print {
+                  .instructions {
+                    display: none;
+                  }
+                  body { 
+                    margin: 0;
+                    padding: 0;
+                  }
+                  @page {
+                    margin: 0;
+                    size: 7cm 5cm;
+                  }
+                  .sticker-container {
+                    width: 7cm;
+                    height: 5cm;
+                  }
+                }
+              </style>
+            </head>
+            <body>
+              <div class="instructions">
+                <strong>📄 Para guardar como PDF:</strong><br>
+                1. Presiona <strong>Ctrl+P</strong> (o Cmd+P en Mac)<br>
+                2. En "Destino" selecciona <strong>"Guardar como PDF"</strong><br>
+                3. Haz clic en <strong>"Guardar"</strong><br>
+                <strong>📏 Tamaño de impresión:</strong> 7cm × 5cm
+              </div>
+              <div class="sticker-container">
+                <img src="${logoBase64}" alt="GameBox Logo" class="logo">
+                <div class="info">
+                  <div class="info-line"><strong>ORDEN:</strong> ${order.order_number}</div>
+                  <div class="info-line"><strong>CLIENTE:</strong> ${customer.full_name.slice(0, 25)}</div>
+                  <div class="info-line"><strong>TEL:</strong> ${(customer.phone || 'N/A').slice(0, 15)}</div>
+                  <div class="info-line"><strong>DISPOSITIVO:</strong> ${(order.device_type + ' ' + order.device_brand).slice(0, 22)}</div>
+                  <div class="info-line"><strong>SERIE:</strong> ${(order.serial_number || 'N/A').slice(0, 20)}</div>
+                </div>
+              </div>
+            </body>
+          </html>
+        `)
+      } else {
+        // Template para comanda en tirilla (80mm) - PDF
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>${title} - Orden #${order.order_number}</title>
+              <meta charset="utf-8">
+              <style>
+                * {
+                  margin: 0;
+                  padding: 0;
+                  box-sizing: border-box;
+                }
+                body { 
+                  font-family: 'Courier New', monospace; 
+                  font-size: 10px; 
+                  width: 80mm;
+                  margin: 0;
+                  padding: 2mm;
+                  line-height: 1.3;
+                  background: white;
+                }
+                .instructions {
+                  background: #e3f2fd;
+                  padding: 10px;
+                  margin-bottom: 15px;
+                  border-radius: 5px;
+                  font-family: Arial, sans-serif;
+                  font-size: 12px;
+                  width: auto;
+                }
+                .header {
+                  text-align: center;
+                  margin-bottom: 3mm;
+                  border-bottom: 1px dashed #000;
+                  padding-bottom: 3mm;
+                }
+                .logo {
+                  width: 60mm;
+                  height: auto;
+                  margin-bottom: 2mm;
+                }
+                .title {
+                  font-weight: bold;
+                  font-size: 11px;
+                  margin-bottom: 2mm;
+                }
+                .content {
+                  font-size: 9px;
+                  line-height: 1.4;
+                }
+                .section {
+                  margin-bottom: 3mm;
+                  border-bottom: 1px dashed #ccc;
+                  padding-bottom: 2mm;
+                }
+                .label {
+                  font-weight: bold;
+                }
+                .footer {
+                  text-align: center;
+                  margin-top: 5mm;
+                  font-size: 8px;
+                  border-top: 1px dashed #000;
+                  padding-top: 3mm;
+                }
+                @media print {
+                  .instructions {
+                    display: none;
+                  }
+                  body { 
+                    width: 80mm;
+                    margin: 0;
+                    padding: 2mm;
+                  }
+                  @page {
+                    margin: 0;
+                    size: 80mm auto;
+                  }
+                }
+              </style>
+            </head>
+            <body>
+              <div class="instructions">
+                <strong>📄 Para guardar como PDF:</strong><br>
+                1. Presiona <strong>Ctrl+P</strong> (o Cmd+P en Mac)<br>
+                2. En "Destino" selecciona <strong>"Guardar como PDF"</strong><br>
+                3. Haz clic en <strong>"Guardar"</strong><br>
+                <strong>📏 Formato:</strong> Tirilla 80mm
+              </div>
+              
+              <div class="header">
+                <img src="${logoBase64}" alt="GameBox Logo" class="logo">
+                <div class="title">COMANDA DE SERVICIO</div>
+              </div>
+              
+              <div class="content">
+                <div class="section">
+                  <div><span class="label">ORDEN:</span> ${order.order_number}</div>
+                  <div><span class="label">FECHA:</span> ${formatDate(order.created_at)}</div>
+                </div>
+                
+                <div class="section">
+                  <div><span class="label">CLIENTE:</span> ${customer.full_name}</div>
+                  <div><span class="label">CEDULA:</span> ${customer.cedula}</div>
+                  ${customer.phone ? `<div><span class="label">TEL:</span> ${customer.phone}</div>` : ''}
+                </div>
+                
+                <div class="section">
+                  <div class="label">DISPOSITIVO INGRESADO:</div>
+                  <div><span class="label">TIPO:</span> ${order.device_type}</div>
+                  <div><span class="label">MARCA:</span> ${order.device_brand}</div>
+                  <div><span class="label">MODELO:</span> ${order.device_model}</div>
+                  <div><span class="label">SERIE:</span> ${order.serial_number || 'N/A'}</div>
+                </div>
+                
+                <div class="section">
+                  <div class="label">PROBLEMA:</div>
+                  <div>${order.problem_description}</div>
+                  ${order.observations ? `<div class="label">OBSERVACIONES:</div><div>${order.observations}</div>` : ''}
+                </div>
+                
+                <div class="section">
+                  <div><span class="label">ESTADO:</span> ${getStatusDisplayName(order.status)}</div>
+                  ${order.completed_by ? `<div><span class="label">FINALIZADO POR:</span> ${order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}</div>` : ''}
+                </div>
+              </div>
+              
+              <div class="footer">
+                <div class="label">CONSERVE ESTE COMPROBANTE</div>
+              </div>
+            </body>
+          </html>
+        `)
+      }
+      
       printWindow.document.close()
       
       // Auto-open print dialog for PDF saving
@@ -338,33 +570,117 @@ CONSERVE ESTE COMPROBANTE
 
               {/* Preview Area */}
               {viewType === 'sticker' ? (
-                // Vista previa con imagen para sticker
+                // Vista previa con imagen para sticker optimizado 7x5cm
                 <div className="bg-light p-3 rounded mb-3 text-center" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                  <div className="border rounded p-3 d-inline-block bg-white" style={{ fontFamily: 'monospace', fontSize: '10px' }}>
-                    {/* Logo como imagen en vista previa */}
-                    <img src={logoGamebox} alt="GameBox Logo" style={{ width: '200px', marginBottom: '10px' }} />
+                  <div className="border rounded p-2 d-inline-block bg-white" style={{ 
+                    width: '280px', 
+                    height: '200px', 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    fontFamily: 'Arial, sans-serif'
+                  }}>
+                    {/* Logo optimizado */}
+                    <img src={logoGamebox} alt="GameBox Logo" style={{ 
+                      width: '100%', 
+                      maxWidth: '180px', 
+                      height: 'auto', 
+                      margin: '0 auto 8px auto',
+                      display: 'block'
+                    }} />
                     
-                    <div style={{ marginBottom: '5px', fontWeight: 'bold' }}>🎮 SERVICIO TÉCNICO DE CONSOLAS 🎮</div>
-                    
-                    <div className="mt-2" style={{ textAlign: 'left' }}>
-                      <div>ORDEN #: {order.order_number}</div>
-                      <div>CLIENTE: {customer.full_name}</div>
-                      <div>TELEFONO: {customer.phone || 'N/A'}</div>
-                      <div>DISPOSITIVO: {order.device_type} {order.device_brand}</div>
-                      <div>SERIE: {order.serial_number || 'N/A'}</div>
+                    <div style={{ 
+                      fontSize: '11px', 
+                      textAlign: 'left', 
+                      flexGrow: 1,
+                      lineHeight: '1.3'
+                    }}>
+                      <div style={{ marginBottom: '2px' }}><strong>ORDEN:</strong> {order.order_number}</div>
+                      <div style={{ marginBottom: '2px' }}><strong>CLIENTE:</strong> {customer.full_name.slice(0, 25)}</div>
+                      <div style={{ marginBottom: '2px' }}><strong>TEL:</strong> {(customer.phone || 'N/A').slice(0, 15)}</div>
+                      <div style={{ marginBottom: '2px' }}><strong>DISPOSITIVO:</strong> {(order.device_type + ' ' + order.device_brand).slice(0, 22)}</div>
+                      <div><strong>SERIE:</strong> {(order.serial_number || 'N/A').slice(0, 20)}</div>
                     </div>
+                  </div>
+                  
+                  <div className="mt-2 text-muted" style={{ fontSize: '12px' }}>
+                    📏 <strong>Tamaño de impresión:</strong> 7cm × 5cm
                   </div>
                 </div>
               ) : (
-                // Vista previa normal para comanda
+                // Vista previa para comanda en formato tirilla
                 <div className="bg-light p-3 rounded mb-3" style={{ 
-                  fontFamily: 'monospace', 
-                  fontSize: '12px', 
-                  whiteSpace: 'pre-wrap', 
                   maxHeight: '400px', 
                   overflowY: 'auto' 
                 }}>
-                  {generateComandaContent()}
+                  <div className="mx-auto border rounded p-3 bg-white" style={{ 
+                    width: '280px', // Simula 80mm
+                    fontFamily: 'Courier New, monospace',
+                    fontSize: '11px'
+                  }}>
+                    {/* Header con logo */}
+                    <div className="text-center mb-3 pb-2" style={{ borderBottom: '1px dashed #000' }}>
+                      <img src={logoGamebox} alt="GameBox Logo" style={{ 
+                        width: '200px', 
+                        height: 'auto',
+                        marginBottom: '8px'
+                      }} />
+                      <div style={{ fontWeight: 'bold', fontSize: '12px' }}>COMANDA DE SERVICIO</div>
+                    </div>
+                    
+                    {/* Contenido organizado en secciones */}
+                    <div style={{ fontSize: '10px', lineHeight: '1.4' }}>
+                      <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
+                        <div><strong>ORDEN:</strong> {order.order_number}</div>
+                        <div><strong>FECHA:</strong> {formatDate(order.created_at)}</div>
+                      </div>
+                      
+                      <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
+                        <div><strong>CLIENTE:</strong> {customer.full_name}</div>
+                        <div><strong>CEDULA:</strong> {customer.cedula}</div>
+                        {customer.phone && <div><strong>TEL:</strong> {customer.phone}</div>}
+                      </div>
+                      
+                      <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
+                        <div style={{ fontWeight: 'bold' }}>DISPOSITIVO INGRESADO:</div>
+                        <div><strong>TIPO:</strong> {order.device_type}</div>
+                        <div><strong>MARCA:</strong> {order.device_brand}</div>
+                        <div><strong>MODELO:</strong> {order.device_model}</div>
+                        <div><strong>SERIE:</strong> {order.serial_number || 'N/A'}</div>
+                      </div>
+                      
+                      <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
+                        <div style={{ fontWeight: 'bold' }}>PROBLEMA:</div>
+                        <div>{order.problem_description}</div>
+                        {order.observations && (
+                          <>
+                            <div style={{ fontWeight: 'bold', marginTop: '5px' }}>OBSERVACIONES:</div>
+                            <div>{order.observations}</div>
+                          </>
+                        )}
+                      </div>
+                      
+                      <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
+                        <div><strong>ESTADO:</strong> {getStatusDisplayName(order.status)}</div>
+                        {order.completed_by && (
+                          <div><strong>FINALIZADO POR:</strong> {order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}</div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Footer */}
+                    <div className="text-center mt-3 pt-2" style={{ 
+                      borderTop: '1px dashed #000',
+                      fontSize: '9px',
+                      fontWeight: 'bold'
+                    }}>
+                      CONSERVE ESTE COMPROBANTE
+                    </div>
+                  </div>
+                  
+                  <div className="mt-2 text-muted text-center" style={{ fontSize: '12px' }}>
+                    📏 <strong>Formato de impresión:</strong> Tirilla 80mm
+                  </div>
                 </div>
               )}
               
