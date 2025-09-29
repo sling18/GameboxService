@@ -4,6 +4,7 @@ import Dashboard from './Dashboard'
 import ServiceQueue from './ServiceQueue'
 import CustomerSearch from './CustomerSearch'
 import CreateOrder from './CreateOrder'
+import TechniciansManagement from './TechniciansManagement'
 import { Construction } from 'lucide-react'
 
 const PageRenderer: React.FC = () => {
@@ -35,7 +36,7 @@ const PageRenderer: React.FC = () => {
     case 'create-order':
       return <CreateOrder />
     case 'technicians':
-      return <ComingSoon title="Gestión de Técnicos" />
+      return <TechniciansManagement />
     case 'settings':
       return <ComingSoon title="Configuración del Sistema" />
     default:
