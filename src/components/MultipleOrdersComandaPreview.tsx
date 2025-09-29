@@ -154,7 +154,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
               .footer {
                 text-align: center;
                 margin-top: 5mm;
-                font-size: 8px;
+                font-size: 10px;
                 border-top: 1px dashed #000;
                 padding-top: 3mm;
               }
@@ -249,7 +249,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                 width: 7cm;
                 height: 5cm;
                 border: 2px solid #000;
-                padding: 3mm;
+                padding: 2mm;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
@@ -259,15 +259,15 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
               }
               .logo {
                 width: 100%;
-                max-width: 4.5cm;
+                max-width: 4cm;
                 height: auto;
-                margin: 0 auto 3mm auto;
+                margin: 0 auto 2mm auto;
                 display: block;
               }
               .info {
                 flex-grow: 1;
-                font-size: 8px;
-                line-height: 1.3;
+                font-size: 9px;
+                line-height: 1.2;
                 color: #000;
               }
               .info-line {
@@ -358,7 +358,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                   width: 7cm;
                   height: 5cm;
                   border: 2px solid #000;
-                  padding: 3mm;
+                  padding: 2mm;
                   display: flex;
                   flex-direction: column;
                   justify-content: space-between;
@@ -368,15 +368,15 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                 }
                 .logo {
                   width: 100%;
-                  max-width: 4.5cm;
+                  max-width: 4cm;
                   height: auto;
-                  margin: 0 auto 3mm auto;
+                  margin: 0 auto 2mm auto;
                   display: block;
                 }
                 .info {
                   flex-grow: 1;
-                  font-size: 8px;
-                  line-height: 1.3;
+                  font-size: 9px;
+                  line-height: 1.2;
                   color: #000;
                 }
                 .info-line {
@@ -499,7 +499,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                 .footer {
                   text-align: center;
                   margin-top: 5mm;
-                  font-size: 8px;
+                  font-size: 10px;
                   border-top: 1px dashed #000;
                   padding-top: 3mm;
                 }
