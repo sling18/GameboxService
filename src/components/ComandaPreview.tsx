@@ -60,7 +60,7 @@ PROBLEMA: ${order.problem_description}
 ${order.observations ? `OBSERVACIONES: ${order.observations}` : ''}
 
 ESTADO: ${getStatusDisplayName(order.status)}
-${order.completed_by ? `FINALIZADO POR: ${order.completed_by.full_name}` : ''}
+${order.completed_by ? `FINALIZADO POR: ${order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}` : ''}
 ------------------------------------------
 ==========================================
 CONSERVE ESTE COMPROBANTE

@@ -40,6 +40,7 @@ CREATE TABLE service_orders (
     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'in_progress', 'completed', 'delivered')),
     priority TEXT NOT NULL DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
     assigned_technician_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+    completed_by_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
     received_by_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     estimated_completion TIMESTAMP WITH TIME ZONE,
     completion_notes TEXT,
@@ -63,6 +64,7 @@ CREATE INDEX idx_customers_cedula ON customers(cedula);
 CREATE INDEX idx_service_orders_status ON service_orders(status);
 CREATE INDEX idx_service_orders_customer_id ON service_orders(customer_id);
 CREATE INDEX idx_service_orders_assigned_technician_id ON service_orders(assigned_technician_id);
+CREATE INDEX idx_service_orders_completed_by_id ON service_orders(completed_by_id);
 CREATE INDEX idx_service_orders_received_by_id ON service_orders(received_by_id);
 CREATE INDEX idx_service_orders_created_at ON service_orders(created_at);
 

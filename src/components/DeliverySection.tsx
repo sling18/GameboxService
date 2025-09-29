@@ -144,7 +144,9 @@ const DeliverySection: React.FC = () => {
                         <div className="mb-2">
                           <small className="text-muted">
                             <User size={12} className="me-1" />
-                            {order.assigned_technician.full_name}
+                            {order.assigned_technician?.full_name || 
+                             order.assigned_technician?.email?.split('@')[0] || 
+                             'Técnico'}
                           </small>
                         </div>
                       )}

@@ -673,12 +673,20 @@ const Dashboard: React.FC = () => {
                             <td className="px-3 py-3">
                               {order.status === 'completed' && order.completed_by ? (
                                 <div>
-                                  <div className="fw-medium text-success">{order.completed_by.full_name}</div>
+                                  <div className="fw-medium text-success">
+                                    {order.completed_by?.full_name || 
+                                     order.completed_by?.email?.split('@')[0] || 
+                                     'Técnico'}
+                                  </div>
                                   <small className="text-muted">Finalizado</small>
                                 </div>
                               ) : order.assigned_technician ? (
                                 <div>
-                                  <div className="fw-medium">{order.assigned_technician.full_name}</div>
+                                  <div className="fw-medium">
+                                    {order.assigned_technician?.full_name || 
+                                     order.assigned_technician?.email?.split('@')[0] || 
+                                     'Técnico'}
+                                  </div>
                                   <small className="text-muted">Asignado</small>
                                 </div>
                               ) : (

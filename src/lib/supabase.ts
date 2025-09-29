@@ -83,6 +83,7 @@ export type Database = {
           status: 'pending' | 'in_progress' | 'completed' | 'delivered'
           priority: 'low' | 'medium' | 'high'
           assigned_technician_id: string | null
+          completed_by_id: string | null
           received_by_id: string
           estimated_completion: string | null
           completion_notes: string | null
@@ -100,6 +101,7 @@ export type Database = {
           status?: 'pending' | 'in_progress' | 'completed' | 'delivered'
           priority?: 'low' | 'medium' | 'high'
           assigned_technician_id?: string | null
+          completed_by_id?: string | null
           received_by_id: string
           estimated_completion?: string | null
           completion_notes?: string | null
@@ -117,6 +119,7 @@ export type Database = {
           status?: 'pending' | 'in_progress' | 'completed' | 'delivered'
           priority?: 'low' | 'medium' | 'high'
           assigned_technician_id?: string | null
+          completed_by_id?: string | null
           received_by_id?: string
           estimated_completion?: string | null
           completion_notes?: string | null

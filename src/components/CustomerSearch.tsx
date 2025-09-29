@@ -286,12 +286,18 @@ const CustomerSearch: React.FC = () => {
                                         <User size={12} className="me-1" />
                                         {order.status === 'completed' && order.completed_by ? (
                                           <>
-                                            <span className="text-success fw-semibold">{order.completed_by.full_name}</span>
+                                            <span className="text-success fw-semibold">
+                                              {order.completed_by?.full_name || 
+                                               order.completed_by?.email?.split('@')[0] || 
+                                               'Técnico'}
+                                            </span>
                                             <span> (Finalizado)</span>
                                           </>
                                         ) : (
                                           <>
-                                            {order.assigned_technician.full_name}
+                                            {order.assigned_technician?.full_name || 
+                                             order.assigned_technician?.email?.split('@')[0] || 
+                                             'Técnico'}
                                             <span> (Asignado)</span>
                                           </>
                                         )}

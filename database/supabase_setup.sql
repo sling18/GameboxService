@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS service_orders (
   status TEXT CHECK (status IN ('pending', 'in_progress', 'completed', 'delivered')) DEFAULT 'pending',
   priority TEXT CHECK (priority IN ('low', 'medium', 'high')) DEFAULT 'medium',
   assigned_technician_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  completed_by_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
   received_by_id UUID REFERENCES profiles(id) ON DELETE RESTRICT NOT NULL,
   estimated_completion TIMESTAMPTZ,
   completion_notes TEXT,
