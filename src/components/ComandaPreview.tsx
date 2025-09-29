@@ -45,35 +45,21 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
 
 ORDEN #: ${order.order_number}
 FECHA: ${formatDate(order.created_at)}
-
 ------------------------------------------
-CLIENTE:
-------------------------------------------
-${customer.full_name}
+CLIENTE: ${customer.full_name}
 CEDULA: ${customer.cedula}
 ${customer.phone ? `TEL: ${customer.phone}` : ''}
-
 ------------------------------------------
-DISPOSITIVO:
-------------------------------------------
-${order.device_type} - ${order.device_brand}
-MODELO: ${order.device_model}
+DISPOSITIVO: ${order.device_type} - ${order.device_brand}
+MODELO: ${order.device_model} 
 ${order.serial_number ? `SERIE: ${order.serial_number}` : ''}
-
 ------------------------------------------
-PROBLEMA:
-------------------------------------------
-${order.problem_description}
-
+PROBLEMA: ${order.problem_description}
 ${order.observations ? `------------------------------------------
-OBSERVACIONES:
+OBSERVACIONES: ${order.observations}` : ''}
 ------------------------------------------
-${order.observations}
-
-` : ''}------------------------------------------
 ESTADO: ${getStatusDisplayName(order.status)}
 ${order.completed_by ? `FINALIZADO POR: ${order.completed_by.full_name}` : ''}
-
 ==========================================
 CONSERVE ESTE COMPROBANTE
 ==========================================
@@ -85,20 +71,11 @@ CONSERVE ESTE COMPROBANTE
     const content = `
 ┌─────────────────────────────────────┐
 │           GAMEBOXSERVICE            │
-│                                     │
 │  ORDEN #: ${order.order_number.padEnd(25)} │
-│                                     │
-│  CLIENTE:                           │
-│  ${customer.full_name.slice(0,30).padEnd(30)} │
-│                                     │
-│  TELEFONO:                          │
-│  ${(customer.phone || 'N/A').padEnd(30)} │
-│                                     │
-│  DISPOSITIVO:                       │
-│  ${(order.device_type + ' ' + order.device_brand).slice(0,30).padEnd(30)} │
-│                                     │
-│  ${order.serial_number ? `SERIE: ${order.serial_number.slice(0,24).padEnd(24)}` : 'SERIE: N/A'.padEnd(31)} │
-│                                     │
+│  CLIENTE: ${customer.full_name.slice(0,22).padEnd(22)}    │
+│  TELEFONO: ${(customer.phone || 'N/A').slice(0,21).padEnd(21)}    │
+│  DISPOSITIVO: ${(order.device_type + ' ' + order.device_brand).slice(0,18).padEnd(18)}    │
+│  ${order.serial_number ? `SERIE: ${order.serial_number.slice(0,26).padEnd(26)}` : 'SERIE: N/A'.padEnd(33)}  │
 └─────────────────────────────────────┘
     `
     return content.trim()
