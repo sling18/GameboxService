@@ -61,18 +61,43 @@ export const sanitizeInput = {
   },
 
   /**
-   * Sanitiza URLs
+   * Sanitiza URLs con validación estricta contra ataques
+   * Previene: javascript:, data:, vbscript:, file: URIs
    */
   url: (input: string): string => {
     if (!input) return ''
     
+    const inputLower = input.trim().toLowerCase()
+    
+    // ✅ Lista negra de protocolos maliciosos
+    const maliciousProtocols = [
+      'javascript:',
+      'data:',
+      'vbscript:',
+      'file:',
+      'about:',
+      'blob:'
+    ]
+    
+    // Verificar si contiene protocolo malicioso
+    if (maliciousProtocols.some(protocol => inputLower.startsWith(protocol))) {
+      console.warn('🚫 Protocolo malicioso detectado y bloqueado:', input)
+      return ''
+    }
+    
     try {
       const url = new URL(input.trim())
-      if (!['http:', 'https:'].includes(url.protocol)) {
+      
+      // ✅ Lista blanca de protocolos permitidos
+      const allowedProtocols = ['http:', 'https:']
+      if (!allowedProtocols.includes(url.protocol)) {
+        console.warn('🚫 Protocolo no permitido:', url.protocol)
         return ''
       }
+      
       return url.href
     } catch {
+      // Si no es una URL válida, retornar vacío
       return ''
     }
   }
