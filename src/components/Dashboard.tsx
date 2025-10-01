@@ -25,7 +25,9 @@ import {
   Star,
   Edit,
   Trash2,
-  FileText
+  FileText,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
 import type { ServiceOrder } from '../types'
 
@@ -41,6 +43,10 @@ const Dashboard: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<ServiceOrder | null>(null)
   const [showErrorModal, setShowErrorModal] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  
+  // Paginación para órdenes recientes
+  const [currentPage, setCurrentPage] = useState(1)
+  const ordersPerPage = 8
 
   const getStats = () => {
     const pending = serviceOrders.filter(order => order.status === 'pending').length
@@ -61,6 +67,20 @@ const Dashboard: React.FC = () => {
   }
 
   const stats = getStats()
+
+  // Funciones de paginación
+  const totalPages = Math.ceil(serviceOrders.length / ordersPerPage)
+  const startIndex = (currentPage - 1) * ordersPerPage
+  const endIndex = startIndex + ordersPerPage
+  const currentOrders = serviceOrders.slice(startIndex, endIndex)
+
+  const handlePreviousPage = () => {
+    setCurrentPage(prev => Math.max(1, prev - 1))
+  }
+
+  const handleNextPage = () => {
+    setCurrentPage(prev => Math.min(totalPages, prev + 1))
+  }
 
   const handleEditOrder = (order: ServiceOrder) => {
     setEditingOrder(order)
@@ -635,66 +655,63 @@ const Dashboard: React.FC = () => {
                     )}
                   </div>
                 ) : (
-                  <div className="table-responsive">
-                    <table className="table table-hover align-middle mb-0">
+                  <div style={{ overflowX: 'hidden' }}>
+                    <table className="table table-hover align-middle mb-0" style={{ tableLayout: 'fixed', width: '100%' }}>
                       <thead className="table-light">
                         <tr>
-                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Cliente</th>
-                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Dispositivo</th>
-                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Estado</th>
-                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Técnico</th>
-                          <th scope="col" className="border-0 fw-semibold px-3 py-3">Fecha</th>
+                          <th scope="col" className="border-0 fw-semibold px-2 py-3" style={{ width: '18%' }}>Cliente</th>
+                          <th scope="col" className="border-0 fw-semibold px-2 py-3" style={{ width: '22%' }}>Dispositivo</th>
+                          <th scope="col" className="border-0 fw-semibold px-2 py-3" style={{ width: '13%' }}>Estado</th>
+                          <th scope="col" className="border-0 fw-semibold px-2 py-3" style={{ width: '17%' }}>Técnico</th>
+                          <th scope="col" className="border-0 fw-semibold px-2 py-3" style={{ width: '13%' }}>Fecha</th>
                           {user?.role === 'admin' && (
-                            <th scope="col" className="border-0 fw-semibold px-3 py-3 text-center">Acciones</th>
+                            <th scope="col" className="border-0 fw-semibold px-2 py-3 text-center" style={{ width: '17%' }}>Acciones</th>
                           )}
                         </tr>
                       </thead>
                       <tbody>
-                        {serviceOrders.slice(0, 8).map((order) => (
+                        {currentOrders.map((order) => (
                           <tr key={order.id} className="border-0">
-                            <td className="px-3 py-3">
-                              <div>
-                                <div className="fw-semibold">{order.customer?.full_name}</div>
+                            <td className="px-2 py-2">
+                              <div style={{ overflow: 'hidden' }}>
+                                <div className="fw-semibold text-truncate" style={{ fontSize: '0.9rem' }}>{order.customer?.full_name}</div>
                                 <small className="text-muted">{order.customer?.cedula}</small>
                               </div>
                             </td>
-                            <td className="px-3 py-3">
-                              <div>
-                                <div className="fw-medium">{order.device_brand} {order.device_model}</div>
-                                <small className="text-muted">
-                                  {order.device_type}
-                                  {order.serial_number && ` • S/N: ${order.serial_number}`}
+                            <td className="px-2 py-2">
+                              <div style={{ overflow: 'hidden' }}>
+                                <div className="fw-medium text-truncate" style={{ fontSize: '0.9rem' }}>
+                                  {order.device_brand} {order.device_type}
+                                </div>
+                                <small className="text-muted text-truncate d-block">
+                                  {order.device_model}
                                 </small>
                               </div>
                             </td>
-                            <td className="px-3 py-3">
+                            <td className="px-2 py-2">
                               <StatusBadge status={order.status} />
                             </td>
-                            <td className="px-3 py-3">
-                              {order.status === 'completed' && order.completed_by ? (
-                                <div>
-                                  <div className="fw-medium text-success">
+                            <td className="px-2 py-2">
+                              <div style={{ overflow: 'hidden' }}>
+                                {order.status === 'completed' && order.completed_by ? (
+                                  <div className="fw-medium text-success text-truncate" style={{ fontSize: '0.9rem' }}>
                                     {order.completed_by?.full_name || 
                                      order.completed_by?.email?.split('@')[0] || 
                                      'Técnico'}
                                   </div>
-                                  <small className="text-muted">Finalizado</small>
-                                </div>
-                              ) : order.assigned_technician ? (
-                                <div>
-                                  <div className="fw-medium">
+                                ) : order.assigned_technician ? (
+                                  <div className="fw-medium text-truncate" style={{ fontSize: '0.9rem' }}>
                                     {order.assigned_technician?.full_name || 
                                      order.assigned_technician?.email?.split('@')[0] || 
                                      'Técnico'}
                                   </div>
-                                  <small className="text-muted">Asignado</small>
-                                </div>
-                              ) : (
-                                <span className="text-muted">Sin asignar</span>
-                              )}
+                                ) : (
+                                  <span className="text-muted small">Sin asignar</span>
+                                )}
+                              </div>
                             </td>
-                            <td className="px-3 py-3">
-                              <small className="text-muted">
+                            <td className="px-2 py-2">
+                              <small className="text-muted text-nowrap" style={{ fontSize: '0.85rem' }}>
                                 {new Date(order.created_at).toLocaleDateString('es-ES', {
                                   day: '2-digit',
                                   month: '2-digit',
@@ -703,30 +720,30 @@ const Dashboard: React.FC = () => {
                               </small>
                             </td>
                             {user?.role === 'admin' && (
-                              <td className="px-3 py-3 text-center">
+                              <td className="px-2 py-2 text-center">
                                 <div className="btn-group btn-group-sm" role="group">
                                   <button
                                     type="button"
-                                    className="btn btn-outline-primary"
+                                    className="btn btn-outline-primary p-1"
                                     onClick={() => handleEditOrder(order)}
-                                    title="Editar orden"
+                                    title="Editar"
                                   >
                                     <Edit size={14} />
                                   </button>
                                   <button
                                     type="button"
-                                    className="btn btn-outline-info"
+                                    className="btn btn-outline-info p-1"
                                     onClick={() => handleShowComanda(order)}
-                                    title="Ver comanda para imprimir"
+                                    title="Comanda"
                                   >
                                     <FileText size={14} />
                                   </button>
                                   <button
                                     type="button"
-                                    className="btn btn-outline-danger"
+                                    className="btn btn-outline-danger p-1"
                                     onClick={() => handleDeleteOrder(order.id)}
                                     disabled={deletingOrderId === order.id}
-                                    title="Eliminar orden"
+                                    title="Eliminar"
                                   >
                                     {deletingOrderId === order.id ? (
                                       <div className="spinner-border spinner-border-sm" role="status">
@@ -743,6 +760,38 @@ const Dashboard: React.FC = () => {
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                )}
+                
+                {/* Controles de paginación */}
+                {serviceOrders.length > ordersPerPage && (
+                  <div className="card-footer bg-transparent border-top">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div className="text-muted small">
+                        Mostrando {startIndex + 1}-{Math.min(endIndex, serviceOrders.length)} de {serviceOrders.length} órdenes
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <button
+                          onClick={handlePreviousPage}
+                          disabled={currentPage === 1}
+                          className="btn btn-outline-primary btn-sm d-flex align-items-center"
+                        >
+                          <ChevronLeft size={16} className="me-1" />
+                          Anterior
+                        </button>
+                        <span className="text-muted small">
+                          Página {currentPage} de {totalPages}
+                        </span>
+                        <button
+                          onClick={handleNextPage}
+                          disabled={currentPage === totalPages}
+                          className="btn btn-outline-primary btn-sm d-flex align-items-center"
+                        >
+                          Siguiente
+                          <ChevronRight size={16} className="ms-1" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
