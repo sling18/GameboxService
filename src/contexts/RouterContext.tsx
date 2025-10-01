@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react'
 
-type Page = 'dashboard' | 'orders' | 'customers' | 'technicians' | 'settings' | 'create-order'
+export type Page = 'dashboard' | 'orders' | 'customers' | 'technicians' | 'settings' | 'create-order'
 
 interface RouterContextType {
   currentPage: Page

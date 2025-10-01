@@ -68,17 +68,48 @@ export const STORAGE_KEYS = {
 // Validation Rules
 export const VALIDATION = {
   CEDULA: {
-    MIN_LENGTH: 6,
-    MAX_LENGTH: 20
-  },
-  PHONE: {
     MIN_LENGTH: 7,
     MAX_LENGTH: 15
   },
+  PHONE: {
+    MIN_LENGTH: 7,
+    MAX_LENGTH: 20
+  },
+  EMAIL: {
+    MAX_LENGTH: 255
+  },
+  NAME: {
+    MAX_LENGTH: 100
+  },
+  TEXT: {
+    MAX_LENGTH: 500
+  },
   PASSWORD: {
-    MIN_LENGTH: 6,
+    MIN_LENGTH: 8,
     MAX_LENGTH: 72
   }
+} as const
+
+// Pagination Settings
+export const PAGINATION = {
+  DASHBOARD_ORDERS: 8,
+  CUSTOMERS: 10,
+  USERS: 10,
+  TECHNICIAN_REPAIRS: 5
+} as const
+
+// Timeouts (in milliseconds)
+export const TIMEOUTS = {
+  API_REQUEST: 30000, // 30 segundos
+  DEBOUNCE: 300,      // 300ms
+  THROTTLE: 1000,     // 1 segundo
+  MODAL_ANIMATION: 300 // 300ms
+} as const
+
+// Auto-refresh Configuration
+export const AUTO_REFRESH_CONFIG = {
+  INTERVAL: 30000, // 30 segundos
+  ENABLED_ROLES: [USER_ROLES.RECEPTIONIST, USER_ROLES.TECHNICIAN]
 } as const
 
 // Date Formats

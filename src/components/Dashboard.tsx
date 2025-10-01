@@ -9,6 +9,10 @@ import AutoRefreshIndicator from './AutoRefreshIndicator'
 import DeliverySection from './DeliverySection'
 import EditOrderModal from './EditOrderModal'
 import ComandaPreview from './ComandaPreview'
+import { useModal } from '../hooks/useModal'
+import { CustomModal } from './ui/CustomModal'
+import { formatDate } from '../utils/dateFormatter'
+import { handleError } from '../utils/errorHandler'
 import { 
   ClipboardList, 
   Clock, 
@@ -41,8 +45,9 @@ const Dashboard: React.FC = () => {
   const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null)
   const [showComanda, setShowComanda] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState<ServiceOrder | null>(null)
-  const [showErrorModal, setShowErrorModal] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  
+  // Hook unificado de modales
+  const { modal, showError, closeModal } = useModal()
   
   // Paginación para órdenes recientes
   const [currentPage, setCurrentPage] = useState(1)
@@ -127,15 +132,14 @@ const Dashboard: React.FC = () => {
 
       if (error) {
         console.error('❌ Error consultando orden con customer:', error)
-        setErrorMessage('Error: No se pudo cargar la información de la orden desde la base de datos.')
-        setShowErrorModal(true)
+        const message = handleError(error, 'handleViewComanda - query')
+        showError('Error', message)
         return
       }
 
       if (!orderWithCustomer.customer) {
         console.error('❌ Customer no encontrado para la orden:', order.id)
-        setErrorMessage('Error: No se pudo encontrar la información del cliente para esta orden.')
-        setShowErrorModal(true)
+        showError('Error', 'No se pudo encontrar la información del cliente para esta orden.')
         return
       }
 
@@ -144,8 +148,8 @@ const Dashboard: React.FC = () => {
       setShowComanda(true)
     } catch (err) {
       console.error('❌ Error general:', err)
-      setErrorMessage('Error: Problema técnico al cargar la información de la orden.')
-      setShowErrorModal(true)
+      const message = handleError(err, 'handleViewComanda - catch')
+      showError('Error', message)
     }
   }
 
@@ -712,11 +716,7 @@ const Dashboard: React.FC = () => {
                             </td>
                             <td className="px-2 py-2">
                               <small className="text-muted text-nowrap" style={{ fontSize: '0.85rem' }}>
-                                {new Date(order.created_at).toLocaleDateString('es-ES', {
-                                  day: '2-digit',
-                                  month: '2-digit',
-                                  year: 'numeric'
-                                })}
+                                {formatDate.short(order.created_at)}
                               </small>
                             </td>
                             {user?.role === 'admin' && (
@@ -822,37 +822,8 @@ const Dashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Modal de Error */}
-      {showErrorModal && (
-        <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header bg-danger text-white">
-                <h5 className="modal-title">
-                  <i className="bi bi-exclamation-triangle me-2"></i>
-                  Error al Cargar Comanda
-                </h5>
-              </div>
-              <div className="modal-body">
-                <p className="mb-0">{errorMessage}</p>
-                <p className="text-muted mt-2 mb-0">
-                  Por favor, intente nuevamente o contacte al administrador del sistema.
-                </p>
-              </div>
-              <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary"
-                  onClick={() => setShowErrorModal(false)}
-                >
-                  <i className="bi bi-check-lg me-2"></i>
-                  Aceptar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal Unificado */}
+      <CustomModal {...modal} onClose={closeModal} />
     </div>
   )
 }

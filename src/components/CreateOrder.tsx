@@ -9,6 +9,9 @@ import { CustomModal } from './ui/CustomModal'
 import ComandaPreview from './ComandaPreview'
 import MultipleOrdersComandaPreview from './MultipleOrdersComandaPreview'
 import type { DeviceItem } from '../types'
+import { sanitizeInput } from '../utils/sanitization'
+import { validators } from '../utils/validation'
+import { handleError } from '../utils/errorHandler'
 
 interface ModalState {
   isOpen: boolean
@@ -130,72 +133,157 @@ const CreateOrder: React.FC = () => {
   }
 
   const handleSearchCustomer = async () => {
-    if (!cedula.trim()) return
+    // Sanitizar y validar cédula
+    const sanitizedCedula = sanitizeInput.cedula(cedula)
     
-    setLoading(true)
-    const foundCustomer = await getCustomerByCedula(cedula.trim())
-    
-    if (foundCustomer) {
-      setCustomer(foundCustomer)
-      setShowNewCustomerForm(false)
-    } else {
-      setCustomer(null)
-      setNewCustomer({ ...newCustomer, cedula: cedula.trim() })
-      setShowNewCustomerForm(true)
+    if (!sanitizedCedula) {
+      showErrorModal('Por favor ingrese una cédula')
+      return
     }
-    setLoading(false)
-  }
 
-  const handleCreateCustomer = async () => {
-    if (!newCustomer.cedula.trim() || !newCustomer.full_name.trim()) {
+    // Validar formato de cédula
+    const cedulaError = validators.cedula(sanitizedCedula)
+    if (cedulaError) {
+      showErrorModal(cedulaError)
       return
     }
     
-    const createdCustomer = await createCustomer(newCustomer)
-    if (createdCustomer) {
-      setCustomer(createdCustomer)
-      setShowNewCustomerForm(false)
-      setNewCustomer({ cedula: '', full_name: '', phone: '', email: '' })
+    setLoading(true)
+    try {
+      const foundCustomer = await getCustomerByCedula(sanitizedCedula)
+      
+      if (foundCustomer) {
+        setCustomer(foundCustomer)
+        setShowNewCustomerForm(false)
+      } else {
+        setCustomer(null)
+        setNewCustomer({ ...newCustomer, cedula: sanitizedCedula })
+        setShowNewCustomerForm(true)
+      }
+    } catch (error) {
+      const message = handleError(error, 'handleSearchCustomer')
+      showErrorModal(message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCreateCustomer = async () => {
+    // Sanitizar todos los campos
+    const sanitizedData = {
+      cedula: sanitizeInput.cedula(newCustomer.cedula),
+      full_name: sanitizeInput.name(newCustomer.full_name),
+      phone: sanitizeInput.phone(newCustomer.phone),
+      email: sanitizeInput.email(newCustomer.email),
+    }
+
+    // Validar campos requeridos
+    if (!sanitizedData.cedula) {
+      showErrorModal('La cédula es requerida')
+      return
+    }
+
+    if (!sanitizedData.full_name) {
+      showErrorModal('El nombre completo es requerido')
+      return
+    }
+
+    // Validar formato de cédula
+    const cedulaError = validators.cedula(sanitizedData.cedula)
+    if (cedulaError) {
+      showErrorModal(cedulaError)
+      return
+    }
+
+    // Validar formato de email si fue proporcionado
+    if (sanitizedData.email) {
+      const emailError = validators.email(sanitizedData.email)
+      if (emailError) {
+        showErrorModal(emailError)
+        return
+      }
+    }
+
+    // Validar formato de teléfono si fue proporcionado
+    if (sanitizedData.phone) {
+      const phoneError = validators.phone(sanitizedData.phone)
+      if (phoneError) {
+        showErrorModal(phoneError)
+        return
+      }
+    }
+    
+    try {
+      const createdCustomer = await createCustomer(sanitizedData)
+      if (createdCustomer) {
+        setCustomer(createdCustomer)
+        setShowNewCustomerForm(false)
+        setNewCustomer({ cedula: '', full_name: '', phone: '', email: '' })
+      }
+    } catch (error) {
+      const message = handleError(error, 'handleCreateCustomer')
+      showErrorModal(message)
     }
   }
 
   const handleCreateOrder = async () => {
-    if (!customer) return
-    
-    if (!orderData.device_type || !orderData.device_brand || !orderData.problem_description) {
+    if (!customer) {
+      showErrorModal('Debe seleccionar un cliente')
       return
     }
     
-    setCreating(true)
-    const success = await createServiceOrder({
-      customer_id: customer.id,
-      ...orderData,
-    })
-    
-    if (success) {
-      // Buscar la orden recién creada para mostrar la comanda
-      try {
-        const { data: orders } = await supabase
-          .from('service_orders')
-          .select('*, customers(*)')
-          .eq('customer_id', customer.id)
-          .order('created_at', { ascending: false })
-          .limit(1)
-        
-        if (orders && orders.length > 0) {
-          setCreatedOrder(orders[0])
-          setShowComanda(true)
-        }
-      } catch (error) {
-        console.error('Error buscando orden creada:', error)
-      }
-      
-      showSuccessModal('Orden creada')
-      
-      // NO limpiar automáticamente - el usuario decidirá cuándo cerrar la comanda
-      // El formulario se limpiará cuando cierre la comanda manualmente
+    // Validar campos requeridos
+    if (!orderData.device_type || !orderData.device_brand || !orderData.problem_description) {
+      showErrorModal('Por favor complete todos los campos obligatorios')
+      return
     }
-    setCreating(false)
+
+    // Sanitizar datos antes de enviar
+    const sanitizedOrderData = {
+      device_type: sanitizeInput.text(orderData.device_type),
+      device_brand: sanitizeInput.text(orderData.device_brand),
+      device_model: sanitizeInput.text(orderData.device_model),
+      serial_number: sanitizeInput.text(orderData.serial_number),
+      problem_description: sanitizeInput.text(orderData.problem_description),
+      observations: sanitizeInput.text(orderData.observations),
+    }
+    
+    setCreating(true)
+    try {
+      const success = await createServiceOrder({
+        customer_id: customer.id,
+        ...sanitizedOrderData,
+      })
+      
+      if (success) {
+        // Buscar la orden recién creada para mostrar la comanda
+        try {
+          const { data: orders } = await supabase
+            .from('service_orders')
+            .select('*, customers(*)')
+            .eq('customer_id', customer.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+          
+          if (orders && orders.length > 0) {
+            setCreatedOrder(orders[0])
+            setShowComanda(true)
+          }
+        } catch (error) {
+          console.error('Error buscando orden creada:', error)
+        }
+        
+        showSuccessModal('Orden creada')
+        
+        // NO limpiar automáticamente - el usuario decidirá cuándo cerrar la comanda
+        // El formulario se limpiará cuando cierre la comanda manualmente
+      }
+    } catch (error) {
+      const message = handleError(error, 'handleCreateOrder')
+      showErrorModal(message)
+    } finally {
+      setCreating(false)
+    }
   }
 
   // Funciones para múltiples dispositivos
@@ -206,7 +294,17 @@ const CreateOrder: React.FC = () => {
       return
     }
 
-    setDevices(prev => [...prev, { ...currentDevice }])
+    // Sanitizar el dispositivo antes de agregarlo a la lista
+    const sanitizedDevice: DeviceItem = {
+      device_type: sanitizeInput.text(currentDevice.device_type),
+      device_brand: sanitizeInput.text(currentDevice.device_brand),
+      device_model: sanitizeInput.text(currentDevice.device_model),
+      serial_number: sanitizeInput.text(currentDevice.serial_number || ''),
+      problem_description: sanitizeInput.text(currentDevice.problem_description),
+      observations: sanitizeInput.text(currentDevice.observations || ''),
+    }
+
+    setDevices(prev => [...prev, sanitizedDevice])
     setCurrentDevice({
       device_type: '',
       device_brand: '',
@@ -239,22 +337,28 @@ const CreateOrder: React.FC = () => {
 
     setCreating(true)
     
-    const success = await createMultipleDeviceOrder({
-      customer_id: customer.id,
-      devices: devices,
-    })
-    
-    if (success && success.length > 0) {
-      // Mostrar comanda múltiple
-      setCreatedOrders(success)
-      setShowMultipleComanda(true)
+    try {
+      const success = await createMultipleDeviceOrder({
+        customer_id: customer.id,
+        devices: devices,
+      })
       
-      showSuccessModal(`${success.length} órdenes creadas exitosamente`)
-      
-      // NO limpiar automáticamente - el usuario decidirá cuándo cerrar la comanda
-      // El formulario se limpiará cuando cierre la comanda manualmente
+      if (success && success.length > 0) {
+        // Mostrar comanda múltiple
+        setCreatedOrders(success)
+        setShowMultipleComanda(true)
+        
+        showSuccessModal(`${success.length} órdenes creadas exitosamente`)
+        
+        // NO limpiar automáticamente - el usuario decidirá cuándo cerrar la comanda
+        // El formulario se limpiará cuando cierre la comanda manualmente
+      }
+    } catch (error) {
+      const message = handleError(error, 'handleCreateMultipleOrders')
+      showErrorModal(message)
+    } finally {
+      setCreating(false)
     }
-    setCreating(false)
   }
 
   const deviceTypes = ['Consola', 'Control', 'Accesorio', 'Otro']
