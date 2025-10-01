@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { FileText, Printer, Download, X, Tag, Package } from 'lucide-react'
 import type { ServiceOrder, Customer } from '../types'
 import logoGamebox from '../assets/logo-gamebox.png'
+import { useImageToBase64 } from '../hooks'
+import { formatDateForPrint, getStatusDisplayName } from '../utils'
 
 interface MultipleOrdersComandaPreviewProps {
   orders: ServiceOrder[]
@@ -15,27 +17,9 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
   onClose 
 }) => {
   const [viewType, setViewType] = useState<'comanda' | 'individual-stickers'>('comanda')
-  const [logoBase64, setLogoBase64] = useState<string>('')
-
-  // Convertir imagen a base64 para impresión
-  React.useEffect(() => {
-    const convertImageToBase64 = async () => {
-      try {
-        const response = await fetch(logoGamebox)
-        const blob = await response.blob()
-        const reader = new FileReader()
-        reader.onload = () => {
-          if (typeof reader.result === 'string') {
-            setLogoBase64(reader.result)
-          }
-        }
-        reader.readAsDataURL(blob)
-      } catch (error) {
-        console.error('Error al cargar la imagen:', error)
-      }
-    }
-    convertImageToBase64()
-  }, [])
+  
+  // Usar hook personalizado para conversión de imagen
+  const { base64: logoBase64 } = useImageToBase64(logoGamebox)
   
   // Validación de datos requeridos
   if (!customer || !orders || orders.length === 0) {
@@ -67,31 +51,6 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
     customer: customer.full_name, 
     ordersCount: orders.length 
   })
-  
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('es-ES', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
-  const getStatusDisplayName = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'PENDIENTE'
-      case 'in_progress':
-        return 'EN PROGRESO'
-      case 'completed':
-        return 'COMPLETADO'
-      case 'delivered':
-        return 'ENTREGADO'
-      default:
-        return status.toUpperCase()
-    }
-  }
 
   const handlePrintComanda = () => {
     const printWindow = window.open('', '_blank', 'width=600,height=800')
@@ -179,7 +138,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
             
             <div class="content">
               <div class="section">
-                <div><span class="label">FECHA:</span> ${formatDate(orders[0].created_at)}</div>
+                <div><span class="label">FECHA:</span> ${formatDateForPrint(orders[0].created_at)}</div>
                 <div><span class="label">DISPOSITIVOS:</span> ${orders.length}</div>
               </div>
               
@@ -535,7 +494,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
               
               <div class="content">
                 <div class="section">
-                  <div><span class="label">FECHA:</span> ${formatDate(orders[0].created_at)}</div>
+                  <div><span class="label">FECHA:</span> ${formatDateForPrint(orders[0].created_at)}</div>
                   <div><span class="label">DISPOSITIVOS:</span> ${orders.length}</div>
                 </div>
                 
@@ -689,7 +648,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                     {/* Contenido organizado en secciones */}
                     <div style={{ fontSize: '10px', lineHeight: '1.4' }}>
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
-                        <div><strong>FECHA:</strong> {formatDate(orders[0].created_at)}</div>
+                        <div><strong>FECHA:</strong> {formatDateForPrint(orders[0].created_at)}</div>
                         <div><strong>DISPOSITIVOS:</strong> {orders.length}</div>
                       </div>
                       

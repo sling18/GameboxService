@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { FileText, Printer, Download, X, Tag } from 'lucide-react'
 import type { ServiceOrder, Customer } from '../types'
 import logoGamebox from '../assets/logo-gamebox.png'
+import { useImageToBase64 } from '../hooks'
+import { formatDateForPrint, getStatusDisplayName } from '../utils'
 
 interface ComandaPreviewProps {
   order: ServiceOrder
@@ -11,52 +13,9 @@ interface ComandaPreviewProps {
 
 const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClose }) => {
   const [viewType, setViewType] = useState<'comanda' | 'sticker'>('comanda')
-  const [logoBase64, setLogoBase64] = useState<string>('')
-
-  // Convertir imagen a base64 para impresión
-  React.useEffect(() => {
-    const convertImageToBase64 = async () => {
-      try {
-        const response = await fetch(logoGamebox)
-        const blob = await response.blob()
-        const reader = new FileReader()
-        reader.onload = () => {
-          if (typeof reader.result === 'string') {
-            setLogoBase64(reader.result)
-          }
-        }
-        reader.readAsDataURL(blob)
-      } catch (error) {
-        console.error('Error al cargar la imagen:', error)
-      }
-    }
-    convertImageToBase64()
-  }, [])
   
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('es-ES', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
-  const getStatusDisplayName = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'PENDIENTE'
-      case 'in_progress':
-        return 'EN PROGRESO'
-      case 'completed':
-        return 'COMPLETADO'
-      case 'delivered':
-        return 'ENTREGADO'
-      default:
-        return status.toUpperCase()
-    }
-  }
+  // Usar hook personalizado para conversión de imagen
+  const { base64: logoBase64 } = useImageToBase64(logoGamebox)
 
   const handlePrint = () => {
     const title = viewType === 'comanda' ? 'Comanda' : 'Sticker'
@@ -227,7 +186,7 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
               <div class="content">
                 <div class="section">
                   <div><span class="label">ORDEN:</span> ${order.order_number}</div>
-                  <div><span class="label">FECHA:</span> ${formatDate(order.created_at)}</div>
+                  <div><span class="label">FECHA:</span> ${formatDateForPrint(order.created_at)}</div>
                 </div>
                 
                 <div class="section">
@@ -481,7 +440,7 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
               <div class="content">
                 <div class="section">
                   <div><span class="label">ORDEN:</span> ${order.order_number}</div>
-                  <div><span class="label">FECHA:</span> ${formatDate(order.created_at)}</div>
+                  <div><span class="label">FECHA:</span> ${formatDateForPrint(order.created_at)}</div>
                 </div>
                 
                 <div class="section">
@@ -632,7 +591,7 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                     <div style={{ fontSize: '10px', lineHeight: '1.4' }}>
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
                         <div><strong>ORDEN:</strong> {order.order_number}</div>
-                        <div><strong>FECHA:</strong> {formatDate(order.created_at)}</div>
+                        <div><strong>FECHA:</strong> {formatDateForPrint(order.created_at)}</div>
                       </div>
                       
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
