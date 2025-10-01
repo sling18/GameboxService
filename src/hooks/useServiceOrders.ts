@@ -178,7 +178,6 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
           serial_number: device.serial_number || null,
           problem_description: device.problem_description,
           observations: device.observations || null,
-          estimated_completion: orderData.estimated_completion || null,
           order_number: orderNumber,
           received_by_id: user.id,
         }

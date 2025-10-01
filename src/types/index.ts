@@ -87,5 +87,4 @@ export interface CreateServiceOrderData {
 export interface CreateMultipleDeviceOrderData {
   customer_id: string
   devices: DeviceItem[]
-  estimated_completion?: string
 }

@@ -11,7 +11,23 @@ Currently, two official plugins are available:
 
 Una aplicación web completa para gestionar un taller de servicio técnico de videojuegos, desarrollada con React, TypeScript y configurada para usar Supabase como backend.
 
-## 🚀 Estado Actual - Demostración Funcional
+## � Documentación del Proyecto
+
+### Guías de Arquitectura
+- [📐 ARCHITECTURE.md](./docs/ARCHITECTURE.md) - Arquitectura completa del sistema
+- [✨ BEST_PRACTICES.md](./docs/BEST_PRACTICES.md) - Mejores prácticas aplicadas
+- [♻️ REFACTORING_SUMMARY.md](./docs/REFACTORING_SUMMARY.md) - Resumen de refactorización
+- [📋 REFACTORING_CHECKLIST.md](./docs/REFACTORING_CHECKLIST.md) - Checklist completo
+- [📊 EXECUTIVE_SUMMARY.md](./docs/EXECUTIVE_SUMMARY.md) - Resumen ejecutivo
+
+### Guías de Performance y Optimización
+- [📦 BUNDLE_OPTIMIZATION.md](./docs/BUNDLE_OPTIMIZATION.md) - Optimización de bundle y code splitting
+
+### Guías de Debugging
+- [🔍 DEBUG_TECHNICIAN_STATS.md](./docs/DEBUG_TECHNICIAN_STATS.md) - Debug de estadísticas de técnicos
+- [🎯 TECHNICIAN_STATS_FIX.md](./docs/TECHNICIAN_STATS_FIX.md) - Corrección implementada
+
+## �🚀 Estado Actual - Demostración Funcional
 
 La aplicación está **100% funcional** en modo demostración con datos locales. Puedes probar todas las funcionalidades sin necesidad de configurar Supabase.
 

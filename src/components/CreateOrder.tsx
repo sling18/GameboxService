@@ -73,7 +73,6 @@ const CreateOrder: React.FC = () => {
     serial_number: '',
     problem_description: '',
     observations: '',
-    estimated_completion: '',
   })
 
   // Estados para múltiples dispositivos
@@ -243,7 +242,6 @@ const CreateOrder: React.FC = () => {
     const success = await createMultipleDeviceOrder({
       customer_id: customer.id,
       devices: devices,
-      estimated_completion: orderData.estimated_completion,
     })
     
     if (success && success.length > 0) {
@@ -274,7 +272,6 @@ const CreateOrder: React.FC = () => {
       serial_number: '',
       problem_description: '',
       observations: '',
-      estimated_completion: '',
     })
   }
 
@@ -304,7 +301,6 @@ const CreateOrder: React.FC = () => {
       serial_number: '',
       problem_description: '',
       observations: '',
-      estimated_completion: '',
     })
     closeModal()
   }
@@ -325,7 +321,6 @@ const CreateOrder: React.FC = () => {
       serial_number: '',
       problem_description: '',
       observations: '',
-      estimated_completion: '',
     })
     closeModal()
   }
@@ -727,21 +722,6 @@ const CreateOrder: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Fecha estimada común */}
-                    <div className="row g-3 mt-3">
-                      <div className="col-md-6">
-                        <label className="form-label fw-semibold">Fecha Estimada de Finalización</label>
-                        <input
-                          type="date"
-                          className="form-control"
-                          value={orderData.estimated_completion}
-                          onChange={(e) => setOrderData({ ...orderData, estimated_completion: e.target.value })}
-                          min={new Date().toISOString().split('T')[0]}
-                        />
-                        <div className="form-text">Esta fecha se aplicará a todos los dispositivos</div>
-                      </div>
-                    </div>
-
                     {/* Botones de acción para múltiples dispositivos */}
                     <div className="d-flex gap-2 mt-4">
                       <button 
@@ -772,7 +752,6 @@ const CreateOrder: React.FC = () => {
                             problem_description: '',
                             observations: ''
                           })
-                          setOrderData({ ...orderData, estimated_completion: '' })
                         }}
                         className="btn btn-outline-secondary"
                       >
@@ -857,17 +836,6 @@ const CreateOrder: React.FC = () => {
                           placeholder="Observaciones adicionales, notas técnicas, etc..."
                           value={orderData.observations}
                           onChange={(e) => setOrderData({ ...orderData, observations: e.target.value })}
-                        />
-                      </div>
-                      
-                      <div className="col-md-6">
-                        <label className="form-label fw-semibold">Fecha Estimada de Finalización</label>
-                        <input
-                          type="date"
-                          className="form-control"
-                          value={orderData.estimated_completion}
-                          onChange={(e) => setOrderData({ ...orderData, estimated_completion: e.target.value })}
-                          min={new Date().toISOString().split('T')[0]}
                         />
                       </div>
                     </div>

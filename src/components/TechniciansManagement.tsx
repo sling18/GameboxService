@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import { useServiceOrders } from '../hooks/useServiceOrders'
-import { supabase } from '../lib/supabase'
+import { useRouter } from '../contexts/RouterContext'
 import { 
   Wrench, 
   TrendingUp, 
@@ -13,116 +12,59 @@ import {
   Target,
   Users,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
-import type { User as UserType } from '../types'
-import type { ServiceOrder } from '../types'
-
-interface TechnicianStats {
-  id: string
-  full_name: string
-  email: string
-  totalCompleted: number
-  thisWeek: number
-  thisMonth: number
-  thisYear: number
-  completedOrders: ServiceOrder[]
-  inProgressOrders: ServiceOrder[]
-  avgCompletionTime: number
-  totalRevenue: number
-}
+import { fetchTechnicianStatistics, type TechnicianStats } from '../services/technicianStatsService'
 
 type TimeFilter = 'week' | 'month' | 'year' | 'all'
 
 const TechniciansManagement: React.FC = () => {
   const { user } = useAuth()
-  const { serviceOrders, loading: ordersLoading } = useServiceOrders()
-  const [technicians, setTechnicians] = useState<UserType[]>([])
+  const { navigate } = useRouter()
   const [techStats, setTechStats] = useState<TechnicianStats[]>([])
   const [selectedTimeFilter, setSelectedTimeFilter] = useState<TimeFilter>('month')
   const [expandedTechnician, setExpandedTechnician] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  
+  // Paginación por técnico
+  const [completedPage, setCompletedPage] = useState<Record<string, number>>({})
+  const [inProgressPage, setInProgressPage] = useState<Record<string, number>>({})
+  const ITEMS_PER_PAGE = 5
 
-  // Cargar técnicos
+  // Redirigir si no es admin (protección temprana)
   useEffect(() => {
-    const fetchTechnicians = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('role', 'technician')
-          .order('full_name')
+    if (user && user.role !== 'admin') {
+      console.log('⚠️ Acceso denegado a Técnicos, redirigiendo a dashboard...')
+      navigate('dashboard')
+    }
+  }, [user, navigate])
 
-        if (error) throw error
-        setTechnicians(data || [])
+  // Cargar estadísticas de técnicos solo si es admin
+  useEffect(() => {
+    // No cargar si no hay usuario o no es admin
+    if (!user || user.role !== 'admin') {
+      return
+    }
+
+    const loadStats = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const stats = await fetchTechnicianStatistics()
+        setTechStats(stats)
       } catch (err) {
-        console.error('Error cargando técnicos:', err)
+        console.error('Error cargando estadísticas:', err)
+        setError(err instanceof Error ? err.message : 'Error desconocido')
       } finally {
         setLoading(false)
       }
     }
 
-    fetchTechnicians()
-  }, [])
-
-  // Calcular estadísticas de técnicos
-  useEffect(() => {
-    if (!technicians.length || !serviceOrders.length) return
-
-    const stats: TechnicianStats[] = technicians.map(tech => {
-      const completedOrders = serviceOrders.filter(order => 
-        order.completed_by_id === tech.id && order.status === 'completed'
-      )
-      
-      const inProgressOrders = serviceOrders.filter(order =>
-        order.assigned_technician_id === tech.id && order.status === 'in_progress'
-      )
-
-      const now = new Date()
-      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-      const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-      const oneYearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
-
-      const thisWeek = completedOrders.filter(order => 
-        new Date(order.updated_at) >= oneWeekAgo
-      ).length
-
-      const thisMonth = completedOrders.filter(order => 
-        new Date(order.updated_at) >= oneMonthAgo
-      ).length
-
-      const thisYear = completedOrders.filter(order => 
-        new Date(order.updated_at) >= oneYearAgo
-      ).length
-
-      // Calcular tiempo promedio de finalización (estimado)
-      const avgCompletionTime = completedOrders.length > 0 
-        ? completedOrders.reduce((sum, order) => {
-            const created = new Date(order.created_at)
-            const completed = new Date(order.updated_at)
-            return sum + (completed.getTime() - created.getTime())
-          }, 0) / completedOrders.length / (1000 * 60 * 60 * 24) // días
-        : 0
-
-      return {
-        id: tech.id,
-        full_name: tech.full_name || tech.email?.split('@')[0] || 'Técnico',
-        email: tech.email,
-        totalCompleted: completedOrders.length,
-        thisWeek,
-        thisMonth,
-        thisYear,
-        completedOrders,
-        inProgressOrders,
-        avgCompletionTime,
-        totalRevenue: completedOrders.length * 15000 // Estimado $15,000 por reparación
-      }
-    })
-
-    // Ordenar por reparaciones completadas (descendente)
-    stats.sort((a, b) => b.totalCompleted - a.totalCompleted)
-    setTechStats(stats)
-  }, [technicians, serviceOrders])
+    loadStats()
+  }, [user])
 
   const getTimeFilterValue = (stats: TechnicianStats): number => {
     switch (selectedTimeFilter) {
@@ -148,7 +90,39 @@ const TechniciansManagement: React.FC = () => {
     setExpandedTechnician(expandedTechnician === techId ? null : techId)
   }
 
-  if (loading || ordersLoading) {
+  const getCompletedPage = (techId: string) => completedPage[techId] || 1
+  const getInProgressPage = (techId: string) => inProgressPage[techId] || 1
+
+  const setCompletedPageForTech = (techId: string, page: number) => {
+    setCompletedPage(prev => ({ ...prev, [techId]: page }))
+  }
+
+  const setInProgressPageForTech = (techId: string, page: number) => {
+    setInProgressPage(prev => ({ ...prev, [techId]: page }))
+  }
+
+  const getPaginatedItems = (items: any[], page: number) => {
+    const startIndex = (page - 1) * ITEMS_PER_PAGE
+    const endIndex = startIndex + ITEMS_PER_PAGE
+    return items.slice(startIndex, endIndex)
+  }
+
+  const getTotalPages = (totalItems: number) => {
+    return Math.ceil(totalItems / ITEMS_PER_PAGE)
+  }
+
+  // Protección: No renderizar nada mientras se verifica el rol
+  // Esto evita el flash de "Acceso Restringido"
+  if (!user) {
+    return null
+  }
+
+  // Si no es admin, retornar null mientras redirige
+  if (user.role !== 'admin') {
+    return null
+  }
+
+  if (loading) {
     return (
       <div className="container-fluid px-3 px-md-4 py-3">
         <div className="text-center py-5">
@@ -161,19 +135,15 @@ const TechniciansManagement: React.FC = () => {
     )
   }
 
-  if (user?.role !== 'admin') {
+  if (error) {
     return (
       <div className="container-fluid px-3 px-md-4 py-3">
-        <div className="row justify-content-center">
-          <div className="col-md-6">
-            <div className="card border-0 shadow-sm">
-              <div className="card-body text-center py-5">
-                <Users size={60} className="text-warning mb-3" />
-                <h3 className="h5 fw-bold text-dark mb-3">Acceso Restringido</h3>
-                <p className="text-muted">Solo los administradores pueden ver las estadísticas de técnicos.</p>
-              </div>
-            </div>
-          </div>
+        <div className="alert alert-danger">
+          <h5 className="alert-heading">Error</h5>
+          <p>{error}</p>
+          <button className="btn btn-outline-danger btn-sm" onClick={() => window.location.reload()}>
+            Reintentar
+          </button>
         </div>
       </div>
     )
@@ -263,7 +233,7 @@ const TechniciansManagement: React.FC = () => {
               <div className="text-primary mb-2">
                 <Users size={30} />
               </div>
-              <h3 className="fw-bold mb-1">{technicians.length}</h3>
+              <h3 className="fw-bold mb-1">{techStats.length}</h3>
               <small className="text-muted">Técnicos Activos</small>
             </div>
           </div>
@@ -392,31 +362,51 @@ const TechniciansManagement: React.FC = () => {
                                 {tech.completedOrders.length === 0 ? (
                                   <p className="text-muted small">No hay reparaciones completadas aún.</p>
                                 ) : (
-                                  <div className="list-group list-group-flush">
-                                    {tech.completedOrders.slice(0, 5).map(order => (
-                                      <div key={order.id} className="list-group-item px-0 py-2 border-0 border-bottom">
-                                        <div className="d-flex justify-content-between align-items-start">
-                                          <div className="flex-grow-1">
-                                            <div className="fw-medium small">{order.device_brand} {order.device_model}</div>
-                                            <div className="text-muted small">{order.customer?.full_name}</div>
-                                            <div className="text-primary small">#{order.order_number}</div>
-                                          </div>
-                                          <div className="text-end">
-                                            <small className="text-muted">
-                                              {new Date(order.updated_at).toLocaleDateString('es-ES')}
-                                            </small>
+                                  <>
+                                    <div className="list-group list-group-flush">
+                                      {getPaginatedItems(tech.completedOrders, getCompletedPage(tech.id)).map(order => (
+                                        <div key={order.id} className="list-group-item px-0 py-2 border-0 border-bottom">
+                                          <div className="d-flex justify-content-between align-items-start">
+                                            <div className="flex-grow-1">
+                                              <div className="fw-medium small">{order.device_brand} {order.device_model}</div>
+                                              <div className="text-muted small">{order.customer?.full_name}</div>
+                                              <div className="text-primary small">#{order.order_number}</div>
+                                            </div>
+                                            <div className="text-end">
+                                              <small className="text-muted">
+                                                {new Date(order.updated_at).toLocaleDateString('es-ES')}
+                                              </small>
+                                            </div>
                                           </div>
                                         </div>
-                                      </div>
-                                    ))}
-                                    {tech.completedOrders.length > 5 && (
-                                      <div className="text-center pt-2">
+                                      ))}
+                                    </div>
+                                    
+                                    {/* Paginación para Completadas */}
+                                    {getTotalPages(tech.completedOrders.length) > 1 && (
+                                      <div className="d-flex align-items-center justify-content-between mt-3 pt-2 border-top">
+                                        <button
+                                          className="btn btn-sm btn-outline-secondary"
+                                          disabled={getCompletedPage(tech.id) === 1}
+                                          onClick={() => setCompletedPageForTech(tech.id, getCompletedPage(tech.id) - 1)}
+                                        >
+                                          <ChevronLeft size={14} />
+                                        </button>
+                                        
                                         <small className="text-muted">
-                                          ... y {tech.completedOrders.length - 5} más
+                                          Página {getCompletedPage(tech.id)} de {getTotalPages(tech.completedOrders.length)}
                                         </small>
+                                        
+                                        <button
+                                          className="btn btn-sm btn-outline-secondary"
+                                          disabled={getCompletedPage(tech.id) === getTotalPages(tech.completedOrders.length)}
+                                          onClick={() => setCompletedPageForTech(tech.id, getCompletedPage(tech.id) + 1)}
+                                        >
+                                          <ChevronRight size={14} />
+                                        </button>
                                       </div>
                                     )}
-                                  </div>
+                                  </>
                                 )}
                               </div>
                               
@@ -429,24 +419,51 @@ const TechniciansManagement: React.FC = () => {
                                 {tech.inProgressOrders.length === 0 ? (
                                   <p className="text-muted small">No hay reparaciones en progreso.</p>
                                 ) : (
-                                  <div className="list-group list-group-flush">
-                                    {tech.inProgressOrders.map(order => (
-                                      <div key={order.id} className="list-group-item px-0 py-2 border-0 border-bottom">
-                                        <div className="d-flex justify-content-between align-items-start">
-                                          <div className="flex-grow-1">
-                                            <div className="fw-medium small">{order.device_brand} {order.device_model}</div>
-                                            <div className="text-muted small">{order.customer?.full_name}</div>
-                                            <div className="text-primary small">#{order.order_number}</div>
-                                          </div>
-                                          <div className="text-end">
-                                            <small className="text-warning">
-                                              {Math.round((new Date().getTime() - new Date(order.created_at).getTime()) / (1000 * 60 * 60 * 24))} días
-                                            </small>
+                                  <>
+                                    <div className="list-group list-group-flush">
+                                      {getPaginatedItems(tech.inProgressOrders, getInProgressPage(tech.id)).map(order => (
+                                        <div key={order.id} className="list-group-item px-0 py-2 border-0 border-bottom">
+                                          <div className="d-flex justify-content-between align-items-start">
+                                            <div className="flex-grow-1">
+                                              <div className="fw-medium small">{order.device_brand} {order.device_model}</div>
+                                              <div className="text-muted small">{order.customer?.full_name}</div>
+                                              <div className="text-primary small">#{order.order_number}</div>
+                                            </div>
+                                            <div className="text-end">
+                                              <small className="text-warning">
+                                                {Math.round((new Date().getTime() - new Date(order.created_at).getTime()) / (1000 * 60 * 60 * 24))} días
+                                              </small>
+                                            </div>
                                           </div>
                                         </div>
+                                      ))}
+                                    </div>
+                                    
+                                    {/* Paginación para En Progreso */}
+                                    {getTotalPages(tech.inProgressOrders.length) > 1 && (
+                                      <div className="d-flex align-items-center justify-content-between mt-3 pt-2 border-top">
+                                        <button
+                                          className="btn btn-sm btn-outline-secondary"
+                                          disabled={getInProgressPage(tech.id) === 1}
+                                          onClick={() => setInProgressPageForTech(tech.id, getInProgressPage(tech.id) - 1)}
+                                        >
+                                          <ChevronLeft size={14} />
+                                        </button>
+                                        
+                                        <small className="text-muted">
+                                          Página {getInProgressPage(tech.id)} de {getTotalPages(tech.inProgressOrders.length)}
+                                        </small>
+                                        
+                                        <button
+                                          className="btn btn-sm btn-outline-secondary"
+                                          disabled={getInProgressPage(tech.id) === getTotalPages(tech.inProgressOrders.length)}
+                                          onClick={() => setInProgressPageForTech(tech.id, getInProgressPage(tech.id) + 1)}
+                                        >
+                                          <ChevronRight size={14} />
+                                        </button>
                                       </div>
-                                    ))}
-                                  </div>
+                                    )}
+                                  </>
                                 )}
                               </div>
                             </div>
