@@ -182,7 +182,7 @@ const Dashboard: React.FC = () => {
                     <div className="row align-items-center">
                       <div className="col-md-9">
                         <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
-                        <p className="mb-0 opacity-90">Panel de Administración - GameBox Service</p>
+                        <p className="mb-0 opacity-90">Panel de Administración</p>
                         <small className="opacity-75">Control total del sistema de reparaciones</small>
                         <div className="mt-2">
                           {autoRefreshEnabled ? (
@@ -361,7 +361,7 @@ const Dashboard: React.FC = () => {
                     <div className="row align-items-center">
                       <div className="col-md-9">
                         <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
-                        <p className="mb-0 opacity-90">Gestión de Recepción - GameBox Service</p>
+                        <p className="mb-0 opacity-90">Gestión de Recepción</p>
                         <small className="opacity-75">Atención al cliente y gestión de órdenes</small>
                         <div className="mt-2">
                           <AutoRefreshIndicator 
@@ -476,7 +476,7 @@ const Dashboard: React.FC = () => {
                     <div className="row align-items-center">
                       <div className="col-md-9">
                         <h2 className="h4 fw-bold mb-2">{getWelcomeMessage()}</h2>
-                        <p className="mb-0 opacity-90">Cola de Reparaciones - GameBox Service</p>
+                        <p className="mb-0 opacity-90">Cola de Reparaciones</p>
                         <small className="opacity-75">Gestión técnica y reparaciones</small>
                         <div className="mt-2">
                           <AutoRefreshIndicator 

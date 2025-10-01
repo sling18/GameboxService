@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import { LogIn, User, Lock, Gamepad2, Monitor, Smartphone } from 'lucide-react'
+import { LogIn, User, Lock } from 'lucide-react'
+import logoGamebox from '../assets/logo-gamebox.png'
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('')
@@ -46,27 +47,14 @@ const Login: React.FC = () => {
               <div className="card-body p-5">
                 {/* Header */}
                 <div className="text-center mb-4">
-                  <div className="d-flex justify-content-center align-items-center gap-2 mb-3">
-                    <Gamepad2 size={40} className="text-primary" />
-                    <h1 className="h3 fw-bold text-dark mb-0">GameBox Service</h1>
+                  <div className="d-flex justify-content-center align-items-center mb-3">
+                    <img 
+                      src={logoGamebox} 
+                      alt="GameBox Service" 
+                      style={{ maxWidth: '280px', height: 'auto' }}
+                    />
                   </div>
                   <p className="text-muted">Sistema de Gestión de Taller</p>
-                </div>
-
-                {/* Sistema de iconos */}
-                <div className="row text-center mb-4">
-                  <div className="col-4">
-                    <Gamepad2 size={24} className="text-primary mb-2" />
-                    <div className="small text-muted">Consolas</div>
-                  </div>
-                  <div className="col-4">
-                    <Monitor size={24} className="text-success mb-2" />
-                    <div className="small text-muted">Monitores</div>
-                  </div>
-                  <div className="col-4">
-                    <Smartphone size={24} className="text-warning mb-2" />
-                    <div className="small text-muted">Accesorios</div>
-                  </div>
                 </div>
 
                 {/* Login form */}

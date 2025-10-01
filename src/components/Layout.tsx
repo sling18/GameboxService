@@ -10,9 +10,9 @@ import {
   Settings,
   User,
   Shield,
-  UserCheck,
-  Gamepad2
+  UserCheck
 } from 'lucide-react'
+import logoGamebox from '../assets/logo-gamebox.png'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -73,8 +73,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="container-fluid">
             {/* Brand */}
             <div className="navbar-brand d-flex align-items-center mb-0">
-              <Gamepad2 size={24} className="me-2 text-primary" />
-              <span className="fw-bold fs-5">GameBox Service</span>
+              <img 
+                src={logoGamebox} 
+                alt="GameBox Service" 
+                style={{ height: '40px', width: 'auto' }}
+              />
             </div>
 
             {/* Mobile menu button */}
