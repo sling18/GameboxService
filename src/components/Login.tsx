@@ -39,22 +39,23 @@ const Login: React.FC = () => {
   }
 
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light px-3">
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-md-6 col-lg-5">
+          <div className="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
             <div className="card shadow-lg border-0">
-              <div className="card-body p-5">
+              <div className="card-body p-3 p-sm-4 p-md-5">
                 {/* Header */}
-                <div className="text-center mb-4">
+                <div className="text-center mb-3 mb-md-4">
                   <div className="d-flex justify-content-center align-items-center mb-3">
                     <img 
                       src={logoGamebox} 
                       alt="GameBox Service" 
-                      style={{ maxWidth: '280px', height: 'auto' }}
+                      className="img-fluid"
+                      style={{ maxWidth: '100%', width: '280px', height: 'auto' }}
                     />
                   </div>
-                  <p className="text-muted">Sistema de Gestión de Taller</p>
+                  <p className="text-muted mb-0">Sistema de Gestión de Taller</p>
                 </div>
 
                 {/* Login form */}

@@ -659,8 +659,8 @@ const Dashboard: React.FC = () => {
                     )}
                   </div>
                 ) : (
-                  <div style={{ overflowX: 'hidden' }}>
-                    <table className="table table-hover align-middle mb-0" style={{ tableLayout: 'fixed', width: '100%' }}>
+                  <div className="table-responsive" style={{ overflowX: 'auto' }}>
+                    <table className="table table-hover align-middle mb-0" style={{ tableLayout: 'fixed', width: '100%', minWidth: '600px' }}>
                       <thead className="table-light">
                         <tr>
                           <th scope="col" className="border-0 fw-semibold px-2 py-3" style={{ width: '18%' }}>Cliente</th>
@@ -676,13 +676,13 @@ const Dashboard: React.FC = () => {
                       <tbody>
                         {currentOrders.map((order) => (
                           <tr key={order.id} className="border-0">
-                            <td className="px-2 py-2">
+                            <td className="px-2 py-2" data-label="Cliente">
                               <div style={{ overflow: 'hidden' }}>
                                 <div className="fw-semibold text-truncate" style={{ fontSize: '0.9rem' }}>{order.customer?.full_name}</div>
                                 <small className="text-muted">{order.customer?.cedula}</small>
                               </div>
                             </td>
-                            <td className="px-2 py-2">
+                            <td className="px-2 py-2" data-label="Dispositivo">
                               <div style={{ overflow: 'hidden' }}>
                                 <div className="fw-medium text-truncate" style={{ fontSize: '0.9rem' }}>
                                   {order.device_brand} {order.device_type}
@@ -692,10 +692,10 @@ const Dashboard: React.FC = () => {
                                 </small>
                               </div>
                             </td>
-                            <td className="px-2 py-2">
+                            <td className="px-2 py-2" data-label="Estado">
                               <StatusBadge status={order.status} />
                             </td>
-                            <td className="px-2 py-2">
+                            <td className="px-2 py-2" data-label="Técnico">
                               <div style={{ overflow: 'hidden' }}>
                                 {order.status === 'completed' && order.completed_by ? (
                                   <div className="fw-medium text-success text-truncate" style={{ fontSize: '0.9rem' }}>
@@ -714,19 +714,20 @@ const Dashboard: React.FC = () => {
                                 )}
                               </div>
                             </td>
-                            <td className="px-2 py-2">
+                            <td className="px-2 py-2" data-label="Fecha">
                               <small className="text-muted text-nowrap" style={{ fontSize: '0.85rem' }}>
                                 {formatDate.short(order.created_at)}
                               </small>
                             </td>
                             {user?.role === 'admin' && (
-                              <td className="px-2 py-2 text-center">
+                              <td className="px-2 py-2 text-center" data-label="Acciones">
                                 <div className="btn-group btn-group-sm" role="group">
                                   <button
                                     type="button"
                                     className="btn btn-outline-primary p-1"
                                     onClick={() => handleEditOrder(order)}
                                     title="Editar"
+                                    aria-label="Editar orden"
                                   >
                                     <Edit size={14} />
                                   </button>
@@ -735,6 +736,7 @@ const Dashboard: React.FC = () => {
                                     className="btn btn-outline-info p-1"
                                     onClick={() => handleShowComanda(order)}
                                     title="Comanda"
+                                    aria-label="Ver comanda"
                                   >
                                     <FileText size={14} />
                                   </button>

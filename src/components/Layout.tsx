@@ -66,25 +66,34 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const roleColor = getRoleColor(user?.role || '')
 
   return (
-    <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
+    <div className="d-flex flex-column" style={{ minHeight: '100vh', width: '100%', overflowX: 'hidden' }}>
       {/* Header Navigation */}
       <header className="bg-white shadow-sm border-bottom">
-        <nav className="navbar navbar-expand-lg navbar-light bg-white px-3 px-md-4">
-          <div className="container-fluid">
+        <nav className="navbar navbar-expand-lg navbar-light bg-white px-2 px-sm-3 px-md-4 py-2">
+          <div className="container-fluid p-0">
             {/* Brand */}
-            <div className="navbar-brand d-flex align-items-center mb-0">
+            <div className="navbar-brand d-flex align-items-center mb-0 me-auto">
               <img 
                 src={logoGamebox} 
                 alt="GameBox Service" 
-                style={{ height: '40px', width: 'auto' }}
+                className="img-fluid"
+                style={{ height: '36px', maxWidth: '140px', width: 'auto' }}
               />
+            </div>
+
+            {/* User Info Mobile - Between logo and toggle */}
+            <div className="d-flex d-lg-none align-items-center me-2">
+              <div className={`bg-${roleColor} bg-opacity-10 rounded-circle p-2`}>
+                <RoleIcon size={14} className={`text-${roleColor}`} />
+              </div>
             </div>
 
             {/* Mobile menu button */}
             <button 
-              className="navbar-toggler border-0 p-0" 
+              className="navbar-toggler border-0 p-1" 
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle navigation"
             >
               <span className="navbar-toggler-icon"></span>
             </button>
@@ -116,13 +125,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 })}
               </ul>
 
-              {/* User Info & Sign Out */}
-              <div className="d-flex align-items-center">
+              {/* User Info & Sign Out - Desktop */}
+              <div className="d-none d-lg-flex align-items-center">
                 <div className="d-flex align-items-center me-3">
                   <div className={`bg-${roleColor} bg-opacity-10 rounded-circle p-2 me-2`}>
                     <RoleIcon size={16} className={`text-${roleColor}`} />
                   </div>
-                  <div className="d-none d-md-block">
+                  <div>
                     <div className="fw-semibold small text-truncate" style={{maxWidth: '150px'}}>
                       {user?.full_name || user?.email}
                     </div>
@@ -137,7 +146,34 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   className="btn btn-outline-danger btn-sm d-flex align-items-center"
                 >
                   <LogOut size={14} className="me-1" />
-                  <span className="d-none d-md-inline">Salir</span>
+                  <span>Salir</span>
+                </button>
+              </div>
+
+              {/* Sign Out Mobile - Inside collapsed menu */}
+              <div className="d-lg-none mt-3 pt-3 border-top">
+                <div className="d-flex align-items-center mb-3 px-3">
+                  <div className={`bg-${roleColor} bg-opacity-10 rounded-circle p-2 me-2`}>
+                    <RoleIcon size={16} className={`text-${roleColor}`} />
+                  </div>
+                  <div>
+                    <div className="fw-semibold small text-truncate" style={{maxWidth: '200px'}}>
+                      {user?.full_name || user?.email}
+                    </div>
+                    <small className="text-muted">
+                      {getRoleDisplay(user?.role || '')}
+                    </small>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    signOut()
+                    setMobileMenuOpen(false)
+                  }}
+                  className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center"
+                >
+                  <LogOut size={16} className="me-2" />
+                  <span>Cerrar Sesión</span>
                 </button>
               </div>
             </div>
@@ -146,8 +182,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-grow-1 bg-light">
-        {children}
+      <main className="flex-grow-1 bg-light" style={{ width: '100%', overflowX: 'hidden' }}>
+        <div className="container-fluid px-2 px-sm-3 px-md-4 py-3 py-md-4">
+          {children}
+        </div>
       </main>
     </div>
   )
