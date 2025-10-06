@@ -121,13 +121,14 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                   box-sizing: border-box;
                 }
                 body { 
-                  font-family: 'Courier New', monospace; 
-                  font-size: 10px; 
+                  font-family: 'Arial Black', 'Arial Bold', sans-serif; 
+                  font-size: 12px; 
                   width: 80mm;
                   margin: 0;
                   padding: 2mm;
-                  line-height: 1.3;
+                  line-height: 1.4;
                   background: white;
+                  font-weight: 900;
                 }
                 .header {
                   text-align: center;
@@ -142,12 +143,12 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 }
                 .title {
                   font-weight: bold;
-                  font-size: 11px;
+                  font-size: 13px;
                   margin-bottom: 2mm;
                 }
                 .content {
-                  font-size: 9px;
-                  line-height: 1.4;
+                  font-size: 11px;
+                  line-height: 1.5;
                 }
                 .section {
                   margin-bottom: 3mm;
@@ -355,13 +356,14 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                   box-sizing: border-box;
                 }
                 body { 
-                  font-family: 'Courier New', monospace; 
-                  font-size: 10px; 
+                  font-family: 'Arial Black', 'Arial Bold', sans-serif; 
+                  font-size: 12px; 
                   width: 80mm;
                   margin: 0;
                   padding: 2mm;
-                  line-height: 1.3;
+                  line-height: 1.4;
                   background: white;
+                  font-weight: 900;
                 }
                 .instructions {
                   background: #e3f2fd;
@@ -385,12 +387,12 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 }
                 .title {
                   font-weight: bold;
-                  font-size: 11px;
+                  font-size: 13px;
                   margin-bottom: 2mm;
                 }
                 .content {
-                  font-size: 9px;
-                  line-height: 1.4;
+                  font-size: 11px;
+                  line-height: 1.5;
                 }
                 .section {
                   margin-bottom: 3mm;
@@ -537,7 +539,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                     display: 'flex', 
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    fontFamily: 'Arial, sans-serif'
+                    fontFamily: 'Arial Black, Arial Bold, sans-serif',
+                    fontWeight: 900
                   }}>
                     {/* Logo optimizado */}
                     <img src={logoGamebox} alt="GameBox Logo" style={{ 
@@ -549,10 +552,10 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                     }} />
                     
                     <div style={{ 
-                      fontSize: '11px', 
+                      fontSize: '12px', 
                       textAlign: 'left', 
                       flexGrow: 1,
-                      lineHeight: '1.3'
+                      lineHeight: '1.4'
                     }}>
                       <div style={{ marginBottom: '2px' }}><strong>ORDEN:</strong> {order.order_number}</div>
                       <div style={{ marginBottom: '2px' }}><strong>CLIENTE:</strong> {customer.full_name.slice(0, 25)}</div>
@@ -574,8 +577,9 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 }}>
                   <div className="mx-auto border rounded p-3 bg-white" style={{ 
                     width: '280px', // Simula 80mm
-                    fontFamily: 'Courier New, monospace',
-                    fontSize: '11px'
+                    fontFamily: 'Arial Black, Arial Bold, sans-serif',
+                    fontSize: '12px',
+                    fontWeight: 900
                   }}>
                     {/* Header con logo */}
                     <div className="text-center mb-3 pb-2" style={{ borderBottom: '1px dashed #000' }}>
@@ -584,11 +588,11 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                         height: 'auto',
                         marginBottom: '8px'
                       }} />
-                      <div style={{ fontWeight: 'bold', fontSize: '12px' }}>COMANDA DE SERVICIO</div>
+                      <div style={{ fontWeight: 'bold', fontSize: '13px' }}>COMANDA DE SERVICIO</div>
                     </div>
                     
                     {/* Contenido organizado en secciones */}
-                    <div style={{ fontSize: '10px', lineHeight: '1.4' }}>
+                    <div style={{ fontSize: '11px', lineHeight: '1.5' }}>
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
                         <div><strong>ORDEN:</strong> {order.order_number}</div>
                         <div><strong>FECHA:</strong> {formatDateForPrint(order.created_at)}</div>
