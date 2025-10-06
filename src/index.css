@@ -375,6 +375,27 @@ body {
   .table tbody td:last-child {
     border-bottom: 0;
   }
+
+  /* Acciones en móvil - centradas y full width */
+  .table tbody td[data-label="Acciones"] {
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .table tbody td[data-label="Acciones"]::before {
+    text-align: center;
+    width: 100%;
+    padding-right: 0;
+    margin-bottom: 0.25rem;
+  }
+
+  .table tbody td[data-label="Acciones"] .btn-group {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
 }
 
 /* Responsive Images */

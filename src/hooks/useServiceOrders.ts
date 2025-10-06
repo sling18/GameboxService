@@ -302,23 +302,29 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
     }
   }
 
-  const deliverServiceOrder = async (orderId: string, _deliveryNotes?: string): Promise<boolean> => {
+  const deliverServiceOrder = async (orderId: string, deliveryNotes?: string): Promise<boolean> => {
     try {
       console.log('📦 Marcando orden como entregada:', orderId)
       
-      // Temporalmente solo cambiar el status hasta que agreguemos las columnas a la BD
+      const now = new Date().toISOString()
+      
       const { error } = await supabase
         .from('service_orders')
         .update({
           status: 'delivered',
-          updated_at: new Date().toISOString(),
+          delivered_at: now,
+          delivery_notes: deliveryNotes || null,
+          updated_at: now,
         })
         .eq('id', orderId)
 
       if (error) throw error
 
       console.log('✅ Orden marcada como entregada exitosamente')
-      console.log('📝 Nota: delivery_notes y delivered_at se agregarán cuando se actualice la BD')
+      console.log(`� Fecha de entrega registrada: ${now}`)
+      if (deliveryNotes) {
+        console.log(`📝 Notas de entrega: ${deliveryNotes}`)
+      }
       
       // Refresh data
       await fetchServiceOrders()

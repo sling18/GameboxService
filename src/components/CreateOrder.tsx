@@ -457,17 +457,18 @@ const CreateOrder: React.FC = () => {
           <div className="card border-0 shadow-sm">
             <div className="card-header bg-transparent border-0 py-3">
               <h5 className="card-title mb-0 d-flex align-items-center">
-                <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style={{width: '32px', height: '32px'}}>
+                <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2 me-sm-3 flex-shrink-0" style={{width: 'clamp(28px, 8vw, 36px)', height: 'clamp(28px, 8vw, 36px)', fontSize: 'clamp(12px, 3vw, 16px)'}}>
                   <span className="fw-bold">1</span>
                 </div>
                 <Search size={18} className="me-2 text-primary" />
-                Buscar Cliente
+                <span className="d-none d-sm-inline">Buscar Cliente</span>
+                <span className="d-inline d-sm-none small">Buscar</span>
               </h5>
             </div>
             <div className="card-body">
-              <div className="row g-3 align-items-end">
-                <div className="col-md-8">
-                  <label className="form-label fw-semibold">Número de Cédula</label>
+              <div className="row g-2 g-sm-3 align-items-end">
+                <div className="col-12 col-sm-8">
+                  <label className="form-label fw-semibold small">Número de Cédula</label>
                   <div className="input-group">
                     <span className="input-group-text bg-light border-end-0">
                       <User size={16} className="text-muted" />
@@ -479,24 +480,28 @@ const CreateOrder: React.FC = () => {
                       value={cedula}
                       onChange={(e) => setCedula(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleSearchCustomer()}
+                      style={{minHeight: '44px'}}
                     />
                   </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-12 col-sm-4">
                   <button 
                     onClick={handleSearchCustomer} 
                     disabled={loading}
                     className="btn btn-primary w-100 d-flex align-items-center justify-content-center"
+                    style={{minHeight: '44px'}}
                   >
                     {loading ? (
                       <>
                         <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                        Buscando...
+                        <span className="d-none d-sm-inline">Buscando...</span>
+                        <span className="d-inline d-sm-none">...</span>
                       </>
                     ) : (
                       <>
-                        <Search size={16} className="me-2" />
-                        Buscar Cliente
+                        <Search size={16} className="me-1 me-sm-2" />
+                        <span className="d-none d-sm-inline">Buscar Cliente</span>
+                        <span className="d-inline d-sm-none">Buscar</span>
                       </>
                     )}
                   </button>
@@ -545,53 +550,58 @@ const CreateOrder: React.FC = () => {
                     <span className="fw-bold">2</span>
                   </div>
                   <UserPlus size={18} className="me-2 text-warning" />
-                  Registrar Nuevo Cliente
+                  <span className="d-none d-sm-inline">Registrar Nuevo Cliente</span>
+                  <span className="d-inline d-sm-none small">Nuevo Cliente</span>
                 </h5>
               </div>
               <div className="card-body">
-                <div className="row g-3">
-                  <div className="col-md-6">
-                    <label className="form-label fw-semibold">Cédula <span className="text-danger">*</span></label>
+                <div className="row g-2 g-sm-3">
+                  <div className="col-12 col-sm-6">
+                    <label className="form-label fw-semibold small">Cédula <span className="text-danger">*</span></label>
                     <input
                       type="text"
                       className="form-control"
                       value={newCustomer.cedula}
                       onChange={(e) => setNewCustomer({ ...newCustomer, cedula: e.target.value })}
                       required
+                      style={{minHeight: '44px'}}
                     />
                   </div>
-                  <div className="col-md-6">
-                    <label className="form-label fw-semibold">Nombre Completo <span className="text-danger">*</span></label>
+                  <div className="col-12 col-sm-6">
+                    <label className="form-label fw-semibold small">Nombre Completo <span className="text-danger">*</span></label>
                     <input
                       type="text"
                       className="form-control"
                       value={newCustomer.full_name}
                       onChange={(e) => setNewCustomer({ ...newCustomer, full_name: e.target.value })}
                       required
+                      style={{minHeight: '44px'}}
                     />
                   </div>
-                  <div className="col-md-6">
-                    <label className="form-label fw-semibold">Teléfono</label>
+                  <div className="col-12 col-sm-6">
+                    <label className="form-label fw-semibold small">Teléfono</label>
                     <input
                       type="text"
                       className="form-control"
                       placeholder="+57 300 123 4567"
                       value={newCustomer.phone}
                       onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
+                      style={{minHeight: '44px'}}
                     />
                   </div>
-                  <div className="col-md-6">
-                    <label className="form-label fw-semibold">Email</label>
+                  <div className="col-12 col-sm-6">
+                    <label className="form-label fw-semibold small">Email</label>
                     <input
                       type="email"
                       className="form-control"
                       placeholder="cliente@email.com"
                       value={newCustomer.email}
                       onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+                      style={{minHeight: '44px'}}
                     />
                   </div>
                   <div className="col-12">
-                    <button onClick={handleCreateCustomer} className="btn btn-warning">
+                    <button onClick={handleCreateCustomer} className="btn btn-warning w-100 w-sm-auto" style={{minHeight: '44px'}}>
                       <Plus size={16} className="me-2" />
                       Registrar Cliente
                     </button>
@@ -608,9 +618,9 @@ const CreateOrder: React.FC = () => {
         <div className="row mb-4">
           <div className="col-12">
             <div className="card border-0 shadow-sm">
-              <div className="card-body">
-                <div className="d-flex justify-content-center">
-                  <div className="btn-group" role="group">
+              <div className="card-body p-2 p-sm-3">
+                <div className="d-flex flex-column flex-sm-row justify-content-center gap-2">
+                  <div className="btn-group w-100 w-sm-auto" role="group">
                     <input 
                       type="radio" 
                       className="btn-check" 
@@ -619,8 +629,9 @@ const CreateOrder: React.FC = () => {
                       checked={!multipleDeviceMode}
                       onChange={() => setMultipleDeviceMode(false)}
                     />
-                    <label className="btn btn-outline-primary" htmlFor="single-device">
-                      📱 Un Solo Dispositivo
+                    <label className="btn btn-outline-primary" htmlFor="single-device" style={{minHeight: '44px'}}>
+                      <span className="d-none d-sm-inline">📱 Un Solo Dispositivo</span>
+                      <span className="d-inline d-sm-none">📱 Uno</span>
                     </label>
 
                     <input 
@@ -631,15 +642,16 @@ const CreateOrder: React.FC = () => {
                       checked={multipleDeviceMode}
                       onChange={() => setMultipleDeviceMode(true)}
                     />
-                    <label className="btn btn-outline-primary" htmlFor="multiple-devices">
-                      📦 Múltiples Dispositivos
+                    <label className="btn btn-outline-primary" htmlFor="multiple-devices" style={{minHeight: '44px'}}>
+                      <span className="d-none d-sm-inline">📦 Múltiples Dispositivos</span>
+                      <span className="d-inline d-sm-none">📦 Varios</span>
                     </label>
                   </div>
                 </div>
                 {multipleDeviceMode && (
-                  <div className="mt-3 text-center">
+                  <div className="mt-2 mt-sm-3 text-center">
                     <small className="text-muted">
-                      💡 Perfecto para clientes que traen varios equipos a reparar
+                      💡 <span className="d-none d-sm-inline">Perfecto para clientes que traen varios equipos a reparar</span><span className="d-inline d-sm-none">Para varios equipos</span>
                     </small>
                   </div>
                 )}
@@ -654,13 +666,14 @@ const CreateOrder: React.FC = () => {
         <div className="row mb-4">
           <div className="col-12">
             <div className="card border-0 shadow-sm">
-              <div className="card-header bg-transparent border-0 py-3">
+              <div className="card-header bg-transparent border-0 py-2 py-sm-3">
                 <h5 className="card-title mb-0 d-flex align-items-center">
-                  <div className="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style={{width: '32px', height: '32px'}}>
+                  <div className="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-2 me-sm-3 flex-shrink-0" style={{width: 'clamp(28px, 8vw, 36px)', height: 'clamp(28px, 8vw, 36px)', fontSize: 'clamp(12px, 3vw, 16px)'}}>
                     <span className="fw-bold">3</span>
                   </div>
                   <Package size={18} className="me-2 text-success" />
-                  {multipleDeviceMode ? 'Múltiples Dispositivos' : 'Detalles de la Reparación'}
+                  <span className="d-none d-sm-inline">{multipleDeviceMode ? 'Múltiples Dispositivos' : 'Detalles de la Reparación'}</span>
+                  <span className="d-inline d-sm-none small">{multipleDeviceMode ? 'Dispositivos' : 'Reparación'}</span>
                 </h5>
               </div>
               <div className="card-body">
@@ -677,30 +690,32 @@ const CreateOrder: React.FC = () => {
                           {devices.map((device, index) => (
                             <div key={index} className="col-12">
                               <div className="card border-start border-primary border-3">
-                                <div className="card-body py-2">
-                                  <div className="d-flex justify-content-between align-items-start">
-                                    <div>
-                                      <strong>{device.device_type} - {device.device_brand}</strong>
-                                      {device.device_model && <span className="text-muted"> ({device.device_model})</span>}
+                                <div className="card-body p-2 p-sm-3">
+                                  <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2">
+                                    <div className="flex-grow-1 min-w-0">
+                                      <strong className="d-block text-truncate">{device.device_type} - {device.device_brand}</strong>
+                                      {device.device_model && <span className="text-muted small"> ({device.device_model})</span>}
                                       <br />
-                                      <small className="text-muted">{device.problem_description}</small>
+                                      <small className="text-muted d-block text-truncate">{device.problem_description}</small>
                                     </div>
-                                    <div className="btn-group btn-group-sm">
+                                    <div className="d-flex gap-1 flex-shrink-0">
                                       <button
                                         type="button"
-                                        className="btn btn-outline-primary"
+                                        className="btn btn-outline-primary btn-sm"
                                         onClick={() => duplicateDevice(index)}
                                         title="Duplicar dispositivo"
+                                        style={{minWidth: '44px', minHeight: '44px'}}
                                       >
-                                        <Copy size={14} />
+                                        <Copy size={16} />
                                       </button>
                                       <button
                                         type="button"
-                                        className="btn btn-outline-danger"
+                                        className="btn btn-outline-danger btn-sm"
                                         onClick={() => removeDeviceFromList(index)}
                                         title="Eliminar dispositivo"
+                                        style={{minWidth: '44px', minHeight: '44px'}}
                                       >
-                                        <Trash2 size={14} />
+                                        <Trash2 size={16} />
                                       </button>
                                     </div>
                                   </div>
@@ -721,14 +736,15 @@ const CreateOrder: React.FC = () => {
                         </h6>
                       </div>
                       <div className="card-body">
-                        <div className="row g-3">
-                          <div className="col-md-6">
-                            <label className="form-label fw-semibold">Tipo de Dispositivo <span className="text-danger">*</span></label>
+                        <div className="row g-2 g-sm-3">
+                          <div className="col-12 col-sm-6 col-md-6">
+                            <label className="form-label fw-semibold small">Tipo de Dispositivo <span className="text-danger">*</span></label>
                             <select
                               className="form-select"
                               value={currentDevice.device_type}
                               onChange={(e) => setCurrentDevice({ ...currentDevice, device_type: e.target.value })}
                               required
+                              style={{minHeight: '44px'}}
                             >
                               <option value="">Selecciona el tipo</option>
                               {deviceTypes.map(type => (
@@ -737,13 +753,14 @@ const CreateOrder: React.FC = () => {
                             </select>
                           </div>
                           
-                          <div className="col-md-6">
-                            <label className="form-label fw-semibold">Marca <span className="text-danger">*</span></label>
+                          <div className="col-12 col-sm-6 col-md-6">
+                            <label className="form-label fw-semibold small">Marca <span className="text-danger">*</span></label>
                             <select
                               className="form-select"
                               value={currentDevice.device_brand}
                               onChange={(e) => setCurrentDevice({ ...currentDevice, device_brand: e.target.value })}
                               required
+                              style={{minHeight: '44px'}}
                             >
                               <option value="">Selecciona la marca</option>
                               {brands.map(brand => (
@@ -752,30 +769,32 @@ const CreateOrder: React.FC = () => {
                             </select>
                           </div>
                           
-                          <div className="col-md-6">
-                            <label className="form-label fw-semibold">Modelo</label>
+                          <div className="col-12 col-sm-6 col-md-6">
+                            <label className="form-label fw-semibold small">Modelo</label>
                             <input
                               type="text"
                               className="form-control"
                               placeholder="Ej: PS5, Xbox Series X, Switch"
                               value={currentDevice.device_model}
                               onChange={(e) => setCurrentDevice({ ...currentDevice, device_model: e.target.value })}
+                              style={{minHeight: '44px'}}
                             />
                           </div>
                           
-                          <div className="col-md-6">
-                            <label className="form-label fw-semibold">Número de Serie</label>
+                          <div className="col-12 col-sm-6 col-md-6">
+                            <label className="form-label fw-semibold small">Número de Serie</label>
                             <input
                               type="text"
                               className="form-control"
                               placeholder="Ej: ABC123456789"
                               value={currentDevice.serial_number}
                               onChange={(e) => setCurrentDevice({ ...currentDevice, serial_number: e.target.value })}
+                              style={{minHeight: '44px'}}
                             />
                           </div>
                           
                           <div className="col-12">
-                            <label className="form-label fw-semibold">Descripción del Problema <span className="text-danger">*</span></label>
+                            <label className="form-label fw-semibold small">Descripción del Problema <span className="text-danger">*</span></label>
                             <textarea
                               className="form-control"
                               rows={3}
@@ -783,17 +802,19 @@ const CreateOrder: React.FC = () => {
                               value={currentDevice.problem_description}
                               onChange={(e) => setCurrentDevice({ ...currentDevice, problem_description: e.target.value })}
                               required
+                              style={{minHeight: '80px'}}
                             />
                           </div>
                           
                           <div className="col-12">
-                            <label className="form-label fw-semibold">Observaciones</label>
+                            <label className="form-label fw-semibold small">Observaciones</label>
                             <textarea
                               className="form-control"
                               rows={2}
                               placeholder="Observaciones adicionales..."
                               value={currentDevice.observations}
                               onChange={(e) => setCurrentDevice({ ...currentDevice, observations: e.target.value })}
+                              style={{minHeight: '60px'}}
                             />
                           </div>
                         </div>
@@ -827,21 +848,24 @@ const CreateOrder: React.FC = () => {
                     </div>
 
                     {/* Botones de acción para múltiples dispositivos */}
-                    <div className="d-flex gap-2 mt-4">
+                    <div className="d-flex flex-column flex-sm-row gap-2 mt-3 mt-sm-4">
                       <button 
                         onClick={handleCreateMultipleOrders}
                         disabled={creating || devices.length === 0}
                         className="btn btn-success flex-grow-1"
+                        style={{minHeight: '44px'}}
                       >
                         {creating ? (
                           <>
                             <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                            Creando Órdenes...
+                            <span className="d-none d-sm-inline">Creando Órdenes...</span>
+                            <span className="d-inline d-sm-none">Creando...</span>
                           </>
                         ) : (
                           <>
-                            <Save size={16} className="me-2" />
-                            Crear {devices.length} Orden{devices.length !== 1 ? 'es' : ''} de Servicio
+                            <Save size={16} className="me-1 me-sm-2" />
+                            <span className="d-none d-sm-inline">Crear {devices.length} Orden{devices.length !== 1 ? 'es' : ''} de Servicio</span>
+                            <span className="d-inline d-sm-none">Crear ({devices.length})</span>
                           </>
                         )}
                       </button>
@@ -945,29 +969,34 @@ const CreateOrder: React.FC = () => {
                     </div>
 
                     {/* Botones de acción para dispositivo único */}
-                    <div className="d-flex gap-2 mt-4">
+                    <div className="d-flex flex-column flex-sm-row gap-2 mt-3 mt-sm-4">
                       <button 
                         onClick={handleCreateOrder}
                         disabled={creating || !orderData.device_type || !orderData.device_brand || !orderData.problem_description}
                         className="btn btn-success flex-grow-1"
+                        style={{minHeight: '44px'}}
                       >
                         {creating ? (
                           <>
                             <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                            Creando Orden...
+                            <span className="d-none d-sm-inline">Creando Orden...</span>
+                            <span className="d-inline d-sm-none">Creando...</span>
                           </>
                         ) : (
                           <>
-                            <Save size={16} className="me-2" />
-                            Crear Orden de Servicio
+                            <Save size={16} className="me-1 me-sm-2" />
+                            <span className="d-none d-sm-inline">Crear Orden de Servicio</span>
+                            <span className="d-inline d-sm-none">Crear Orden</span>
                           </>
                         )}
                       </button>
                       <button 
                         onClick={handleClearForm}
                         className="btn btn-outline-secondary"
+                        style={{minHeight: '44px'}}
                       >
-                        Limpiar Formulario
+                        <span className="d-none d-sm-inline">Limpiar Formulario</span>
+                        <span className="d-inline d-sm-none">Limpiar</span>
                       </button>
                     </div>
                   </>

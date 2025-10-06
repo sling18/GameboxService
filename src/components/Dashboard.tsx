@@ -207,8 +207,8 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Estadísticas principales */}
-            <div className="row g-2 g-md-3 mb-3">
-              <div className="col-6 col-md-3">
+            <div className="row g-2 g-sm-3 g-md-3 mb-3">
+              <div className="col-12 col-sm-6 col-md-6 col-lg-3">
                 <StatCard
                   title="Total Órdenes"
                   value={stats.total}
@@ -219,7 +219,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => navigate('orders')}
                 />
               </div>
-              <div className="col-6 col-md-3">
+              <div className="col-12 col-sm-6 col-md-6 col-lg-3">
                 <StatCard
                   title="Pendientes"
                   value={stats.pending}
@@ -229,7 +229,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => navigate('orders')}
                 />
               </div>
-              <div className="col-6 col-md-3">
+              <div className="col-12 col-sm-6 col-md-6 col-lg-3">
                 <StatCard
                   title="En Progreso"
                   value={stats.inProgress}
@@ -239,7 +239,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => navigate('orders')}
                 />
               </div>
-              <div className="col-6 col-md-3">
+              <div className="col-12 col-sm-6 col-md-6 col-lg-3">
                 <StatCard
                   title="Completadas"
                   value={stats.completed}
@@ -252,8 +252,8 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Estadísticas secundarias */}
-            <div className="row g-2 g-md-3 mb-3">
-              <div className="col-md-4">
+            <div className="row g-2 g-sm-3 g-md-3 mb-3">
+              <div className="col-12 col-sm-6 col-md-4">
                 <StatCard
                   title="Órdenes Hoy"
                   value={stats.todayOrders}
@@ -263,7 +263,7 @@ const Dashboard: React.FC = () => {
                   size="sm"
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-sm-6 col-md-4">
                 <StatCard
                   title="Con Número Serie"
                   value={stats.withSerial}
@@ -273,7 +273,7 @@ const Dashboard: React.FC = () => {
                   size="sm"
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-md-4">
                 <StatCard
                   title="Entregadas"
                   value={stats.delivered}
@@ -296,33 +296,33 @@ const Dashboard: React.FC = () => {
                     </h6>
                   </div>
                   <div className="card-body p-3">
-                    <div className="row g-2">
-                      <div className="col-6 col-lg-3">
-                        <button onClick={() => navigate('create-order')} className="btn btn-primary w-100 d-flex flex-column align-items-center justify-content-center p-2 border-0">
-                          <Plus size={20} className="mb-1" />
-                          <span className="fw-semibold small">Nueva Orden</span>
-                          <small className="opacity-75">Registrar dispositivo</small>
+                    <div className="row g-2 g-sm-3">
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                        <button onClick={() => navigate('create-order')} className="btn btn-primary w-100 d-flex flex-column align-items-center justify-content-center p-3 py-3 border-0" style={{minHeight: '110px'}}>
+                          <Plus size={24} className="mb-2" />
+                          <span className="fw-semibold">Nueva Orden</span>
+                          <small className="opacity-75 text-center d-none d-sm-block">Registrar dispositivo</small>
                         </button>
                       </div>
-                      <div className="col-6 col-lg-3">
-                        <button onClick={() => navigate('customers')} className="btn btn-outline-primary w-100 d-flex flex-column align-items-center justify-content-center p-2">
-                          <Users size={20} className="mb-1" />
-                          <span className="fw-semibold small">Buscar Cliente</span>
-                          <small className="opacity-75">Por cédula</small>
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                        <button onClick={() => navigate('customers')} className="btn btn-outline-primary w-100 d-flex flex-column align-items-center justify-content-center p-3 py-3" style={{minHeight: '110px'}}>
+                          <Users size={24} className="mb-2" />
+                          <span className="fw-semibold">Buscar Cliente</span>
+                          <small className="opacity-75 text-center d-none d-sm-block">Por cédula</small>
                         </button>
                       </div>
-                      <div className="col-6 col-lg-3">
-                        <button onClick={() => navigate('orders')} className="btn btn-outline-secondary w-100 d-flex flex-column align-items-center justify-content-center p-2">
-                          <Eye size={20} className="mb-1" />
-                          <span className="fw-semibold small">Ver Órdenes</span>
-                          <small className="opacity-75">Todas las órdenes</small>
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                        <button onClick={() => navigate('orders')} className="btn btn-outline-secondary w-100 d-flex flex-column align-items-center justify-content-center p-3 py-3" style={{minHeight: '110px'}}>
+                          <Eye size={24} className="mb-2" />
+                          <span className="fw-semibold">Ver Órdenes</span>
+                          <small className="opacity-75 text-center d-none d-sm-block">Todas las órdenes</small>
                         </button>
                       </div>
-                      <div className="col-6 col-lg-3">
-                        <button onClick={() => navigate('settings')} className="btn btn-outline-secondary w-100 d-flex flex-column align-items-center justify-content-center p-2">
-                          <Wrench size={20} className="mb-1" />
-                          <span className="fw-semibold small">Configuración</span>
-                          <small className="opacity-75">Sistema</small>
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                        <button onClick={() => navigate('settings')} className="btn btn-outline-secondary w-100 d-flex flex-column align-items-center justify-content-center p-3 py-3" style={{minHeight: '110px'}}>
+                          <Wrench size={24} className="mb-2" />
+                          <span className="fw-semibold">Configuración</span>
+                          <small className="opacity-75 text-center d-none d-sm-block">Sistema</small>
                         </button>
                       </div>
                     </div>
@@ -380,8 +380,8 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Estadísticas para recepcionista */}
-            <div className="row g-2 g-md-3 mb-3">
-              <div className="col-md-4">
+            <div className="row g-2 g-sm-3 g-md-3 mb-3">
+              <div className="col-12 col-sm-6 col-md-4">
                 <StatCard
                   title="Órdenes Hoy"
                   value={stats.todayOrders}
@@ -391,7 +391,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => navigate('orders')}
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-sm-6 col-md-4">
                 <StatCard
                   title="Pendientes"
                   value={stats.pending}
@@ -401,7 +401,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => navigate('orders')}
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-md-4">
                 <StatCard
                   title="Para Entrega"
                   value={stats.completed}
@@ -495,8 +495,8 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Estadísticas para técnico */}
-            <div className="row g-2 g-md-3 mb-3">
-              <div className="col-md-4">
+            <div className="row g-2 g-sm-3 g-md-3 mb-3">
+              <div className="col-12 col-sm-6 col-md-4">
                 <StatCard
                   title="Mis Reparaciones"
                   value={myOrders.filter(o => o.status === 'in_progress').length}
@@ -506,7 +506,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => navigate('orders')}
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-sm-6 col-md-4">
                 <StatCard
                   title="Disponibles"
                   value={availableOrders.length}
@@ -516,7 +516,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => navigate('orders')}
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-md-4">
                 <StatCard
                   title="Completadas Hoy"
                   value={myCompleted.filter(order => {
@@ -659,15 +659,15 @@ const Dashboard: React.FC = () => {
                     )}
                   </div>
                 ) : (
-                  <div className="table-responsive" style={{ overflowX: 'auto' }}>
-                    <table className="table table-hover align-middle mb-0" style={{ tableLayout: 'fixed', width: '100%', minWidth: '600px' }}>
+                  <div className="table-responsive">
+                    <table className="table table-hover align-middle mb-0">
                       <thead className="table-light">
                         <tr>
-                          <th scope="col" className="border-0 fw-semibold px-2 py-3" style={{ width: '18%' }}>Cliente</th>
-                          <th scope="col" className="border-0 fw-semibold px-2 py-3" style={{ width: '22%' }}>Dispositivo</th>
-                          <th scope="col" className="border-0 fw-semibold px-2 py-3" style={{ width: '13%' }}>Estado</th>
-                          <th scope="col" className="border-0 fw-semibold px-2 py-3" style={{ width: '17%' }}>Técnico</th>
-                          <th scope="col" className="border-0 fw-semibold px-2 py-3" style={{ width: '13%' }}>Fecha</th>
+                          <th scope="col" className="border-0 fw-semibold px-2 py-3">Cliente</th>
+                          <th scope="col" className="border-0 fw-semibold px-2 py-3">Dispositivo</th>
+                          <th scope="col" className="border-0 fw-semibold px-2 py-3">Estado</th>
+                          <th scope="col" className="border-0 fw-semibold px-2 py-3">Técnico</th>
+                          <th scope="col" className="border-0 fw-semibold px-2 py-3">Fecha</th>
                           {user?.role === 'admin' && (
                             <th scope="col" className="border-0 fw-semibold px-2 py-3 text-center" style={{ width: '17%' }}>Acciones</th>
                           )}
@@ -676,83 +676,84 @@ const Dashboard: React.FC = () => {
                       <tbody>
                         {currentOrders.map((order) => (
                           <tr key={order.id} className="border-0">
-                            <td className="px-2 py-2" data-label="Cliente">
-                              <div style={{ overflow: 'hidden' }}>
+                            <td className="px-2 py-2 py-md-3" data-label="Cliente">
+                              <div className="d-flex flex-column flex-md-row align-items-start">
                                 <div className="fw-semibold text-truncate" style={{ fontSize: '0.9rem' }}>{order.customer?.full_name}</div>
-                                <small className="text-muted">{order.customer?.cedula}</small>
+                                <small className="text-muted d-block d-md-inline ms-md-2">{order.customer?.cedula}</small>
                               </div>
                             </td>
-                            <td className="px-2 py-2" data-label="Dispositivo">
-                              <div style={{ overflow: 'hidden' }}>
-                                <div className="fw-medium text-truncate" style={{ fontSize: '0.9rem' }}>
+                            <td className="px-2 py-2 py-md-3" data-label="Dispositivo">
+                              <div className="d-flex flex-column">
+                                <span className="fw-medium text-truncate" style={{ fontSize: '0.9rem' }}>
                                   {order.device_brand} {order.device_type}
-                                </div>
-                                <small className="text-muted text-truncate d-block">
+                                </span>
+                                <small className="text-muted text-truncate">
                                   {order.device_model}
                                 </small>
                               </div>
                             </td>
-                            <td className="px-2 py-2" data-label="Estado">
+                            <td className="px-2 py-2 py-md-3" data-label="Estado">
                               <StatusBadge status={order.status} />
                             </td>
-                            <td className="px-2 py-2" data-label="Técnico">
-                              <div style={{ overflow: 'hidden' }}>
-                                {order.status === 'completed' && order.completed_by ? (
-                                  <div className="fw-medium text-success text-truncate" style={{ fontSize: '0.9rem' }}>
-                                    {order.completed_by?.full_name || 
-                                     order.completed_by?.email?.split('@')[0] || 
-                                     'Técnico'}
-                                  </div>
-                                ) : order.assigned_technician ? (
-                                  <div className="fw-medium text-truncate" style={{ fontSize: '0.9rem' }}>
-                                    {order.assigned_technician?.full_name || 
-                                     order.assigned_technician?.email?.split('@')[0] || 
-                                     'Técnico'}
-                                  </div>
-                                ) : (
-                                  <span className="text-muted small">Sin asignar</span>
-                                )}
-                              </div>
+                            <td className="px-2 py-2 py-md-3" data-label="Técnico">
+                              {order.status === 'completed' && order.completed_by ? (
+                                <div className="fw-medium text-success text-truncate" style={{ fontSize: '0.9rem' }}>
+                                  {order.completed_by?.full_name || 
+                                   order.completed_by?.email?.split('@')[0] || 
+                                   'Técnico'}
+                                </div>
+                              ) : order.assigned_technician ? (
+                                <div className="fw-medium text-truncate" style={{ fontSize: '0.9rem' }}>
+                                  {order.assigned_technician?.full_name || 
+                                   order.assigned_technician?.email?.split('@')[0] || 
+                                   'Técnico'}
+                                </div>
+                              ) : (
+                                <span className="text-muted small">Sin asignar</span>
+                              )}
                             </td>
-                            <td className="px-2 py-2" data-label="Fecha">
-                              <small className="text-muted text-nowrap" style={{ fontSize: '0.85rem' }}>
+                            <td className="px-2 py-2 py-md-3" data-label="Fecha">
+                              <small className="text-muted" style={{ fontSize: '0.85rem' }}>
                                 {formatDate.short(order.created_at)}
                               </small>
                             </td>
                             {user?.role === 'admin' && (
-                              <td className="px-2 py-2 text-center" data-label="Acciones">
-                                <div className="btn-group btn-group-sm" role="group">
+                              <td className="px-2 py-2 py-md-3 text-center" data-label="Acciones">
+                                <div className="btn-group" role="group">
                                   <button
                                     type="button"
-                                    className="btn btn-outline-primary p-1"
+                                    className="btn btn-outline-primary btn-sm px-2 py-2"
                                     onClick={() => handleEditOrder(order)}
                                     title="Editar"
                                     aria-label="Editar orden"
+                                    style={{minWidth: '44px', minHeight: '44px'}}
                                   >
-                                    <Edit size={14} />
+                                    <Edit size={16} />
                                   </button>
                                   <button
                                     type="button"
-                                    className="btn btn-outline-info p-1"
+                                    className="btn btn-outline-info btn-sm px-2 py-2"
                                     onClick={() => handleShowComanda(order)}
                                     title="Comanda"
                                     aria-label="Ver comanda"
+                                    style={{minWidth: '44px', minHeight: '44px'}}
                                   >
-                                    <FileText size={14} />
+                                    <FileText size={16} />
                                   </button>
                                   <button
                                     type="button"
-                                    className="btn btn-outline-danger p-1"
+                                    className="btn btn-outline-danger btn-sm px-2 py-2"
                                     onClick={() => handleDeleteOrder(order.id)}
                                     disabled={deletingOrderId === order.id}
                                     title="Eliminar"
+                                    style={{minWidth: '44px', minHeight: '44px'}}
                                   >
                                     {deletingOrderId === order.id ? (
                                       <div className="spinner-border spinner-border-sm" role="status">
                                         <span className="visually-hidden">Loading...</span>
                                       </div>
                                     ) : (
-                                      <Trash2 size={14} />
+                                      <Trash2 size={16} />
                                     )}
                                   </button>
                                 </div>
@@ -767,30 +768,35 @@ const Dashboard: React.FC = () => {
                 
                 {/* Controles de paginación */}
                 {serviceOrders.length > ordersPerPage && (
-                  <div className="card-footer bg-transparent border-top">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <div className="text-muted small">
-                        Mostrando {startIndex + 1}-{Math.min(endIndex, serviceOrders.length)} de {serviceOrders.length} órdenes
+                  <div className="card-footer bg-transparent border-top py-3">
+                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                      <div className="text-muted small text-center text-md-start order-2 order-md-1">
+                        Mostrando {startIndex + 1}-{Math.min(endIndex, serviceOrders.length)} de {serviceOrders.length}
                       </div>
-                      <div className="d-flex align-items-center gap-2">
+                      <div className="d-flex align-items-center justify-content-center gap-2 order-1 order-md-2">
                         <button
                           onClick={handlePreviousPage}
                           disabled={currentPage === 1}
-                          className="btn btn-outline-primary btn-sm d-flex align-items-center"
+                          className="btn btn-outline-primary btn-sm px-3 py-2 d-flex align-items-center"
+                          style={{minHeight: '40px'}}
                         >
-                          <ChevronLeft size={16} className="me-1" />
-                          Anterior
+                          <ChevronLeft size={16} className="d-none d-sm-inline me-1" />
+                          <span className="d-inline d-sm-none">‹</span>
+                          <span className="d-none d-sm-inline">Anterior</span>
                         </button>
-                        <span className="text-muted small">
-                          Página {currentPage} de {totalPages}
+                        <span className="text-muted small px-2" style={{minWidth: '80px', textAlign: 'center'}}>
+                          <span className="d-none d-sm-inline">Página </span>
+                          {currentPage} / {totalPages}
                         </span>
                         <button
                           onClick={handleNextPage}
                           disabled={currentPage === totalPages}
-                          className="btn btn-outline-primary btn-sm d-flex align-items-center"
+                          className="btn btn-outline-primary btn-sm px-3 py-2 d-flex align-items-center"
+                          style={{minHeight: '40px'}}
                         >
-                          Siguiente
-                          <ChevronRight size={16} className="ms-1" />
+                          <span className="d-none d-sm-inline">Siguiente</span>
+                          <span className="d-inline d-sm-none">›</span>
+                          <ChevronRight size={16} className="d-none d-sm-inline ms-1" />
                         </button>
                       </div>
                     </div>
@@ -868,22 +874,33 @@ const StatCard: React.FC<StatCardProps> = ({
     <div 
       className={`card border-0 shadow-sm ${hoverClasses} ${cardHeight}`}
       onClick={onClick}
-      style={{ cursor: onClick ? 'pointer' : 'default' }}
+      style={{ 
+        cursor: onClick ? 'pointer' : 'default',
+        minHeight: size === 'sm' ? '100px' : '120px'
+      }}
     >
-      <div className="card-body p-3 p-md-4">
-        <div className="d-flex align-items-center">
-          <div className={`${colorClasses[color]} bg-opacity-10 rounded-3 p-2 p-md-3 me-3 d-flex align-items-center justify-content-center`}>
+      <div className="card-body p-3 p-sm-4 p-md-4">
+        <div className="d-flex flex-row flex-sm-row align-items-center">
+          <div className={`${colorClasses[color]} bg-opacity-10 rounded-3 p-2 p-sm-3 me-3 d-flex align-items-center justify-content-center flex-shrink-0`}
+               style={{
+                 width: size === 'sm' ? '48px' : '56px',
+                 height: size === 'sm' ? '48px' : '56px'
+               }}>
             <Icon size={size === 'sm' ? 20 : 24} className={`text-${color}`} />
           </div>
-          <div className="flex-grow-1">
-            <h6 className="card-subtitle mb-1 text-muted small">{title}</h6>
+          <div className="flex-grow-1 min-w-0">
+            <h6 className="card-subtitle mb-1 text-muted small text-truncate">{title}</h6>
             {subtitle && (
-              <p className="mb-1 text-muted" style={{fontSize: '0.75rem'}}>{subtitle}</p>
+              <p className="mb-1 text-muted d-none d-sm-block text-truncate" style={{fontSize: '0.75rem'}}>
+                {subtitle}
+              </p>
             )}
-            <div className="d-flex align-items-center">
-              <h4 className={`card-title mb-0 fw-bold ${size === 'sm' ? 'h5' : 'h3'}`}>{value}</h4>
+            <div className="d-flex align-items-baseline flex-wrap">
+              <h4 className={`card-title mb-0 fw-bold ${size === 'sm' ? 'h5' : 'h3'} me-2`}>
+                {value}
+              </h4>
               {trend && (
-                <small className="text-success ms-2">{trend}</small>
+                <small className="text-success">{trend}</small>
               )}
             </div>
           </div>

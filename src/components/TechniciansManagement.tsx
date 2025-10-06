@@ -17,6 +17,7 @@ import {
   ChevronRight
 } from 'lucide-react'
 import { fetchTechnicianStatistics, type TechnicianStats } from '../services/technicianStatsService'
+import { fixDeliveredDates } from '../utils/fixDeliveredDates'
 
 type TimeFilter = 'week' | 'month' | 'year' | 'all'
 
@@ -248,7 +249,7 @@ const TechniciansManagement: React.FC = () => {
               <h3 className="fw-bold mb-1">
                 {techStats.reduce((sum, tech) => sum + getTimeFilterValue(tech), 0)}
               </h3>
-              <small className="text-muted">Reparaciones - {getFilterLabel()}</small>
+              <small className="text-muted">Entregadas - {getFilterLabel()}</small>
             </div>
           </div>
         </div>
@@ -332,7 +333,7 @@ const TechniciansManagement: React.FC = () => {
                           <div className="d-flex align-items-center gap-3">
                             <div className="text-center d-none d-md-block">
                               <div className="fw-bold text-success">{filterValue}</div>
-                              <small className="text-muted">Completadas</small>
+                              <small className="text-muted">Entregadas</small>
                             </div>
                             
                             <div className="text-center d-none d-md-block">
@@ -356,11 +357,11 @@ const TechniciansManagement: React.FC = () => {
                               <div className="col-md-6">
                                 <h6 className="fw-semibold mb-3">
                                   <CheckCircle size={16} className="me-1 text-success" />
-                                  Reparaciones Completadas ({tech.completedOrders.length})
+                                  Reparaciones Entregadas ({tech.completedOrders.length})
                                 </h6>
                                 
                                 {tech.completedOrders.length === 0 ? (
-                                  <p className="text-muted small">No hay reparaciones completadas aún.</p>
+                                  <p className="text-muted small">No hay reparaciones entregadas aún.</p>
                                 ) : (
                                   <>
                                     <div className="list-group list-group-flush">
@@ -373,8 +374,8 @@ const TechniciansManagement: React.FC = () => {
                                               <div className="text-primary small">#{order.order_number}</div>
                                             </div>
                                             <div className="text-end">
-                                              <small className="text-muted">
-                                                {new Date(order.updated_at).toLocaleDateString('es-ES')}
+                                              <small className="text-success">
+                                                ✅ {order.delivered_at ? new Date(order.delivered_at).toLocaleDateString('es-ES') : 'Entregada'}
                                               </small>
                                             </div>
                                           </div>

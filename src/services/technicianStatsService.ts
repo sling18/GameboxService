@@ -40,12 +40,13 @@ export const fetchTechnicians = async (): Promise<UserType[]> => {
 }
 
 /**
- * Obtiene todas las órdenes completadas con información del técnico que las completó
- * NOTA: Si completed_by_id es NULL, usa assigned_technician_id como fallback
+ * Obtiene todas las órdenes ENTREGADAS con información del técnico que las completó
+ * NOTA: Solo cuenta órdenes con status 'delivered' (entregadas al cliente)
+ * Si completed_by_id es NULL, usa assigned_technician_id como fallback
  */
 export const fetchCompletedOrders = async (): Promise<ServiceOrder[]> => {
   try {
-    console.log('🔍 Obteniendo órdenes completadas...')
+    console.log('🔍 Obteniendo órdenes entregadas (delivered)...')
     
     const { data, error } = await supabase
       .from('service_orders')
@@ -56,12 +57,12 @@ export const fetchCompletedOrders = async (): Promise<ServiceOrder[]> => {
         completed_by:profiles!service_orders_completed_by_id_fkey(*),
         received_by:profiles!service_orders_received_by_id_fkey(*)
       `)
-      .eq('status', 'completed')
-      .order('updated_at', { ascending: false })
+      .eq('status', 'delivered')
+      .order('delivered_at', { ascending: false })
 
     if (error) throw error
     
-    console.log(`✅ ${data?.length || 0} órdenes completadas encontradas`)
+    console.log(`✅ ${data?.length || 0} órdenes entregadas encontradas`)
     console.log('📊 Análisis de completed_by_id:')
     console.log('   - Con completed_by_id:', data?.filter(o => o.completed_by_id).length)
     console.log('   - Sin completed_by_id:', data?.filter(o => !o.completed_by_id).length)
@@ -70,12 +71,13 @@ export const fetchCompletedOrders = async (): Promise<ServiceOrder[]> => {
       assigned_technician_id: o.assigned_technician_id,
       completed_by_id: o.completed_by_id,
       assigned_tech_name: o.assigned_technician?.full_name || o.assigned_technician?.email,
-      completed_by_name: o.completed_by?.full_name || o.completed_by?.email
+      completed_by_name: o.completed_by?.full_name || o.completed_by?.email,
+      delivered_at: o.delivered_at
     })))
     
     return data || []
   } catch (err) {
-    console.error('❌ Error obteniendo órdenes completadas:', err)
+    console.error('❌ Error obteniendo órdenes entregadas:', err)
     throw err
   }
 }
@@ -136,23 +138,43 @@ export const calculateTechnicianStats = (
     console.log(`     • Con assigned (fallback): ${techCompletedOrders.filter(o => !o.completed_by_id && o.assigned_technician_id === technician.id).length}`)
   }
 
-  // Calcular estadísticas por período
+  // Calcular estadísticas por período (basado en fecha de entrega)
   const now = new Date()
   const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
   const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
   const oneYearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
 
-  const thisWeek = techCompletedOrders.filter(order => 
-    new Date(order.updated_at) >= oneWeekAgo
-  ).length
+  // Debug: Ver las fechas de las órdenes completadas
+  if (techCompletedOrders.length > 0) {
+    console.log(`   🔍 Analizando fechas de ${techCompletedOrders.length} órdenes:`)
+    techCompletedOrders.forEach((order, idx) => {
+      const deliveredDate = order.delivered_at ? new Date(order.delivered_at) : null
+      console.log(`     ${idx + 1}. ${order.order_number}: delivered_at=${order.delivered_at}, parsed=${deliveredDate?.toLocaleDateString('es-ES')}`)
+    })
+    console.log(`   📅 Fecha actual: ${now.toLocaleDateString('es-ES')}`)
+    console.log(`   📅 Una semana atrás: ${oneWeekAgo.toLocaleDateString('es-ES')}`)
+    console.log(`   📅 Un mes atrás: ${oneMonthAgo.toLocaleDateString('es-ES')}`)
+  }
 
-  const thisMonth = techCompletedOrders.filter(order => 
-    new Date(order.updated_at) >= oneMonthAgo
-  ).length
+  const thisWeek = techCompletedOrders.filter(order => {
+    if (!order.delivered_at) return false
+    const deliveredDate = new Date(order.delivered_at)
+    return deliveredDate >= oneWeekAgo
+  }).length
 
-  const thisYear = techCompletedOrders.filter(order => 
-    new Date(order.updated_at) >= oneYearAgo
-  ).length
+  const thisMonth = techCompletedOrders.filter(order => {
+    if (!order.delivered_at) return false
+    const deliveredDate = new Date(order.delivered_at)
+    return deliveredDate >= oneMonthAgo
+  }).length
+
+  const thisYear = techCompletedOrders.filter(order => {
+    if (!order.delivered_at) return false
+    const deliveredDate = new Date(order.delivered_at)
+    return deliveredDate >= oneYearAgo
+  }).length
+
+  console.log(`   📊 Períodos calculados: Semana=${thisWeek}, Mes=${thisMonth}, Año=${thisYear}`)
 
   // Calcular tiempo promedio de finalización
   const avgCompletionTime = techCompletedOrders.length > 0 

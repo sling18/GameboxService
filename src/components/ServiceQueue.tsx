@@ -218,11 +218,26 @@ const ServiceQueue: React.FC = () => {
     color 
   }) => {
     const orders = getOrdersByStatus(status)
+    const [currentPage, setCurrentPage] = React.useState(1)
+    const ordersPerPage = 3
+    
+    // Calcular órdenes a mostrar
+    const indexOfLastOrder = currentPage * ordersPerPage
+    const indexOfFirstOrder = indexOfLastOrder - ordersPerPage
+    const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder)
+    const totalPages = Math.ceil(orders.length / ordersPerPage)
+    
+    // Resetear página cuando cambien las órdenes
+    React.useEffect(() => {
+      if (currentPage > totalPages && totalPages > 0) {
+        setCurrentPage(totalPages)
+      }
+    }, [orders.length, currentPage, totalPages])
     
     return (
-      <div className="col-12 col-lg-6 col-xl-3 mb-4">
-        <div className="card border-0 shadow-sm h-100">
-          <div className="card-header bg-transparent border-0 py-3">
+      <div className="col-12 col-sm-6 col-lg-6 col-xl-3 mb-3 mb-sm-4">
+        <div className="card border-0 shadow-sm h-100 d-flex flex-column">
+          <div className="card-header bg-transparent border-0 py-2 py-sm-3">
             <div className="d-flex align-items-center justify-content-between">
               <div className="d-flex align-items-center">
                 <div className={`bg-${color} bg-opacity-10 rounded-circle p-2 me-2`}>
@@ -234,7 +249,7 @@ const ServiceQueue: React.FC = () => {
             </div>
           </div>
           
-          <div className="card-body p-0" style={{maxHeight: '500px', overflowY: 'auto'}}>
+          <div className="card-body p-0 flex-grow-1 d-flex flex-column">
             {orders.length === 0 ? (
               <div className="text-center py-4">
                 <div className={`bg-${color} bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3`}>
@@ -243,28 +258,29 @@ const ServiceQueue: React.FC = () => {
                 <h6 className="text-muted">Sin órdenes {title.toLowerCase()}</h6>
               </div>
             ) : (
-              <div className="p-2">
-                {orders.map(order => (
+              <>
+                <div className="p-2 p-sm-3 flex-grow-1">
+                  {currentOrders.map(order => (
                   <div key={order.id} className="card bg-light border-0 mb-2">
-                    <div className="card-body p-3">
-                      <div className="d-flex justify-content-between align-items-start mb-2">
-                        <div className="flex-grow-1">
+                    <div className="card-body p-2 p-sm-3">
+                      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2 mb-2">
+                        <div className="flex-grow-1 min-w-0">
                           <h6 className="fw-bold mb-1 text-truncate">
                             {order.device_brand} {order.device_model}
                           </h6>
-                          <small className="text-muted d-block">
+                          <small className="text-muted d-block text-truncate">
                             {order.customer?.full_name}
                           </small>
                           <small className="text-primary d-block fw-semibold">
                             #{order.order_number}
                           </small>
                         </div>
-                        <div className="d-flex align-items-center text-muted">
+                        <div className="d-flex align-items-center text-muted flex-shrink-0">
                           <Package className="w-3 h-3 me-1" />
                           <small>
                             {order.device_type}
                             {order.serial_number && (
-                              <span className="text-muted ms-2">
+                              <span className="text-muted ms-2 d-none d-md-inline">
                                 SN: {order.serial_number}
                               </span>
                             )}
@@ -289,18 +305,22 @@ const ServiceQueue: React.FC = () => {
                             <button 
                               className="btn btn-primary btn-sm"
                               onClick={() => handleTakeOrder(order.id)}
+                              style={{minHeight: '44px'}}
                             >
-                              <Wrench size={12} className="me-1" />
-                              Tomar Reparación
+                              <Wrench size={16} className="me-1" />
+                              <span className="d-none d-sm-inline">Tomar Reparación</span>
+                              <span className="d-inline d-sm-none">Tomar</span>
                             </button>
                           )}
                           {status === 'in_progress' && (
                             <button 
                               className="btn btn-success btn-sm"
                               onClick={() => handleCompleteOrder(order.id)}
+                              style={{minHeight: '44px'}}
                             >
-                              <CheckCircle size={12} className="me-1" />
-                              Completar
+                              <CheckCircle size={16} className="me-1" />
+                              <span className="d-none d-sm-inline">Completar</span>
+                              <span className="d-inline d-sm-none">✓</span>
                             </button>
                           )}
                         </div>
@@ -312,9 +332,11 @@ const ServiceQueue: React.FC = () => {
                           <button 
                             className="btn btn-outline-success btn-sm border-2"
                             onClick={() => handleDeliverOrder(order.id)}
+                            style={{minHeight: '44px'}}
                           >
-                            <Package size={12} className="me-1" />
-                            ✅ Cliente Recoge Artículo
+                            <Package size={16} className="me-1" />
+                            <span className="d-none d-sm-inline">✅ Cliente Recoge Artículo</span>
+                            <span className="d-inline d-sm-none">✅ Entregar</span>
                           </button>
                         </div>
                       )}
@@ -325,9 +347,11 @@ const ServiceQueue: React.FC = () => {
                           <button 
                             className="btn btn-outline-info btn-sm"
                             onClick={() => handlePrintComanda(order.id)}
+                            style={{minHeight: '44px'}}
                           >
-                            <Printer size={12} className="me-1" />
-                            Imprimir Comanda
+                            <Printer size={16} className="me-1" />
+                            <span className="d-none d-sm-inline">Imprimir Comanda</span>
+                            <span className="d-inline d-sm-none">Comanda</span>
                           </button>
                         </div>
                       )}
@@ -385,6 +409,43 @@ const ServiceQueue: React.FC = () => {
                   </div>
                 ))}
               </div>
+              
+              {/* Paginación touch-friendly */}
+              {orders.length > ordersPerPage && (
+                <div className="card-footer bg-transparent border-top py-2 py-sm-3">
+                  <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+                    <small className="text-muted text-center text-sm-start order-2 order-sm-1">
+                      {indexOfFirstOrder + 1}-{Math.min(indexOfLastOrder, orders.length)} de {orders.length}
+                    </small>
+                    <div className="d-flex align-items-center gap-2 order-1 order-sm-2">
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="btn btn-outline-primary btn-sm"
+                        style={{minWidth: '44px', minHeight: '44px'}}
+                        aria-label="Página anterior"
+                      >
+                        <span className="d-none d-sm-inline">‹ Anterior</span>
+                        <span className="d-inline d-sm-none">‹</span>
+                      </button>
+                      <span className="text-muted small">
+                        {currentPage} / {totalPages}
+                      </span>
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        className="btn btn-outline-primary btn-sm"
+                        style={{minWidth: '44px', minHeight: '44px'}}
+                        aria-label="Página siguiente"
+                      >
+                        <span className="d-none d-sm-inline">Siguiente ›</span>
+                        <span className="d-inline d-sm-none">›</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
             )}
           </div>
         </div>
@@ -455,39 +516,39 @@ const ServiceQueue: React.FC = () => {
       )}
 
       {/* Statistics row */}
-      <div className="row mb-4">
-        <div className="col-md-3">
-          <div className="card bg-warning bg-opacity-10 border-0">
-            <div className="card-body text-center p-3">
-              <Clock size={32} className="text-warning mb-2" />
-              <h5 className="fw-bold text-warning">{getOrdersByStatus('pending').length}</h5>
+      <div className="row g-2 g-sm-3 mb-3 mb-sm-4">
+        <div className="col-6 col-sm-6 col-md-3">
+          <div className="card bg-warning bg-opacity-10 border-0" style={{minHeight: '110px'}}>
+            <div className="card-body text-center p-2 p-sm-3 d-flex flex-column justify-content-center">
+              <Clock size={28} className="text-warning mb-2" />
+              <h5 className="fw-bold text-warning mb-1">{getOrdersByStatus('pending').length}</h5>
               <small className="text-muted">Pendientes</small>
             </div>
           </div>
         </div>
-        <div className="col-md-3">
-          <div className="card bg-info bg-opacity-10 border-0">
-            <div className="card-body text-center p-3">
-              <User size={32} className="text-info mb-2" />
-              <h5 className="fw-bold text-info">{getOrdersByStatus('in_progress').length}</h5>
+        <div className="col-6 col-sm-6 col-md-3">
+          <div className="card bg-info bg-opacity-10 border-0" style={{minHeight: '110px'}}>
+            <div className="card-body text-center p-2 p-sm-3 d-flex flex-column justify-content-center">
+              <User size={28} className="text-info mb-2" />
+              <h5 className="fw-bold text-info mb-1">{getOrdersByStatus('in_progress').length}</h5>
               <small className="text-muted">En Progreso</small>
             </div>
           </div>
         </div>
-        <div className="col-md-3">
-          <div className="card bg-success bg-opacity-10 border-0">
-            <div className="card-body text-center p-3">
-              <CheckCircle size={32} className="text-success mb-2" />
-              <h5 className="fw-bold text-success">{getOrdersByStatus('completed').length}</h5>
+        <div className="col-6 col-sm-6 col-md-3">
+          <div className="card bg-success bg-opacity-10 border-0" style={{minHeight: '110px'}}>
+            <div className="card-body text-center p-2 p-sm-3 d-flex flex-column justify-content-center">
+              <CheckCircle size={28} className="text-success mb-2" />
+              <h5 className="fw-bold text-success mb-1">{getOrdersByStatus('completed').length}</h5>
               <small className="text-muted">Completadas</small>
             </div>
           </div>
         </div>
-        <div className="col-md-3">
-          <div className="card bg-secondary bg-opacity-10 border-0">
-            <div className="card-body text-center p-3">
-              <Package size={32} className="text-secondary mb-2" />
-              <h5 className="fw-bold text-secondary">{getOrdersByStatus('delivered').length}</h5>
+        <div className="col-6 col-sm-6 col-md-3">
+          <div className="card bg-secondary bg-opacity-10 border-0" style={{minHeight: '110px'}}>
+            <div className="card-body text-center p-2 p-sm-3 d-flex flex-column justify-content-center">
+              <Package size={28} className="text-secondary mb-2" />
+              <h5 className="fw-bold text-secondary mb-1">{getOrdersByStatus('delivered').length}</h5>
               <small className="text-muted">Entregadas</small>
             </div>
           </div>
