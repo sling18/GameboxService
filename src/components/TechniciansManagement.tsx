@@ -17,7 +17,6 @@ import {
   ChevronRight
 } from 'lucide-react'
 import { fetchTechnicianStatistics, type TechnicianStats } from '../services/technicianStatsService'
-import { fixDeliveredDates } from '../utils/fixDeliveredDates'
 
 type TimeFilter = 'week' | 'month' | 'year' | 'all'
 
