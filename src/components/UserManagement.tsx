@@ -29,10 +29,12 @@ interface ModalState {
 
 const UserManagement: React.FC = () => {
   const { user: currentUser } = useAuth()
-  const { users, loading, error, deleteUser, updateUserRole, refreshUsers } = useUsers()
+  const { users, loading, error, deleteUser, updateUserRole, updateUserSede, refreshUsers } = useUsers()
   const [editingUser, setEditingUser] = useState<string | null>(null)
   const [newUserRole, setNewUserRole] = useState<UserRole>('receptionist')
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
+  const [editingSede, setEditingSede] = useState<string | null>(null)
+  const [newSede, setNewSede] = useState('')
   
   // Estado para el modal
   const [modal, setModal] = useState<ModalState>({
@@ -110,6 +112,23 @@ const UserManagement: React.FC = () => {
     } else {
       setEditingUser(null)
       showSuccessModal('Rol actualizado exitosamente')
+    }
+  }
+
+  const handleUpdateSede = async (userId: string) => {
+    if (!newSede.trim()) {
+      showErrorModal('La sede no puede estar vacía')
+      return
+    }
+
+    const result = await updateUserSede(userId, newSede.trim())
+    
+    if (result.error) {
+      showErrorModal(`Error: ${result.error}`)
+    } else {
+      setEditingSede(null)
+      setNewSede('')
+      showSuccessModal('Sede actualizada exitosamente')
     }
   }
 
@@ -214,11 +233,12 @@ const UserManagement: React.FC = () => {
         <div className="alert alert-info d-flex align-items-start mb-4">
           <Users size={16} className="me-2 mt-1" />
           <div>
-            <strong>Gestión de Roles de Usuario:</strong>
+            <strong>Gestión de Usuarios:</strong>
             <ul className="mb-0 mt-2 small">
               <li><strong>Crear usuarios:</strong> Ve a Supabase → Authentication → Users → "Invite a user"</li>
               <li><strong>Gestionar roles:</strong> Los usuarios aparecen aquí automáticamente</li>
               <li><strong>Cambiar rol:</strong> Usa el botón ✏️ para editar el rol de cualquier usuario</li>
+              <li><strong>Asignar sede:</strong> Usa el botón ✏️ en la columna Sede para definir la ubicación del usuario</li>
               <li><strong>Actualizar:</strong> Usa el botón 🔄 si agregaste usuarios en Supabase</li>
             </ul>
           </div>
@@ -238,6 +258,7 @@ const UserManagement: React.FC = () => {
                 <tr>
                   <th scope="col" className="border-0 fw-semibold">Usuario</th>
                   <th scope="col" className="border-0 fw-semibold">Rol</th>
+                  <th scope="col" className="border-0 fw-semibold">Sede</th>
                   <th scope="col" className="border-0 fw-semibold">Fecha</th>
                   <th scope="col" className="border-0 fw-semibold text-end">Acciones</th>
                 </tr>
@@ -288,6 +309,55 @@ const UserManagement: React.FC = () => {
                         <span className={`badge ${getRoleBadgeClass(user.role)} rounded-pill`}>
                           {getRoleDisplayName(user.role)}
                         </span>
+                      )}
+                    </td>
+                    <td>
+                      {editingSede === user.id ? (
+                        <div className="d-flex align-items-center gap-1">
+                          <input
+                            type="text"
+                            className="form-control form-control-sm"
+                            value={newSede}
+                            onChange={(e) => setNewSede(e.target.value)}
+                            placeholder="Ej: Sede Norte"
+                            autoFocus
+                            style={{ maxWidth: '150px' }}
+                          />
+                          <button
+                            onClick={() => handleUpdateSede(user.id)}
+                            className="btn btn-sm btn-success"
+                            title="Guardar"
+                          >
+                            <Save size={12} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEditingSede(null)
+                              setNewSede('')
+                            }}
+                            className="btn btn-sm btn-outline-secondary"
+                            title="Cancelar"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="d-flex align-items-center justify-content-between gap-2">
+                          <span className="badge bg-info text-dark">
+                            {user.sede || 'Sin asignar'}
+                          </span>
+                          <button
+                            onClick={() => {
+                              setEditingSede(user.id)
+                              setNewSede(user.sede || '')
+                            }}
+                            className="btn btn-sm btn-outline-primary"
+                            title="Editar sede"
+                            disabled={editingUser !== null || editingSede !== null}
+                          >
+                            <Edit3 size={12} />
+                          </button>
+                        </div>
                       )}
                     </td>
                     <td>

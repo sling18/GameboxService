@@ -303,6 +303,15 @@ const ServiceQueue: React.FC = () => {
                         </small>
                       </div>
                       
+                      {/* Badge de Sede */}
+                      {order.received_by?.sede && (
+                        <div className="mb-2">
+                          <span className="badge bg-info text-dark">
+                            📍 {order.received_by.sede}
+                          </span>
+                        </div>
+                      )}
+                      
                       {user?.role === 'technician' && (
                         <div className="d-grid gap-1">
                           {status === 'pending' && (

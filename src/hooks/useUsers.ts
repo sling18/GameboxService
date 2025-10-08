@@ -170,6 +170,41 @@ export const useUsers = () => {
     }
   }
 
+  const updateUserSede = async (userId: string, newSede: string) => {
+    try {
+      setError(null)
+      
+      const { data, error: profileError } = await supabase
+        .from('profiles')
+        .update({ 
+          sede: newSede,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId)
+        .select()
+        .single()
+
+      if (profileError) {
+        throw profileError
+      }
+
+      // Actualizar la lista local
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.id === userId 
+            ? { ...user, sede: newSede, updated_at: new Date().toISOString() } 
+            : user
+        )
+      )
+      
+      return { data, error: null }
+    } catch (error: any) {
+      console.error('Error updating user sede:', error)
+      setError(error.message)
+      return { data: null, error: error.message }
+    }
+  }
+
   const createMissingProfile = async (userId: string, email: string, fullName?: string) => {
     try {
       setError(null)
@@ -224,6 +259,7 @@ export const useUsers = () => {
     createQuickUser,
     deleteUser,
     updateUserRole,
+    updateUserSede,
     createMissingProfile,
     refreshUsers: fetchUsers
   }

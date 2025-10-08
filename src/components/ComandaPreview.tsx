@@ -213,6 +213,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 <div class="section">
                   <div><span class="label">ORDEN:</span> ${order.order_number}</div>
                   <div><span class="label">FECHA:</span> ${formatDateForPrint(order.created_at)}</div>
+                  ${order.received_by?.sede ? `<div><span class="label">SEDE:</span> ${order.received_by.sede}</div>` : ''}
+                  ${order.received_by ? `<div><span class="label">RECIBIDO POR:</span> ${order.received_by.full_name || order.received_by.email?.split('@')[0] || 'Recepcionista'}</div>` : ''}
                 </div>
                 
                 <div class="section">
@@ -479,6 +481,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 <div class="section">
                   <div><span class="label">ORDEN:</span> ${order.order_number}</div>
                   <div><span class="label">FECHA:</span> ${formatDateForPrint(order.created_at)}</div>
+                  ${order.received_by?.sede ? `<div><span class="label">SEDE:</span> ${order.received_by.sede}</div>` : ''}
+                  ${order.received_by ? `<div><span class="label">RECIBIDO POR:</span> ${order.received_by.full_name || order.received_by.email?.split('@')[0] || 'Recepcionista'}</div>` : ''}
                 </div>
                 
                 <div class="section">
@@ -636,6 +640,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
                         <div><strong>ORDEN:</strong> {order.order_number}</div>
                         <div><strong>FECHA:</strong> {formatDateForPrint(order.created_at)}</div>
+                        {order.received_by?.sede && <div><strong>SEDE:</strong> {order.received_by.sede}</div>}
+                        {order.received_by && <div><strong>RECIBIDO POR:</strong> {order.received_by.full_name || order.received_by.email?.split('@')[0] || 'Recepcionista'}</div>}
                       </div>
                       
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
