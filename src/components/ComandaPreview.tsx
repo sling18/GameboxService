@@ -149,11 +149,18 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 .content {
                   font-size: 11px;
                   line-height: 1.5;
+                  word-wrap: break-word;
+                  overflow-wrap: break-word;
                 }
                 .section {
                   margin-bottom: 3mm;
                   border-bottom: 1px dashed #ccc;
                   padding-bottom: 2mm;
+                }
+                .section > div {
+                  word-wrap: break-word;
+                  overflow-wrap: break-word;
+                  max-width: 76mm;
                 }
                 .label {
                   font-weight: bold;
@@ -213,6 +220,7 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 <div class="section">
                   <div><span class="label">ESTADO:</span> ${getStatusDisplayName(order.status)}</div>
                   ${order.completed_by ? `<div><span class="label">FINALIZADO POR:</span> ${order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}</div>` : ''}
+                  ${order.completion_notes ? `<div class="label" style="margin-top: 2mm;">TRABAJO REALIZADO:</div><div>${order.completion_notes}</div>` : ''}
                 </div>
               </div>
               
@@ -393,11 +401,18 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 .content {
                   font-size: 11px;
                   line-height: 1.5;
+                  word-wrap: break-word;
+                  overflow-wrap: break-word;
                 }
                 .section {
                   margin-bottom: 3mm;
                   border-bottom: 1px dashed #ccc;
                   padding-bottom: 2mm;
+                }
+                .section > div {
+                  word-wrap: break-word;
+                  overflow-wrap: break-word;
+                  max-width: 76mm;
                 }
                 .label {
                   font-weight: bold;
@@ -468,6 +483,7 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 <div class="section">
                   <div><span class="label">ESTADO:</span> ${getStatusDisplayName(order.status)}</div>
                   ${order.completed_by ? `<div><span class="label">FINALIZADO POR:</span> ${order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}</div>` : ''}
+                  ${order.completion_notes ? `<div class="label" style="margin-top: 2mm;">TRABAJO REALIZADO:</div><div>${order.completion_notes}</div>` : ''}
                 </div>
               </div>
               
@@ -627,6 +643,12 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                         <div><strong>ESTADO:</strong> {getStatusDisplayName(order.status)}</div>
                         {order.completed_by && (
                           <div><strong>FINALIZADO POR:</strong> {order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}</div>
+                        )}
+                        {order.completion_notes && (
+                          <>
+                            <div style={{ fontWeight: 'bold', marginTop: '5px' }}>TRABAJO REALIZADO:</div>
+                            <div>{order.completion_notes}</div>
+                          </>
                         )}
                       </div>
                     </div>

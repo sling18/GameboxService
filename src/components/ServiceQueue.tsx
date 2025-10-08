@@ -264,8 +264,8 @@ const ServiceQueue: React.FC = () => {
                   <div key={order.id} className="card bg-light border-0 mb-2">
                     <div className="card-body p-2 p-sm-3">
                       <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2 mb-2">
-                        <div className="flex-grow-1 min-w-0">
-                          <h6 className="fw-bold mb-1 text-truncate">
+                        <div className="flex-grow-1 min-w-0" style={{ maxWidth: '55%' }}>
+                          <h6 className="fw-bold mb-1" style={{ wordBreak: 'break-word', overflowWrap: 'break-word', lineHeight: '1.3' }}>
                             {order.device_brand} {order.device_model}
                           </h6>
                           <small className="text-muted d-block text-truncate">
@@ -275,12 +275,12 @@ const ServiceQueue: React.FC = () => {
                             #{order.order_number}
                           </small>
                         </div>
-                        <div className="d-flex align-items-center text-muted flex-shrink-0">
-                          <Package className="w-3 h-3 me-1" />
-                          <small>
+                        <div className="d-flex align-items-start text-muted" style={{ maxWidth: '45%' }}>
+                          <Package className="w-3 h-3 me-1 flex-shrink-0 mt-1" />
+                          <small style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                             {order.device_type}
                             {order.serial_number && (
-                              <span className="text-muted ms-2 d-none d-md-inline">
+                              <span className="text-muted d-block mt-1" style={{ fontSize: '0.7rem' }}>
                                 SN: {order.serial_number}
                               </span>
                             )}

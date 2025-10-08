@@ -47,7 +47,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
     )
   }
   
-  console.log('✅ MultipleOrdersComandaPreview: Datos cargados', { 
+  console.log('Ô£à MultipleOrdersComandaPreview: Datos cargados', { 
     customer: customer.full_name, 
     ordersCount: orders.length 
   })
@@ -69,13 +69,14 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                 box-sizing: border-box;
               }
               body { 
-                font-family: 'Courier New', monospace; 
-                font-size: 10px; 
+                font-family: 'Arial Black', 'Arial Bold', sans-serif; 
+                font-size: 12px; 
                 width: 80mm;
                 margin: 0;
                 padding: 2mm;
-                line-height: 1.3;
+                line-height: 1.4;
                 background: white;
+                font-weight: 900;
               }
               .header {
                 text-align: center;
@@ -90,17 +91,24 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
               }
               .title {
                 font-weight: bold;
-                font-size: 11px;
+                font-size: 13px;
                 margin-bottom: 2mm;
               }
               .content {
-                font-size: 9px;
-                line-height: 1.4;
+                font-size: 11px;
+                line-height: 1.5;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
               }
               .section {
                 margin-bottom: 3mm;
                 border-bottom: 1px dashed #ccc;
                 padding-bottom: 2mm;
+              }
+              .section > div {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 76mm;
               }
               .label {
                 font-weight: bold;
@@ -109,11 +117,18 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                 margin-bottom: 4mm;
                 padding: 2mm;
                 border: 1px solid #ddd;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+              }
+              .order-item > div {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 100%;
               }
               .footer {
                 text-align: center;
                 margin-top: 5mm;
-                font-size: 10px;
+                font-size: 11px;
                 border-top: 1px dashed #000;
                 padding-top: 3mm;
               }
@@ -144,7 +159,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
               
               <div class="section">
                 <div><span class="label">CLIENTE:</span> ${customer.full_name}</div>
-                <div><span class="label">CEDULA:</span> ${customer.cedula}</div>
+                <div><span class="label">CÉDULA:</span> ${customer.cedula}</div>
                 ${customer.phone ? `<div><span class="label">TEL:</span> ${customer.phone}</div>` : ''}
               </div>
               
@@ -161,6 +176,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                     ${order.observations ? `<div><span class="label">OBS:</span> ${order.observations}</div>` : ''}
                     <div><span class="label">ESTADO:</span> ${getStatusDisplayName(order.status)}</div>
                     ${order.completed_by ? `<div><span class="label">FINALIZADO POR:</span> ${order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}</div>` : ''}
+                    ${order.completion_notes ? `<div><span class="label">TRABAJO REALIZADO:</span> ${order.completion_notes}</div>` : ''}
                   </div>
                 `).join('')}
               </div>
@@ -405,13 +421,14 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                   box-sizing: border-box;
                 }
                 body { 
-                  font-family: 'Courier New', monospace; 
-                  font-size: 10px; 
+                  font-family: 'Arial Black', 'Arial Bold', sans-serif; 
+                  font-size: 12px; 
                   width: 80mm;
                   margin: 0;
                   padding: 2mm;
-                  line-height: 1.3;
+                  line-height: 1.4;
                   background: white;
+                  font-weight: 900;
                 }
                 .instructions {
                   background: #e3f2fd;
@@ -435,17 +452,24 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                 }
                 .title {
                   font-weight: bold;
-                  font-size: 11px;
+                  font-size: 13px;
                   margin-bottom: 2mm;
                 }
                 .content {
-                  font-size: 9px;
-                  line-height: 1.4;
+                  font-size: 11px;
+                  line-height: 1.5;
+                  word-wrap: break-word;
+                  overflow-wrap: break-word;
                 }
                 .section {
                   margin-bottom: 3mm;
                   border-bottom: 1px dashed #ccc;
                   padding-bottom: 2mm;
+                }
+                .section > div {
+                  word-wrap: break-word;
+                  overflow-wrap: break-word;
+                  max-width: 76mm;
                 }
                 .label {
                   font-weight: bold;
@@ -454,11 +478,18 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                   margin-bottom: 4mm;
                   padding: 2mm;
                   border: 1px solid #ddd;
+                  word-wrap: break-word;
+                  overflow-wrap: break-word;
+                }
+                .order-item > div {
+                  word-wrap: break-word;
+                  overflow-wrap: break-word;
+                  max-width: 100%;
                 }
                 .footer {
                   text-align: center;
                   margin-top: 5mm;
-                  font-size: 10px;
+                  font-size: 11px;
                   border-top: 1px dashed #000;
                   padding-top: 3mm;
                 }
@@ -500,7 +531,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                 
                 <div class="section">
                   <div><span class="label">CLIENTE:</span> ${customer.full_name}</div>
-                  <div><span class="label">CEDULA:</span> ${customer.cedula}</div>
+                  <div><span class="label">CÉDULA:</span> ${customer.cedula}</div>
                   ${customer.phone ? `<div><span class="label">TEL:</span> ${customer.phone}</div>` : ''}
                 </div>
                 
@@ -517,6 +548,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                       ${order.observations ? `<div><span class="label">OBS:</span> ${order.observations}</div>` : ''}
                       <div><span class="label">ESTADO:</span> ${getStatusDisplayName(order.status)}</div>
                       ${order.completed_by ? `<div><span class="label">FINALIZADO POR:</span> ${order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}</div>` : ''}
+                      ${order.completion_notes ? `<div><span class="label">TRABAJO REALIZADO:</span> ${order.completion_notes}</div>` : ''}
                     </div>
                   `).join('')}
                 </div>
@@ -619,7 +651,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                       </div>
                       
                       <div className="text-center text-muted" style={{ fontSize: '9px', marginTop: '5px' }}>
-                        Sticker {index + 1} de {orders.length} - 7cm × 5cm
+                        Sticker {index + 1} de {orders.length} - 7cm ├ù 5cm
                       </div>
                     </div>
                   ))}
@@ -632,8 +664,9 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                 }}>
                   <div className="mx-auto border rounded p-3 bg-white" style={{ 
                     width: '280px', // Simula 80mm
-                    fontFamily: 'Courier New, monospace',
-                    fontSize: '11px'
+                    fontFamily: 'Arial Black, Arial Bold, sans-serif',
+                    fontSize: '12px',
+                    fontWeight: 900
                   }}>
                     {/* Header con logo */}
                     <div className="text-center mb-3 pb-2" style={{ borderBottom: '1px dashed #000' }}>
@@ -642,11 +675,11 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                         height: 'auto',
                         marginBottom: '8px'
                       }} />
-                      <div style={{ fontWeight: 'bold', fontSize: '12px' }}>COMANDA MÚLTIPLE DE SERVICIO</div>
+                      <div style={{ fontWeight: 'bold', fontSize: '13px' }}>COMANDA MÚLTIPLE DE SERVICIO</div>
                     </div>
                     
                     {/* Contenido organizado en secciones */}
-                    <div style={{ fontSize: '10px', lineHeight: '1.4' }}>
+                    <div style={{ fontSize: '11px', lineHeight: '1.5' }}>
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
                         <div><strong>FECHA:</strong> {formatDateForPrint(orders[0].created_at)}</div>
                         <div><strong>DISPOSITIVOS:</strong> {orders.length}</div>
@@ -654,14 +687,14 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                       
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
                         <div><strong>CLIENTE:</strong> {customer.full_name}</div>
-                        <div><strong>CEDULA:</strong> {customer.cedula}</div>
+                        <div><strong>CÉDULA:</strong> {customer.cedula}</div>
                         {customer.phone && <div><strong>TEL:</strong> {customer.phone}</div>}
                       </div>
                       
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
                         <div style={{ fontWeight: 'bold' }}>DISPOSITIVOS INGRESADOS:</div>
                         {orders.map((order, index) => (
-                          <div key={order.id} className="mt-2 p-2" style={{ border: '1px solid #ddd', fontSize: '9px' }}>
+                          <div key={order.id} className="mt-2 p-2" style={{ border: '1px solid #ddd', fontSize: '10px' }}>
                             <div><strong>{index + 1}. ORDEN:</strong> {order.order_number}</div>
                             <div><strong>TIPO:</strong> {order.device_type}</div>
                             <div><strong>MARCA:</strong> {order.device_brand}</div>
@@ -669,6 +702,9 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                             <div><strong>SERIE:</strong> {order.serial_number || 'N/A'}</div>
                             <div><strong>PROBLEMA:</strong> {order.problem_description.slice(0, 30)}...</div>
                             <div><strong>ESTADO:</strong> {getStatusDisplayName(order.status)}</div>
+                            {order.completion_notes && (
+                              <div><strong>TRABAJO:</strong> {order.completion_notes.slice(0, 35)}...</div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -677,7 +713,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                     {/* Footer */}
                     <div className="text-center mt-3 pt-2" style={{ 
                       borderTop: '1px dashed #000',
-                      fontSize: '9px',
+                      fontSize: '11px',
                       fontWeight: 'bold'
                     }}>
                       <div>TOTAL: {orders.length} ÓRDENES</div>
