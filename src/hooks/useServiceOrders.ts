@@ -281,7 +281,13 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
     try {
       if (!user) throw new Error('Usuario no autenticado')
       
-      const { error } = await supabase
+      console.log('💾 Guardando completion_notes:', {
+        orderId,
+        completionNotes,
+        length: completionNotes.length
+      })
+      
+      const { data, error } = await supabase
         .from('service_orders')
         .update({
           status: 'completed',
@@ -290,13 +296,29 @@ export const useServiceOrders = (autoRefresh: boolean = true) => {
           updated_at: new Date().toISOString(),
         })
         .eq('id', orderId)
+        .select()
 
-      if (error) throw error
+      if (error) {
+        console.error('❌ Error guardando completion_notes:', error)
+        throw error
+      }
+
+      console.log('✅ Completion notes guardadas exitosamente:', data)
 
       // Refresh data
       await fetchServiceOrders()
+      
+      // Verificar que la orden refrescada tiene las notas
+      const refreshedOrder = serviceOrders.find(o => o.id === orderId)
+      console.log('🔄 Orden después de refresh:', {
+        order_number: refreshedOrder?.order_number,
+        completion_notes: refreshedOrder?.completion_notes,
+        tiene_notas: !!refreshedOrder?.completion_notes
+      })
+      
       return true
     } catch (err) {
+      console.error('❌ Error completo:', err)
       setError(err instanceof Error ? err.message : 'Error al completar orden')
       return false
     }

@@ -120,12 +120,15 @@ const Dashboard: React.FC = () => {
     console.log('📋 Datos de customer en order:', order.customer)
     
     try {
-      // Hacer consulta directa para asegurar datos del customer
+      // Hacer consulta directa para asegurar datos completos incluyendo completion_notes
       const { data: orderWithCustomer, error } = await supabase
         .from('service_orders')
         .select(`
           *,
-          customer:customers(*)
+          customer:customers(*),
+          assigned_technician:profiles!service_orders_assigned_technician_id_fkey(*),
+          completed_by:profiles!service_orders_completed_by_id_fkey(*),
+          received_by:profiles!service_orders_received_by_id_fkey(*)
         `)
         .eq('id', order.id)
         .single()
@@ -144,6 +147,12 @@ const Dashboard: React.FC = () => {
       }
 
       console.log('✅ Datos completos cargados:', orderWithCustomer)
+      console.log('🔍 COMPLETION NOTES en Dashboard:', {
+        order_number: orderWithCustomer.order_number,
+        completion_notes: orderWithCustomer.completion_notes,
+        tiene_notas: !!orderWithCustomer.completion_notes,
+        tipo: typeof orderWithCustomer.completion_notes
+      })
       setSelectedOrder(orderWithCustomer as ServiceOrder)
       setShowComanda(true)
     } catch (err) {

@@ -19,7 +19,7 @@ interface ModalState {
 }
 
 const ServiceQueue: React.FC = () => {
-  const { serviceOrders, loading, updateServiceOrder, deliverServiceOrder } = useServiceOrders(true) // Enable auto-refresh
+  const { serviceOrders, loading, updateServiceOrder, completeServiceOrder, deliverServiceOrder } = useServiceOrders(true) // Enable auto-refresh
   const { user } = useAuth()
   const { navigate } = useRouter()
   
@@ -163,12 +163,16 @@ const ServiceQueue: React.FC = () => {
       confirmText: 'Completar Reparación',
       onConfirm: async () => {
         try {
-          await updateServiceOrder(orderId, { 
-            status: 'completed',
-            completion_notes: completionNotes.trim()
+          console.log('🔧 Completando orden con notas:', {
+            orderId,
+            completionNotes: completionNotes.trim(),
+            length: completionNotes.trim().length
           })
+          
+          await completeServiceOrder(orderId, completionNotes.trim())
           showSuccessModal('Reparación completada exitosamente')
         } catch (error) {
+          console.error('❌ Error al completar:', error)
           showErrorModal('Error al completar la reparación')
         }
         closeModal()

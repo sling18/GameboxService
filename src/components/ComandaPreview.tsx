@@ -17,7 +17,21 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
   // Usar hook personalizado para conversión de imagen
   const { base64: logoBase64 } = useImageToBase64(logoGamebox)
 
+  // 🔍 DEBUG: Ver datos de completion_notes
+  console.log('🔍🔍🔍 ComandaPreview - DATOS DE LA ORDEN 🔍🔍🔍')
+  console.log('Número de orden:', order.order_number)
+  console.log('Estado:', order.status)
+  console.log('Completion notes:', order.completion_notes)
+  console.log('¿Tiene notas?:', !!order.completion_notes)
+  console.log('Longitud de notas:', order.completion_notes?.length || 0)
+  console.log('Completed by:', order.completed_by)
+  console.log('🔍🔍🔍 FIN DE DEBUG 🔍🔍🔍')
+
   const handlePrint = () => {
+    console.log('🖨️ INICIANDO IMPRESIÓN')
+    console.log('Completion notes antes de imprimir:', order.completion_notes)
+    console.log('¿Tiene completion_notes?:', !!order.completion_notes)
+    
     const title = viewType === 'comanda' ? 'Comanda' : 'Sticker'
     const printWindow = window.open('', '_blank', 'width=600,height=800')
     
@@ -108,6 +122,10 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
         `)
       } else {
         // Template para comanda en tirilla (80mm)
+        console.log('📄 Generando comanda con completion_notes:', order.completion_notes)
+        console.log('📄 Tipo de dato:', typeof order.completion_notes)
+        console.log('📄 Es truthy:', !!order.completion_notes)
+        
         printWindow.document.write(`
           <!DOCTYPE html>
           <html>
@@ -220,7 +238,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 <div class="section">
                   <div><span class="label">ESTADO:</span> ${getStatusDisplayName(order.status)}</div>
                   ${order.completed_by ? `<div><span class="label">FINALIZADO POR:</span> ${order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}</div>` : ''}
-                  ${order.completion_notes ? `<div class="label" style="margin-top: 2mm;">TRABAJO REALIZADO:</div><div>${order.completion_notes}</div>` : ''}
+                  <div class="label" style="margin-top: 2mm; font-weight: bold;">TRABAJO REALIZADO:</div>
+                  <div style="white-space: pre-wrap;">${order.completion_notes || '(Sin descripción de reparación)'}</div>
                 </div>
               </div>
               
@@ -230,6 +249,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
             </body>
           </html>
         `)
+        
+        console.log('📄✅ Comanda impresa con completion_notes:', order.completion_notes)
       }
       
       printWindow.document.close()
@@ -483,7 +504,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 <div class="section">
                   <div><span class="label">ESTADO:</span> ${getStatusDisplayName(order.status)}</div>
                   ${order.completed_by ? `<div><span class="label">FINALIZADO POR:</span> ${order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}</div>` : ''}
-                  ${order.completion_notes ? `<div class="label" style="margin-top: 2mm;">TRABAJO REALIZADO:</div><div>${order.completion_notes}</div>` : ''}
+                  <div class="label" style="margin-top: 2mm; font-weight: bold;">TRABAJO REALIZADO:</div>
+                  <div style="white-space: pre-wrap;">${order.completion_notes || '(Sin descripción de reparación)'}</div>
                 </div>
               </div>
               
@@ -493,6 +515,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
             </body>
           </html>
         `)
+        
+        console.log('📄✅ PDF generado con completion_notes:', order.completion_notes)
       }
       
       printWindow.document.close()
@@ -644,12 +668,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                         {order.completed_by && (
                           <div><strong>FINALIZADO POR:</strong> {order.completed_by.full_name || order.completed_by.email?.split('@')[0] || 'Técnico'}</div>
                         )}
-                        {order.completion_notes && (
-                          <>
-                            <div style={{ fontWeight: 'bold', marginTop: '5px' }}>TRABAJO REALIZADO:</div>
-                            <div>{order.completion_notes}</div>
-                          </>
-                        )}
+                        <div style={{ fontWeight: 'bold', marginTop: '5px' }}>TRABAJO REALIZADO:</div>
+                        <div style={{ whiteSpace: 'pre-wrap' }}>{order.completion_notes || '(Sin descripción de reparación)'}</div>
                       </div>
                     </div>
                     
