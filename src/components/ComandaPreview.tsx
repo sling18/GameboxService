@@ -69,19 +69,19 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 }
                 .logo {
                   width: 100%;
-                  max-width: 4cm;
+                  max-width: 3cm;
                   height: auto;
-                  margin: 0 auto 2mm auto;
+                  margin: 0 auto 1.5mm auto;
                   display: block;
                 }
                 .info {
                   flex-grow: 1;
-                  font-size: 9px;
-                  line-height: 1.2;
+                  font-size: 8.5px;
+                  line-height: 1.3;
                   color: #000;
                 }
                 .info-line {
-                  margin-bottom: 1mm;
+                  margin-bottom: 0.8mm;
                   overflow: hidden;
                   text-overflow: ellipsis;
                   white-space: nowrap;
@@ -89,6 +89,23 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 .info-line strong {
                   font-weight: bold;
                   color: #000;
+                }
+                .problem-section {
+                  margin-top: 1.5mm;
+                  padding-top: 1.5mm;
+                  border-top: 1px solid #999;
+                  font-size: 8px;
+                  line-height: 1.2;
+                }
+                .problem-text {
+                  margin-top: 0.5mm;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 4;
+                  -webkit-box-orient: vertical;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: normal;
+                  max-height: 12mm;
                 }
                 @media print {
                   body { 
@@ -111,10 +128,13 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 <img src="${logoBase64}" alt="GameBox Logo" class="logo">
                 <div class="info">
                   <div class="info-line"><strong>ORDEN:</strong> ${order.order_number}</div>
-                  <div class="info-line"><strong>CLIENTE:</strong> ${customer.full_name.slice(0, 25)}</div>
+                  <div class="info-line"><strong>CLIENTE:</strong> ${customer.full_name.slice(0, 20)}</div>
                   <div class="info-line"><strong>TEL:</strong> ${(customer.phone || 'N/A').slice(0, 15)}</div>
-                  <div class="info-line"><strong>DISPOSITIVO:</strong> ${(order.device_type + ' ' + order.device_brand).slice(0, 22)}</div>
-                  <div class="info-line"><strong>SERIE:</strong> ${(order.serial_number || 'N/A').slice(0, 20)}</div>
+                  <div class="info-line"><strong>SERIE:</strong> ${(order.serial_number || 'N/A').slice(0, 18)}</div>
+                  <div class="problem-section">
+                    <div><strong>PROBLEMA:</strong></div>
+                    <div class="problem-text">${order.problem_description.slice(0, 120)}${order.problem_description.length > 120 ? '...' : ''}</div>
+                  </div>
                 </div>
               </div>
             </body>
@@ -311,19 +331,19 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 }
                 .logo {
                   width: 100%;
-                  max-width: 4cm;
+                  max-width: 3cm;
                   height: auto;
-                  margin: 0 auto 2mm auto;
+                  margin: 0 auto 1.5mm auto;
                   display: block;
                 }
                 .info {
                   flex-grow: 1;
-                  font-size: 9px;
-                  line-height: 1.2;
+                  font-size: 8.5px;
+                  line-height: 1.3;
                   color: #000;
                 }
                 .info-line {
-                  margin-bottom: 1mm;
+                  margin-bottom: 0.8mm;
                   overflow: hidden;
                   text-overflow: ellipsis;
                   white-space: nowrap;
@@ -331,6 +351,23 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 .info-line strong {
                   font-weight: bold;
                   color: #000;
+                }
+                .problem-section {
+                  margin-top: 1.5mm;
+                  padding-top: 1.5mm;
+                  border-top: 1px solid #999;
+                  font-size: 8px;
+                  line-height: 1.2;
+                }
+                .problem-text {
+                  margin-top: 0.5mm;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 4;
+                  -webkit-box-orient: vertical;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: normal;
+                  max-height: 12mm;
                 }
                 @media print {
                   .instructions {
@@ -363,10 +400,13 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 <img src="${logoBase64}" alt="GameBox Logo" class="logo">
                 <div class="info">
                   <div class="info-line"><strong>ORDEN:</strong> ${order.order_number}</div>
-                  <div class="info-line"><strong>CLIENTE:</strong> ${customer.full_name.slice(0, 25)}</div>
+                  <div class="info-line"><strong>CLIENTE:</strong> ${customer.full_name.slice(0, 20)}</div>
                   <div class="info-line"><strong>TEL:</strong> ${(customer.phone || 'N/A').slice(0, 15)}</div>
-                  <div class="info-line"><strong>DISPOSITIVO:</strong> ${(order.device_type + ' ' + order.device_brand).slice(0, 22)}</div>
-                  <div class="info-line"><strong>SERIE:</strong> ${(order.serial_number || 'N/A').slice(0, 20)}</div>
+                  <div class="info-line"><strong>SERIE:</strong> ${(order.serial_number || 'N/A').slice(0, 18)}</div>
+                  <div class="problem-section">
+                    <div><strong>PROBLEMA:</strong></div>
+                    <div class="problem-text">${order.problem_description.slice(0, 120)}${order.problem_description.length > 120 ? '...' : ''}</div>
+                  </div>
                 </div>
               </div>
             </body>
@@ -589,23 +629,28 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                     {/* Logo optimizado */}
                     <img src={logoGamebox} alt="GameBox Logo" style={{ 
                       width: '100%', 
-                      maxWidth: '180px', 
+                      maxWidth: '120px', 
                       height: 'auto', 
-                      margin: '0 auto 8px auto',
+                      margin: '0 auto 5px auto',
                       display: 'block'
                     }} />
                     
                     <div style={{ 
-                      fontSize: '12px', 
+                      fontSize: '11px', 
                       textAlign: 'left', 
                       flexGrow: 1,
-                      lineHeight: '1.4'
+                      lineHeight: '1.3'
                     }}>
                       <div style={{ marginBottom: '2px' }}><strong>ORDEN:</strong> {order.order_number}</div>
-                      <div style={{ marginBottom: '2px' }}><strong>CLIENTE:</strong> {customer.full_name.slice(0, 25)}</div>
+                      <div style={{ marginBottom: '2px' }}><strong>CLIENTE:</strong> {customer.full_name.slice(0, 20)}</div>
                       <div style={{ marginBottom: '2px' }}><strong>TEL:</strong> {(customer.phone || 'N/A').slice(0, 15)}</div>
-                      <div style={{ marginBottom: '2px' }}><strong>DISPOSITIVO:</strong> {(order.device_type + ' ' + order.device_brand).slice(0, 22)}</div>
-                      <div><strong>SERIE:</strong> {(order.serial_number || 'N/A').slice(0, 20)}</div>
+                      <div style={{ marginBottom: '2px' }}><strong>SERIE:</strong> {(order.serial_number || 'N/A').slice(0, 18)}</div>
+                      <div style={{ fontSize: '10px', marginTop: '4px', borderTop: '1px solid #ddd', paddingTop: '4px' }}>
+                        <strong>PROBLEMA:</strong><br />
+                        <div style={{ marginTop: '2px', lineHeight: '1.2' }}>
+                          {order.problem_description.slice(0, 120)}{order.problem_description.length > 120 ? '...' : ''}
+                        </div>
+                      </div>
                     </div>
                   </div>
                   
