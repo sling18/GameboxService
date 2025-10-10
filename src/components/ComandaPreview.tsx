@@ -76,7 +76,7 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 }
                 .info {
                   flex-grow: 1;
-                  font-size: 8.5px;
+                  font-size: 10px;
                   line-height: 1.3;
                   color: #000;
                 }
@@ -94,7 +94,7 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                   margin-top: 1.5mm;
                   padding-top: 1.5mm;
                   border-top: 1px solid #999;
-                  font-size: 8px;
+                  font-size: 9.5px;
                   line-height: 1.2;
                 }
                 .problem-text {
@@ -338,7 +338,7 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 }
                 .info {
                   flex-grow: 1;
-                  font-size: 8.5px;
+                  font-size: 10px;
                   line-height: 1.3;
                   color: #000;
                 }
@@ -356,7 +356,7 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                   margin-top: 1.5mm;
                   padding-top: 1.5mm;
                   border-top: 1px solid #999;
-                  font-size: 8px;
+                  font-size: 9.5px;
                   line-height: 1.2;
                 }
                 .problem-text {
@@ -636,7 +636,7 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                     }} />
                     
                     <div style={{ 
-                      fontSize: '11px', 
+                      fontSize: '13px', 
                       textAlign: 'left', 
                       flexGrow: 1,
                       lineHeight: '1.3'
@@ -645,7 +645,7 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                       <div style={{ marginBottom: '2px' }}><strong>CLIENTE:</strong> {customer.full_name.slice(0, 20)}</div>
                       <div style={{ marginBottom: '2px' }}><strong>TEL:</strong> {(customer.phone || 'N/A').slice(0, 15)}</div>
                       <div style={{ marginBottom: '2px' }}><strong>SERIE:</strong> {(order.serial_number || 'N/A').slice(0, 18)}</div>
-                      <div style={{ fontSize: '10px', marginTop: '4px', borderTop: '1px solid #ddd', paddingTop: '4px' }}>
+                      <div style={{ fontSize: '12px', marginTop: '4px', borderTop: '1px solid #ddd', paddingTop: '4px' }}>
                         <strong>PROBLEMA:</strong><br />
                         <div style={{ marginTop: '2px', lineHeight: '1.2' }}>
                           {order.problem_description.slice(0, 120)}{order.problem_description.length > 120 ? '...' : ''}
