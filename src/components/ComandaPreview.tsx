@@ -4,6 +4,8 @@ import type { ServiceOrder, Customer } from '../types'
 import logoGamebox from '../assets/logo-gamebox.png'
 import { useImageToBase64 } from '../hooks'
 import { formatDateForPrint, getStatusDisplayName } from '../utils'
+import { useAuth } from '../contexts/AuthContext'
+import { getTelefonoSede } from '../config/sedes'
 
 interface ComandaPreviewProps {
   order: ServiceOrder
@@ -13,6 +15,7 @@ interface ComandaPreviewProps {
 
 const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClose }) => {
   const [viewType, setViewType] = useState<'comanda' | 'sticker'>('comanda')
+  const { user } = useAuth()
   
   // Usar hook personalizado para conversión de imagen
   const { base64: logoBase64 } = useImageToBase64(logoGamebox)
@@ -233,8 +236,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 <div class="section">
                   <div><span class="label">ORDEN:</span> ${order.order_number}</div>
                   <div><span class="label">FECHA:</span> ${formatDateForPrint(order.created_at)}</div>
-                  ${order.received_by?.sede ? `<div><span class="label">SEDE:</span> ${order.received_by.sede}</div>` : ''}
-                  ${order.received_by ? `<div><span class="label">RECIBIDO POR:</span> ${order.received_by.full_name || order.received_by.email?.split('@')[0] || 'Recepcionista'}</div>` : ''}
+                  ${(order.received_by?.sede || user?.sede) ? `<div><span class="label">SEDE:</span> ${(order.received_by?.sede || user?.sede || '').replace('Sede ', '')} - Tel: ${getTelefonoSede(order.received_by?.sede || user?.sede)}</div>` : ''}
+                  ${(order.received_by?.full_name || user?.full_name) ? `<div><span class="label">RECIBIDO POR:</span> ${order.received_by?.full_name || user?.full_name || order.received_by?.email?.split('@')[0] || user?.email?.split('@')[0] || 'Recepcionista'}</div>` : ''}
                 </div>
                 
                 <div class="section">
@@ -521,8 +524,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                 <div class="section">
                   <div><span class="label">ORDEN:</span> ${order.order_number}</div>
                   <div><span class="label">FECHA:</span> ${formatDateForPrint(order.created_at)}</div>
-                  ${order.received_by?.sede ? `<div><span class="label">SEDE:</span> ${order.received_by.sede}</div>` : ''}
-                  ${order.received_by ? `<div><span class="label">RECIBIDO POR:</span> ${order.received_by.full_name || order.received_by.email?.split('@')[0] || 'Recepcionista'}</div>` : ''}
+                  ${(order.received_by?.sede || user?.sede) ? `<div><span class="label">SEDE:</span> ${(order.received_by?.sede || user?.sede || '').replace('Sede ', '')} - Tel: ${getTelefonoSede(order.received_by?.sede || user?.sede)}</div>` : ''}
+                  ${(order.received_by?.full_name || user?.full_name) ? `<div><span class="label">RECIBIDO POR:</span> ${order.received_by?.full_name || user?.full_name || order.received_by?.email?.split('@')[0] || user?.email?.split('@')[0] || 'Recepcionista'}</div>` : ''}
                 </div>
                 
                 <div class="section">
@@ -685,8 +688,8 @@ const ComandaPreview: React.FC<ComandaPreviewProps> = ({ order, customer, onClos
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
                         <div><strong>ORDEN:</strong> {order.order_number}</div>
                         <div><strong>FECHA:</strong> {formatDateForPrint(order.created_at)}</div>
-                        {order.received_by?.sede && <div><strong>SEDE:</strong> {order.received_by.sede}</div>}
-                        {order.received_by && <div><strong>RECIBIDO POR:</strong> {order.received_by.full_name || order.received_by.email?.split('@')[0] || 'Recepcionista'}</div>}
+                        {(order.received_by?.sede || user?.sede) && <div><strong>SEDE:</strong> {(order.received_by?.sede || user?.sede || '').replace('Sede ', '')} - Tel: {getTelefonoSede(order.received_by?.sede || user?.sede)}</div>}
+                        {(order.received_by?.full_name || user?.full_name) && <div><strong>RECIBIDO POR:</strong> {order.received_by?.full_name || user?.full_name || order.received_by?.email?.split('@')[0] || user?.email?.split('@')[0] || 'Recepcionista'}</div>}
                       </div>
                       
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>

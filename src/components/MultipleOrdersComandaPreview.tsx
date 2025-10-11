@@ -4,6 +4,8 @@ import type { ServiceOrder, Customer } from '../types'
 import logoGamebox from '../assets/logo-gamebox.png'
 import { useImageToBase64 } from '../hooks'
 import { formatDateForPrint, getStatusDisplayName } from '../utils'
+import { useAuth } from '../contexts/AuthContext'
+import { getTelefonoSede } from '../config/sedes'
 
 interface MultipleOrdersComandaPreviewProps {
   orders: ServiceOrder[]
@@ -17,6 +19,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
   onClose 
 }) => {
   const [viewType, setViewType] = useState<'comanda' | 'individual-stickers'>('comanda')
+  const { user } = useAuth()
   
   // Usar hook personalizado para conversión de imagen
   const { base64: logoBase64 } = useImageToBase64(logoGamebox)
@@ -155,6 +158,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
               <div class="section">
                 <div><span class="label">FECHA:</span> ${formatDateForPrint(orders[0].created_at)}</div>
                 <div><span class="label">DISPOSITIVOS:</span> ${orders.length}</div>
+                ${(orders[0]?.received_by?.sede || user?.sede) ? `<div><span class="label">SEDE:</span> ${(orders[0]?.received_by?.sede || user?.sede || '').replace('Sede ', '')} - Tel: ${getTelefonoSede(orders[0]?.received_by?.sede || user?.sede)}</div>` : ''}
               </div>
               
               <div class="section">
@@ -683,6 +687,7 @@ const MultipleOrdersComandaPreview: React.FC<MultipleOrdersComandaPreviewProps> 
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>
                         <div><strong>FECHA:</strong> {formatDateForPrint(orders[0].created_at)}</div>
                         <div><strong>DISPOSITIVOS:</strong> {orders.length}</div>
+                        {(orders[0]?.received_by?.sede || user?.sede) && <div><strong>SEDE:</strong> {(orders[0]?.received_by?.sede || user?.sede || '').replace('Sede ', '')} - Tel: {getTelefonoSede(orders[0]?.received_by?.sede || user?.sede)}</div>}
                       </div>
                       
                       <div className="mb-2 pb-2" style={{ borderBottom: '1px dashed #ccc' }}>

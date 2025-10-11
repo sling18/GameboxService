@@ -47,7 +47,7 @@ const Dashboard: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<ServiceOrder | null>(null)
   
   // Hook unificado de modales
-  const { modal, showError, closeModal } = useModal()
+  const { modal, showError, showSuccess, showConfirm, closeModal } = useModal()
   
   // Paginación para órdenes recientes
   const [currentPage, setCurrentPage] = useState(1)
@@ -96,23 +96,27 @@ const Dashboard: React.FC = () => {
     return success
   }
 
-  const handleDeleteOrder = async (orderId: string) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta orden? Esta acción no se puede deshacer.')) {
-      setDeletingOrderId(orderId)
-      try {
-        const success = await deleteServiceOrder(orderId)
-        if (success) {
-          console.log('Orden eliminada exitosamente')
-        } else {
-          alert('Error al eliminar la orden')
+  const handleDeleteOrder = (orderId: string) => {
+    showConfirm(
+      'Confirmar Eliminación',
+      '¿Estás seguro de que quieres eliminar esta orden? Esta acción no se puede deshacer.',
+      async () => {
+        setDeletingOrderId(orderId)
+        try {
+          const success = await deleteServiceOrder(orderId)
+          if (success) {
+            showSuccess('Éxito', 'Orden eliminada exitosamente')
+          } else {
+            showError('Error', 'No se pudo eliminar la orden')
+          }
+        } catch (error) {
+          console.error('Error deleting order:', error)
+          showError('Error', 'Error inesperado al eliminar la orden')
+        } finally {
+          setDeletingOrderId(null)
         }
-      } catch (error) {
-        console.error('Error deleting order:', error)
-        alert('Error inesperado al eliminar la orden')
-      } finally {
-        setDeletingOrderId(null)
       }
-    }
+    )
   }
 
   const handleShowComanda = async (order: ServiceOrder) => {
@@ -840,7 +844,14 @@ const Dashboard: React.FC = () => {
       )}
 
       {/* Modal Unificado */}
-      <CustomModal {...modal} onClose={closeModal} />
+      <CustomModal 
+        {...modal} 
+        onClose={closeModal}
+        onConfirm={modal.onConfirm ? () => {
+          modal.onConfirm?.()
+          closeModal()
+        } : closeModal}
+      />
     </div>
   )
 }
